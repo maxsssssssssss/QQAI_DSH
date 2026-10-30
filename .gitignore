@@ -1,0 +1,21 @@
+# Secrets, accounts, conversations, and private runtime state
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*APIKEY*
+*apikey*
+.runtime/
+.private/
+.dsh/
+runtime/
+secrets/
+backups/
+node_modules/
+*.db
+*.db-*
+*.sqlite*
+*.log
+__pycache__/
+.DS_Store
