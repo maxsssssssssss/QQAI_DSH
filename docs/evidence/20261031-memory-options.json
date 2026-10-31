@@ -1,0 +1,249 @@
+{
+  "date": "2026-10-31",
+  "scope": "User-authorized memory expansion plus native QQ faces and unreplied nudge; no unsolicited test QQ messages",
+  "deployment": {
+    "ok": true,
+    "operation": "memory-limits-qq-faces-native-nudge",
+    "gatewayRestarted": false,
+    "testMessageRequested": false,
+    "memoryWritten": false,
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261031-memory-options/limits-k79uigg2",
+    "at": "2026-10-31T17:45:19.310618+08:00",
+    "targets": {
+      "memory": {
+        "recallCount": 10
+      },
+      "stickers": {
+        "faces": true
+      },
+      "speakUp": {
+        "nudge": true
+      }
+    },
+    "isolatedRestoreVerified": true,
+    "backupFiles": 14,
+    "dshRestarted": true,
+    "qqReconnected": true,
+    "botIdentityMatches": true,
+    "gatewayProcessUnchanged": true,
+    "unrelatedConfigurationUnchanged": true,
+    "byteIdenticalState": {
+      "chatlog/2026-10-31.jsonl": true,
+      "memories.json": true,
+      "modules-data/qqai-heybox-reader/reader-state.json": true,
+      "modules-data/qqai-reminders/reminders.json": true,
+      "mood.json": true,
+      "recent-media.json": true,
+      "sessions.json": true,
+      "speakup.json": true
+    },
+    "sourceSha256": {
+      "src/chat/hub.js": "aa6f08652dd1a7ebad7e04e0bf8041ad5b45492e9cac8b9f4b0c89b99e8341ab",
+      "src/features/memory.js": "cf165abe37d7a94ed581ece448f07f83447bd28598ea72aeb0dc1f2b0d22e2c2"
+    }
+  },
+  "limits": {
+    "recallCandidates": 10,
+    "actualHintItems": 8,
+    "actualHintBodyChars": 1600,
+    "wholeFactPacking": true,
+    "chatLogRowChars": 2000,
+    "redactBeforeClipping": true,
+    "factExtractionBatchMaxRows": 80,
+    "factExtractionBatchChars": 40000,
+    "oversizedLegacyRowKeptWhole": true
+  },
+  "regressions": {
+    "passed": 40,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "synthetic native-source and compatibility regression; not QQ acceptance"
+  },
+  "realModel": {
+    "ok": true,
+    "qqMessageRequested": false,
+    "productionMemoryWritten": false,
+    "realModelProbe": {
+      "scope": "installed chatlog and memory implementation with isolated synthetic state and real DSH inference; no QQ sends or production memory writes",
+      "ok": true,
+      "pending": false,
+      "startedAt": "2026-10-31T09:45:39.436Z",
+      "qqSendRequested": false,
+      "productionMemoryWritten": false,
+      "productionChatlogWritten": false,
+      "actualRequests": [
+        {
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off",
+          "maxTokens": 1500,
+          "outputCharacters": 295,
+          "usage": {
+            "inputTokens": 781,
+            "outputTokens": 122,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 0
+          }
+        },
+        {
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off",
+          "maxTokens": 1500,
+          "outputCharacters": 179,
+          "usage": {
+            "inputTokens": 792,
+            "outputTokens": 108,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 0
+          }
+        },
+        {
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off",
+          "maxTokens": 800,
+          "outputCharacters": 66,
+          "usage": {
+            "inputTokens": 143,
+            "outputTokens": 39,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 0
+          }
+        },
+        {
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off",
+          "maxTokens": 1500,
+          "outputCharacters": 44,
+          "usage": {
+            "inputTokens": 179,
+            "outputTokens": 31,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 0
+          }
+        },
+        {
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off",
+          "maxTokens": 120,
+          "outputCharacters": 4,
+          "usage": {
+            "inputTokens": 399,
+            "outputTokens": 4,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 0
+          }
+        }
+      ],
+      "requestLimit": 6,
+      "stage": "complete",
+      "sourceSha256": {
+        "memory": "cf165abe37d7a94ed581ece448f07f83447bd28598ea72aeb0dc1f2b0d22e2c2",
+        "hub": "aa6f08652dd1a7ebad7e04e0bf8041ad5b45492e9cac8b9f4b0c89b99e8341ab",
+        "llm": "5a34b943fc03bf0162fc3c2f795a150d10c2bf2597dea3253c266717bf10724e"
+      },
+      "longChat": {
+        "inputCharacters": 1038,
+        "loggedCharacters": 1038,
+        "targetOffset": 1019,
+        "targetPastOldLimit": true,
+        "targetPreserved": true,
+        "rowCount": 3
+      },
+      "consolidation": {
+        "ok": true,
+        "added": 3,
+        "failed": 0,
+        "pending": 0,
+        "activeFacts": 3,
+        "latePreferenceExtracted": true
+      },
+      "recall": {
+        "configuredCandidates": 10,
+        "seededFacts": 10,
+        "includedFacts": 8,
+        "fifthThroughEighthPresent": true,
+        "ninthAndTenthExcluded": true,
+        "hintCharacters": 553,
+        "bodyCharacters": 502,
+        "exceedsOldBodyLimit": true,
+        "withinNewBodyLimit": true,
+        "seventhFactUsedByModel": true
+      },
+      "finishedAt": "2026-10-31T09:45:44.378Z"
+    },
+    "temporaryModuleUnloaded": true,
+    "configByteIdenticalDuringProbe": true,
+    "productionMemoryByteIdenticalDuringProbe": true,
+    "serviceProcessUnchanged": true,
+    "recallConfigured": true,
+    "facesEnabled": true,
+    "nudgeEnabled": true,
+    "qqOnline": true,
+    "probeSourceSha256": "2c9a13917265c3181701ffa8741a2594488099c775b21c2818cafe68bc704a64",
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261031-memory-options/probe-aa0romqh"
+  },
+  "finalRuntime": {
+    "checkedAt": "2026-10-31T17:46:21+08:00",
+    "qqConnected": true,
+    "botIdentityMatches": true,
+    "serviceActive": true,
+    "gatewayProcessUnchanged": true,
+    "memoryActiveFacts": 5,
+    "timezone": "Asia/Shanghai",
+    "qqFaces": {
+      "enabled": true,
+      "catalogReadSucceeded": true,
+      "numericFaces": 330,
+      "packCount": 10,
+      "face264Present": true,
+      "actualQqSendAcceptanceComplete": false
+    },
+    "nativeNudge": {
+      "enabled": true,
+      "minMinutes": 15,
+      "maxMinutes": 40,
+      "attemptChance": 0.5,
+      "sameQuestionAttemptLimit": 1,
+      "separateDailyLimit": null,
+      "sharesOrdinaryDailyCounter": false,
+      "newQuestionCanTriggerAgain": true,
+      "pendingQuestionSurvivesDshRestart": false,
+      "actualQqUnrepliedWindowAcceptanceComplete": false
+    },
+    "ordinaryProactive": {
+      "enabled": true,
+      "maxPerDay": 20,
+      "minIntervalMinutes": 30,
+      "maxIntervalMinutes": 60,
+      "idleMinutes": 40,
+      "awakeFrom": 8,
+      "awakeTo": 23,
+      "countAtCheck": 2,
+      "purposeEnabled": false
+    }
+  },
+  "historicalTrials": [
+    {
+      "stage": "backup-precondition",
+      "reason": "redacted API configuration initially compared to unredacted disk configuration",
+      "changesApplied": false,
+      "serviceRestored": true
+    },
+    {
+      "stage": "startup",
+      "reason": "private maintenance umask made newly replaced package code unreadable to dsh; fixed by preserving original ownership/mode and checking as dsh",
+      "codeAndConfigRolledBack": true,
+      "serviceRestored": true
+    }
+  ],
+  "acceptanceLimits": [
+    "existing private memories and raw chatlog were preserved; no recovered content from previously truncated rows",
+    "real model tests use isolated synthetic memory, not a new owner QQ conversation",
+    "QQ faces and nudge are enabled; receiving-side face display and a real unreplied window were not separately tested",
+    "original memory correction and cross-session QQ acceptance remain incomplete"
+  ]
+}

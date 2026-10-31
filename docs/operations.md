@@ -102,7 +102,7 @@ AUTOLOAD只自动注入，不代替QQ登录；若QQ要求快速登录、扫码�
 | minIntervalMinutes / maxIntervalMinutes | 30 / 60 |
 | idleMinutes | 40 |
 | awakeFrom / awakeTo | 8 / 23，即北京时间08:00至23:00前 |
-| nudge | false，不执行未回复追问 |
+| nudge | true，17:45按用户新指示开启；独立于普通20次额度 |
 | purpose模块 | false，不并行启用第二套主动引擎 |
 
 仅修改以上指定字段，其余业务配置核对未变。服务进程与主机时区均为Asia/Shanghai。原生调度状态新建时count=0，nextAt为2026-10-31 16:23:25.757（北京时间）；没有清零已有当日次数。该时间是当时保存的排期快照，不承诺届时实际发出消息，后续排期以运行状态为准。
@@ -139,3 +139,19 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 用户已同意从北京时间2026-11-01 00:00起按官方价格持续启用DeepSeek Search/Fetch；当时公告为每千次成功请求各0.75美元。模型调用仍按官方Token价格计费，未授权自动充值、升级实例或购买额外服务。价格未来变化时应重新核实。[官方说明](https://api-docs.deepseek.com/guides/search/#billing)
 
 完整版本与依赖见 `versions.lock.json`、`deployment/locks/`。恢复脚本与实际演练边界见[备份恢复](backup-restore.md)。不得只升级某一个包后继续沿用旧的通过结论。
+
+## 记忆扩容、小黄脸与未回复追问（2026-10-31 17:45）
+
+当前 `memory.recallCount=10`；实际 `recallHint` 最多附带8条完整事实、正文总计1600字符。跳过放不下的事实后继续考虑后续候选，避免在否定词或纠错内容中间截断。人物档案/相处经验等其他记忆提示保持原有规则。双方 `logChat` 流水现在每条最多2000字符，先脱敏再截断；只影响今后写入，旧流水缺失的尾部无法自动补回。这里是JS字符长度预算，不是模型token数。
+
+事实提炼仍由原生04:00/16:00定时器完成，保留80行上限并增加约40000字符分批预算；所有批次都会处理，单条超预算的旧记录单独完整处理。单事实200字符、遗忘规则、提炼模型输出预算和人物档案上限未变。实际调用更多相关记忆、处理较长流水会增加部分token用量。
+
+`stickers.faces=true` 开启QQ系统小黄脸；不需要开启原生图片贴纸库。模型可用 `<face:捂脸>` 等格式，发送前转换为OneBot `face` 段；已从真实SnowLuma读取到330个数字编号表情，未知名称会剔除。Nekowhale原有GIF/图片功能继续保留。
+
+`speakUp.nudge=true` 开启原生未回复追问。每分钟在08:00–23:00活动窗口检查；机器人最近一次私聊是问句且晚于主人最后回复，经过15至40分钟时，该问题最多尝试一次，50%概率进入模型决策，模型仍可沉默。追问不消耗普通主动的20次计数，也不改其nextAt；追问产生的新问句仍可能再次成为目标，因此不能承诺主人持续不回时总共只追问一次。DSH重启会清空进程内最近问句，重启前的问题不会继续等待追问。purpose仍关闭。
+
+部署使用 `deployment/set-memory-and-chat-options.py`，固定版本与分阶段hash校验；只重启DSH，不重启QQ。14文件增量备份位于 `/var/lib/qqai-dsh/maintenance/20261031-memory-options/limits-k79uigg2/`，`before`与`isolated-restore`逐字节一致。覆盖配置、原生记忆、会话映射、聊天流水、主动/提醒/小黑盒/心情状态、profile和变更代码；不替代完整三卷备份。失败时安装器自动恢复被修改的代码与配置、重新启动DSH，不把旧记忆和任务状态覆盖回生产。
+
+未来回滚代码时需同时恢复manifest中旧的 `src/chat/hub.js`、`src/features/memory.js` 和旧启动补丁定义，否则systemd启动前hash检查会拒绝启动；先停DSH，再按manifest恢复这些代码的内容/属主/权限。配置只恢复 `memory.recallCount`、`stickers.faces`、`speakUp.nudge` 三个字段，保留后来其他设置；不要整库恢复旧memories/chatlog/speakup/reminders。若只关闭小黄脸或追问，可在原生面板分别关闭faces/nudge，无需恢复代码。
+
+验证分层：40项合成回归通过；5次真实DSH Flash/off请求（合计2598输入/输出tokens）在隔离合成库中完成长消息尾部提炼和第7条记忆回答，临时模块已卸载，生产记忆逐字节未变。QQ连接和身份、真实表情目录已核对；没有额外发送QQ测试消息，没有把单元测试视为实际小黄脸收件或真实未回复窗口验收。[脱敏证据](evidence/20261031-memory-options.json)

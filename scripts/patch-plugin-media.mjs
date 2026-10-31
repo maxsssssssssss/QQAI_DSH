@@ -4,6 +4,7 @@ import { readFile, writeFile, rename } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { QQ_DELIVERY_PATCHES } from './qq-delivery-patch-spec.mjs'
+import { MEMORY_LIMIT_PATCHES } from './memory-limits-patch-spec.mjs'
 
 const sha256 = (text) => createHash('sha256').update(text).digest('hex')
 // Preserve the previously deployed GIF-only hash as an explicit migration stage.
@@ -19,36 +20,7 @@ export const GIF_MEDIA_PATCH = {
       if (buf.length < 13 || buf.length > 10 * 1024 * 1024 || !['GIF87a', 'GIF89a'].includes(buf.subarray(0, 6).toString('ascii'))) throw new Error('QQAI: invalid GIF')`,
   }
 
-export const PATCHES = [
-  {
-    ...GIF_MEDIA_PATCH,
-    after: QQ_DELIVERY_PATCHES[0].after,
-    stages: [GIF_MEDIA_PATCH, QQ_DELIVERY_PATCHES[0]],
-  },
-  {
-    package: 'dsh-nekowhale-stickers', version: '1.1.1', rootIndex: 1, file: 'lib/core/image-input.js',
-    before: 'fccad94722d5e2e10904633a752f7b7418a0184f64d6b1fc22678775d5e235d8',
-    after: 'ffa783ad1d41c602678d4bfb4468133c4a952dff5cd21a21ae6556c32c4fa25d',
-    needle: 'export async function loadImageInput(src, opts = {}) {',
-    replacement: `export async function loadImageInput(src, opts = {}) {
-    // QQAI_DSH: text templates only; no arbitrary local files or remote avatar URLs.
-    throw new Error('QQAI: avatar image input is disabled; use a text template');`,
-  },
-  {
-    package: 'dsh-aurabot-qq', version: '1.1.24', rootIndex: 0, file: 'src/features/companion.js',
-    before: '6f515141959f0aae8697df8601e35c8fcf32e94be6dece64d487ad526c169400',
-    after: '1aa6989025cca29b2050d06dcdfb34057141783c3f7bb946888528d1a952b5ea',
-    needle: "    '分享一件你今天（编也行，符合你的人设）遇到的小事或想到的东西',",
-    replacement: "    '分享你此刻想到的联想、点子或明确标为想象的鲸鱼娘小场景；不要编造已经发生的现实生活或工具经历',",
-  },
-  {
-    package: 'dsh-aurabot-qq', version: '1.1.24', rootIndex: 0, file: 'src/core/llm.js',
-    before: '6f9b89396e08a23d2adfa65e2de50349cbb5ac12f5b67fae1e291e32cbbf66a6',
-    after: '5a34b943fc03bf0162fc3c2f795a150d10c2bf2597dea3253c266717bf10724e',
-    needle: "o.reasoningEffort === undefined ? 'low' : o.reasoningEffort",
-    replacement: "o.reasoningEffort === undefined ? (o.cfg?.model?.reasoningEffort ?? 'off') : o.reasoningEffort",
-  },
-  {
+export const MEMORY_CONSOLIDATION_PATCH = {
     package: 'dsh-aurabot-qq', version: '1.1.24', rootIndex: 0, file: 'src/features/memory.js',
     before: 'a024527ee4ac97ef1fbb5b978f421d1e2f4a14f33076347a538b3aa569a515d1',
     after: 'cdca6f6956d191426d175254a859142cee5855f60debf4415eea6cc98cddcf52',
@@ -190,6 +162,41 @@ export const PATCHES = [
       }`,
       },
     ],
+  }
+
+export const PATCHES = [
+  {
+    ...GIF_MEDIA_PATCH,
+    after: MEMORY_LIMIT_PATCHES[0].after,
+    stages: [GIF_MEDIA_PATCH, QQ_DELIVERY_PATCHES[0], MEMORY_LIMIT_PATCHES[0]],
+  },
+  {
+    package: 'dsh-nekowhale-stickers', version: '1.1.1', rootIndex: 1, file: 'lib/core/image-input.js',
+    before: 'fccad94722d5e2e10904633a752f7b7418a0184f64d6b1fc22678775d5e235d8',
+    after: 'ffa783ad1d41c602678d4bfb4468133c4a952dff5cd21a21ae6556c32c4fa25d',
+    needle: 'export async function loadImageInput(src, opts = {}) {',
+    replacement: `export async function loadImageInput(src, opts = {}) {
+    // QQAI_DSH: text templates only; no arbitrary local files or remote avatar URLs.
+    throw new Error('QQAI: avatar image input is disabled; use a text template');`,
+  },
+  {
+    package: 'dsh-aurabot-qq', version: '1.1.24', rootIndex: 0, file: 'src/features/companion.js',
+    before: '6f515141959f0aae8697df8601e35c8fcf32e94be6dece64d487ad526c169400',
+    after: '1aa6989025cca29b2050d06dcdfb34057141783c3f7bb946888528d1a952b5ea',
+    needle: "    '分享一件你今天（编也行，符合你的人设）遇到的小事或想到的东西',",
+    replacement: "    '分享你此刻想到的联想、点子或明确标为想象的鲸鱼娘小场景；不要编造已经发生的现实生活或工具经历',",
+  },
+  {
+    package: 'dsh-aurabot-qq', version: '1.1.24', rootIndex: 0, file: 'src/core/llm.js',
+    before: '6f9b89396e08a23d2adfa65e2de50349cbb5ac12f5b67fae1e291e32cbbf66a6',
+    after: '5a34b943fc03bf0162fc3c2f795a150d10c2bf2597dea3253c266717bf10724e',
+    needle: "o.reasoningEffort === undefined ? 'low' : o.reasoningEffort",
+    replacement: "o.reasoningEffort === undefined ? (o.cfg?.model?.reasoningEffort ?? 'off') : o.reasoningEffort",
+  },
+  {
+    ...MEMORY_CONSOLIDATION_PATCH,
+    after: MEMORY_LIMIT_PATCHES[1].after,
+    stages: [MEMORY_CONSOLIDATION_PATCH, MEMORY_LIMIT_PATCHES[1]],
   },
   QQ_DELIVERY_PATCHES[1],
 ]

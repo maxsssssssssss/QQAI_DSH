@@ -1,6 +1,6 @@
 {
   "recorded_date": "2026-10-31",
-  "status": "native-model-mood-judge-enabled",
+  "status": "memory-limits-and-native-chat-options-enabled",
   "node": {
     "version": "24.22.2",
     "linux_x64_sha256": "48cc0e21e048790e54c0cf5749c2725005313d652651c40b7a21feb9697aaf75",
@@ -61,7 +61,7 @@
       "version": "1.1.24",
       "file": "src/chat/hub.js",
       "before": "63d8df994316a6286428ad53cfc530015c340c57cfb9c556fc08c2576a714caf",
-      "after": "3c249d4683389f4d6dfafc54ec492d247e7188f573eba6468de02b9ba06750f9"
+      "after": "aa6f08652dd1a7ebad7e04e0bf8041ad5b45492e9cac8b9f4b0c89b99e8341ab"
     },
     {
       "package": "dsh-nekowhale-stickers",
@@ -89,7 +89,7 @@
       "version": "1.1.24",
       "file": "src/features/memory.js",
       "before": "a024527ee4ac97ef1fbb5b978f421d1e2f4a14f33076347a538b3aa569a515d1",
-      "after": "cdca6f6956d191426d175254a859142cee5855f60debf4415eea6cc98cddcf52"
+      "after": "cf165abe37d7a94ed581ece448f07f83447bd28598ea72aeb0dc1f2b0d22e2c2"
     },
     {
       "package": "dsh-aurabot-qq",
@@ -117,7 +117,7 @@
       "idleMinutes": 40,
       "awakeFrom": 8,
       "awakeTo": 23,
-      "nudge": false
+      "nudge": true
     },
     "native_proactive_schedule_verified": true,
     "native_proactive_delivery_verified": true,
@@ -180,6 +180,34 @@
       "synthetic_probe_applied_to_production_mood": false,
       "natural_qq_trigger_acceptance_complete": false,
       "evidence": "docs/evidence/20261031-mood-judge.json"
+    },
+    "qq_native_faces_enabled": true,
+    "memory_limits": {
+      "recallCandidates": 10,
+      "actualHintItems": 8,
+      "actualHintBodyChars": 1600,
+      "wholeFactPacking": true,
+      "chatLogRowChars": 2000,
+      "redactBeforeClipping": true,
+      "factExtractionBatchMaxRows": 80,
+      "factExtractionBatchChars": 40000,
+      "oversizedLegacyRowKeptWhole": true,
+      "evidence": "docs/evidence/20261031-memory-options.json",
+      "real_model_probe_verified": true,
+      "original_private_memory_preserved": true
+    },
+    "native_nudge": {
+      "enabled": true,
+      "minMinutes": 15,
+      "maxMinutes": 40,
+      "attemptChance": 0.5,
+      "sameQuestionAttemptLimit": 1,
+      "separateDailyLimit": null,
+      "sharesOrdinaryDailyCounter": false,
+      "newQuestionCanTriggerAgain": true,
+      "pendingQuestionSurvivesDshRestart": false,
+      "actualQqUnrepliedWindowAcceptanceComplete": false,
+      "evidence": "docs/evidence/20261031-memory-options.json"
     }
   }
 }

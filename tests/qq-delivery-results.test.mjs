@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { QQ_DELIVERY_PATCHES, patchedDeliverySource } from '../scripts/qq-delivery-patch-spec.mjs'
-import { PATCHES, patchedSource } from '../scripts/patch-plugin-media.mjs'
+import { PATCHES, GIF_MEDIA_PATCH, patchedSource } from '../scripts/patch-plugin-media.mjs'
 
 const root = process.env.AURABOT_SOURCE_ROOT
 const dataModule = (source) => import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'))
@@ -115,8 +115,14 @@ test('actual qq_send_message reports failed/partial/blocked sends and remains ow
 
 test('delivery patch is hash-locked and idempotent', async (t) => {
   for(let i=0;i<QQ_DELIVERY_PATCHES.length;i++) {
-    const source=await patched(t,i); if(!source)return
-    assert.equal(patchedDeliverySource(source,QQ_DELIVERY_PATCHES[i]),source)
-    assert.throws(()=>patchedDeliverySource(source+'drift',QQ_DELIVERY_PATCHES[i]),/unreviewed delivery source/)
+    const final=await patched(t,i); if(!final)return
+    const spec=QQ_DELIVERY_PATCHES[i]
+    const original=await readFile(join(root,spec.file),'utf8')
+    const delivery=patchedDeliverySource(i===0?patchedSource(original,GIF_MEDIA_PATCH):original,spec)
+    assert.equal(patchedDeliverySource(delivery,spec),delivery)
+    assert.throws(()=>patchedDeliverySource(delivery+'drift',spec),/unreviewed delivery source/)
+    // Later memory-limit stages must preserve the reviewed delivery-stage upgrade path.
+    const composed=PATCHES.find(x=>x.file===spec.file)
+    assert.equal(patchedSource(delivery,composed),final)
   }
 })
