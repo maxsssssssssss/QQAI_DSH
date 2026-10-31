@@ -25,7 +25,7 @@
 
 固定发行源码 [consent.ts](https://github.com/SnowLuma/SnowLuma/blob/8ffd314260e9e2b6967eeca494d87aa5be046c34/packages/core/src/webui/consent.ts)将未设置变量解析为未接受；[server.ts](https://github.com/SnowLuma/SnowLuma/blob/8ffd314260e9e2b6967eeca494d87aa5be046c34/packages/core/src/webui/server.ts)在该状态继续创建 WebUI，登录后允许协议页面及接受接口，阻止其他管理 API。预期可先启动等待用户；这是源码证据，首次运行还需确认镜像行为。若实际镜像退出，不以自动接受变量绕过。
 
-启动阶段 `SNOWLUMA_HOOK_AUTOLOAD=0`，先不自动注入 QQ。用户经隧道登录 WebUI 阅读并接受协议、修改初始管理密码，再于 noVNC 完成 QQ 扫码／设备验证。完成后由工程师将该字段改为 `1` 并重建容器，以便重启后恢复注入和连接；该最终配置及 QQ 恢复必须另行验收。
+启动阶段 `SNOWLUMA_HOOK_AUTOLOAD=0`，先不自动注入 QQ。用户经隧道登录 WebUI 阅读并接受协议；若官方面板要求首次改密则按其提示处理，再于 noVNC 完成 QQ 扫码／设备验证。完成后由工程师将该字段改为 `1` 并重建容器，以便重启后恢复注入和连接；该最终配置及 QQ 恢复必须另行验收。
 
 ## 网络与容器权限
 
@@ -52,7 +52,7 @@
 
 Compose 不含密码。官方入口首次随机生成 VNC 密码，保存到 `/app/data/config/vnc-password`，属主 root、权限 0600；它会在首次启动日志中打印密码，因此容器日志也属于私有运行数据。[固定 start.sh](https://github.com/SnowLuma/SnowLuma.Docker.Framework/blob/3f388b17f8baf47b4c2c9606b8a3121eb8599fef/start.sh)
 
-工程师不得把完整日志、VNC 密码、WebUI 初始密码或 token 输出到聊天或 Git。需要用户查看密码时，提取到受保护的本地运行文件并只提供文件位置。首次 WebUI 密码必须修改；不固定或复用公开示例密码。备份及证据收集也不得包含可直接用于登录的公开输出。
+工程师不得把完整日志、VNC 密码、WebUI 初始密码或 token 输出到聊天或 Git。需要用户查看密码时，提取到受保护的本地运行文件并只提供文件位置。本部署使用受保护的随机 bootstrap 密码；未使用 bootstrap、由官方生成的首次密码应按面板要求修改。不固定或复用公开示例密码。备份及证据收集也不得包含可直接用于登录的公开输出。
 
 ## 执行、检查和恢复接口
 
@@ -93,12 +93,22 @@ python3 deployment/fetch-official-snowluma.py \
 # 在服务器私有接收目录运行；不输出容器配置或凭据。
 sha256sum --check SHA256SUMS
 docker load --input snowluma-v2.2.1-amd64-original.tar
-docker image inspect --format '{{.Id}}' motricseven7/snowluma:v2.2.1
+docker image inspect --format '{{.Id}}' docker.io/motricseven7/snowluma:v2.2.1
 ```
 
-镜像 ID 必须为 `sha256:f819e96808d03205ba2a6a152903de9e3b0aa01787ea6d1da5091b4e4e333fc1`。Moby [官方加载实现](https://github.com/moby/moby/blob/8c037227b5c4ab012189621bf775f9f64856b56b/daemon/internal/image/tarexport/load.go)支持读取压缩层，并检查其解压 diff ID；此运输包保留了原始压缩 blob。最终仍须以目标服务器 `docker load` 实际结果验收。
+目标服务器 Docker 29 使用 containerd image store。2026-10-31 实际导入后，按完整 ID 检查得到 `sha256:74d6874a4240636dca700734f31fbce7d0735cbce6bb43780dd8e3788eddccc9`、平台 `linux/amd64`；该 ID 是原始 manifest digest。`sha256:f819e96808d03205ba2a6a152903de9e3b0aa01787ea6d1da5091b4e4e333fc1` 仍是已经逐字节校验的官方 config digest，并非这台 Docker 的 image ID。经典 Docker image store 的 ID 则使用 config digest，恢复到不同存储后端必须重新核对实际结果。
 
-`docker load` 可能不恢复 Registry `RepoDigests`，因此提供 [snowluma.offline.compose.yml](../deployment/snowluma.offline.compose.yml)。它用已经验证的原始 config image ID 固定本地镜像，并设置 `pull_policy: never`，避免 Compose 又去不可达的 Registry。它不会改变网络、卷、权限或镜像内容。
+首次运输包的 OCI descriptor 使用了未完整限定的名称，造成 Docker 29 显示导入成功且 `image ls` 可见，但常规 tag 查询失败。containerd [官方导入实现](https://github.com/containerd/containerd/blob/df9406883d6e0acd28b5f4c3d1e7f2f70efd14d9/core/images/archive/importer.go)优先采用 OCI 元数据，保留其原有名称；只有 Docker archive 分支会规范化名称。无需重新下载或上传镜像，可按已验证 manifest ID 增加完整 tag：
+
+```bash
+docker tag sha256:74d6874a4240636dca700734f31fbce7d0735cbce6bb43780dd8e3788eddccc9 \
+  docker.io/motricseven7/snowluma:v2.2.1
+docker image inspect --format '{{.Id}}' docker.io/motricseven7/snowluma:v2.2.1
+```
+
+下载脚本现为后续运输包写入 `io.containerd.image.name=docker.io/motricseven7/snowluma:v2.2.1` 和 tag 形式的 OCI `ref.name`；保留首次实际部署的原运输包与上述 SHA256，不重写。所有官方 config、manifest 和层字节保持原样。Moby [经典加载实现](https://github.com/moby/moby/blob/8c037227b5c4ab012189621bf775f9f64856b56b/daemon/internal/image/tarexport/load.go)也支持读取压缩层并检查解压 diff ID。
+
+`docker load` 可能不恢复 Registry `RepoDigests`，因此提供 [snowluma.offline.compose.yml](../deployment/snowluma.offline.compose.yml)。它用目标 Docker 29 已实证的原始 manifest image ID 固定本地镜像，并设置 `pull_policy: never`，避免 Compose 又去不可达的 Registry。它不会改变网络、卷、权限或镜像内容。恢复到经典 image store 时，应在私有 override 中改用已验证的 config image ID，不能直接假定两种后端的 ID 相同。
 
 ```bash
 docker compose -p qqai-dsh \
@@ -120,3 +130,5 @@ docker compose -p qqai-dsh \
 如使用，先生成随机强口令写入 root 0600 私有 env-file，通过私有 Compose override 注入；首次初始化成功后可移除 env-file 注入并重建容器，现存的有效密码 hash 会保留。不要打印完整 `docker inspect`／`docker compose config`，因为环境字段可能含明文口令。已有 `mustChangePassword: true` 配置不会被该环境变量直接覆盖，应走官方首次改密流程，不盲删认证文件。
 
 OneBot token 没有在已核查源码中发现对应预置环境变量；准确字段是 `/app/data/config/onebot.json` 的 `networks.httpServers[].accessToken` 与 `networks.wsServers[].accessToken`。官方 Docker 入口已首次分别生成 32 随机字节的 token。工程师可私有读取并同步 Aurabot 的 HTTP／WS token，不能在报告中输出值。[固定 OneBot 配置实现](https://github.com/SnowLuma/SnowLuma/blob/8ffd314260e9e2b6967eeca494d87aa5be046c34/packages/onebot/src/config.ts)
+
+首次准备私有随机密码可执行 `sudo python3 deployment/prepare-snowluma-secrets.py`；现有有效私有文件不会被覆盖。实际容器已核验 runtime 2.2.1、Node v24.22.1，WebUI/noVNC HTTP200；QQ尚未登录。

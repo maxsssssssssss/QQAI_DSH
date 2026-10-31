@@ -7,6 +7,7 @@
 | SSH / Ubuntu / Docker | 完成；用户最终授权使用26.04 | 严格主机校验；Node24.22.2、Docker29.1.3、Compose2.40.3 |
 | DSH Web 持续运行 | systemd已运行；长期观察未完成 | loopback3080、专用用户dsh、重启与真实API成功 |
 | 三插件安装、装载 | 服务器同时active；QQ生效待测 | 固定版本、依赖锁、实际Agent工具目录 |
+| SnowLuma网关 | 官方v2.2.1运行；WebUI/noVNC可用；QQ未登录 | 原始镜像digest和内部runtime版本核验，所有映射loopback |
 | DeepSeek 中文、多轮、工具 | API与服务器DSH层通过；QQ待测 | server-api证据、真实工具结果、Thinking Off |
 | QQ 中文与多气泡 | 未测试 | 机主私聊实际接收与顺序 |
 | 鲸鱼娘人格 | 服务器QQ preset人格源和真实回复通过；QQ待测 | 安装包hash、persona注入与实际“大肥鱼”回复 |
@@ -16,6 +17,6 @@
 | Nekowhale 图/GIF/中文模板 | DSH实际工具生成通过；QQ图片/GIF未测 | 真实sticker_search/send/meme_render成功，GIF字节与中文字体 |
 | Search / Fetch | API与服务器DSH工具通过；QQ待测 | 实际工具成功返回，模型不虚构来源结论 |
 | 重启、持久化、长期运行 | DSH重启同会话召回通过；网关和长期观察待测 | 同一合成会话重启后真实模型回忆成功 |
-| 备份恢复 | 未完成 | 备份完整性与隔离恢复演练 |
+| 备份恢复 | 真实一致性备份、隔离恢复、离机副本校验通过 | 包含三网关卷；未登录QQ，不能证明QQ登录态恢复 |
 | 主观风格 | 待用户评价 | 不以 HTTP 成功代替自然度 |
 

@@ -1,0 +1,100 @@
+{
+  "source": "https://registry-1.docker.io/v2/motricseven7/snowluma",
+  "tag": "v2.2.1",
+  "registry_index_digest": "sha256:29536cd34e9c9c3f8a942be4e5cd6a17d366acd9b2096aa56b5863d024a80d23",
+  "manifest_digest": "sha256:74d6874a4240636dca700734f31fbce7d0735cbce6bb43780dd8e3788eddccc9",
+  "config_digest": "sha256:f819e96808d03205ba2a6a152903de9e3b0aa01787ea6d1da5091b4e4e333fc1",
+  "layers": [
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:11422d7ca1a44390a32bd8d8d9dc5946b4d053b3bbd9507d682e35584ba84a26",
+      "size": 28247935
+    },
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:47e82ed2c7200e6bb57827745085027ba425376a5ed4ba4a8e295a4e3b5d1b40",
+      "size": 3310
+    },
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:c0e48fd1aa256850e18f180365b8fa3e55ae2197e85461fd3392cfb5c4c8e5e7",
+      "size": 51077605
+    },
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:f2b8e65232e105b573ea2f37c4a2ec56bcf0b63687ae2bbe329cf4252f30bc1d",
+      "size": 1713084
+    },
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:6d793208473aa7d9ccc02b9de99aee40e4d6e73065d5307d076fad3ba554d580",
+      "size": 450
+    },
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:ec41b9686b064a9d7fa4d7efd9b3e164fcb9bb8103470f4434386fe63f0b929e",
+      "size": 121596873
+    },
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:2a2a5c04f80c092aec1f5e27c1a14706d22e9d03c51359ac6e7db6b29965a882",
+      "size": 163963588
+    },
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:c958a22396b4915edb5781b0897c96e203aa4fd88230aab13b3be1fb2e51dd2a",
+      "size": 13813681
+    },
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:e08fc94a1e09542da195c5effa220f36f0d274a342ac486bf934adfa77b24404",
+      "size": 74327198
+    },
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:3b25fdd1337c8e98e6aafe356e99af38ad3fbdb4b4eb6aceb98484bc52b74a04",
+      "size": 1695318
+    },
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:28ddc67ac3a7dabca5ddf3e2b11f9717308787c0d2a7ec91b3cc954f20e78215",
+      "size": 272155791
+    },
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:4eff13917efc9d0f06e5928be948c3800893116e90c71bb98fe1f2de48378f80",
+      "size": 7913052
+    },
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1",
+      "size": 32
+    }
+  ],
+  "diff_ids": [
+    "sha256:9b35de7893378218e365c34c2c735fb0032a859112fb7345ca8ea73f9aa1db70",
+    "sha256:b405c072d1d6b8d191f8fe47db6e3c37ff40836c3970c2c03e51b1adc16563fb",
+    "sha256:0ff2c5ad5da71f20291ad85c9f543eaf29984d9883c8c51a0bb117ec2abe097a",
+    "sha256:881f54f72c69e2a38c7f8a642780e61968bea9efe74300b88a2df728c24c7b0b",
+    "sha256:3e12bfea3588951aab89585809de07499eb5094dc38891bdb294e67d7a9327c0",
+    "sha256:0333eadf1285043cdc2344782d1b57c7b383a3d548ab1611ea34673533f60f1d",
+    "sha256:cc05522cfd3d8f4455e9fa7633360143f7699a1997782567a59a53415db34fdf",
+    "sha256:ddd4d843edf9f75763655cbd14f99f0b55dc13007ea34c9eb862fbb01c470341",
+    "sha256:956a00ed5ffbb68bb518ebd9fb65aaf1d4807c01ef4d37c48195a5f550661e5f",
+    "sha256:d943a710dd5ea14e073e1f58a17d285f872a9dc8437ee8d7898025844c566f26",
+    "sha256:dfef49b1e2aa0555495b3e610fa20f0662cd7efbed869e8e63e54bc9bb9b20db",
+    "sha256:12c1deeb6cfd372fe09fa0a3d39c5c4314e9d1bec29b0f94155e5014ad9202e4",
+    "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"
+  ],
+  "status": "all-original-registry-bytes-verified",
+  "modified_image_contents": false,
+  "docker_import_repo_tag": "motricseven7/snowluma:v2.2.1",
+  "uncompressed_diff_ids_verified": true,
+  "transport_format": "OCI layout with Docker tar-import manifest; original compressed layers and config unchanged",
+  "expected_legacy_config_id": "sha256:f819e96808d03205ba2a6a152903de9e3b0aa01787ea6d1da5091b4e4e333fc1",
+  "observed_docker29_image_id": "sha256:74d6874a4240636dca700734f31fbce7d0735cbce6bb43780dd8e3788eddccc9",
+  "observed_canonical_tag": "docker.io/motricseven7/snowluma:v2.2.1",
+  "transport_archive_sha256": "d4788c192397e41ea11f52ffc7817290a2f1088a293e5d01cc5d215d71249efb",
+  "server_transport_sha256_verified": true,
+  "qq_login_tested": false
+}

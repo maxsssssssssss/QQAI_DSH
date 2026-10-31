@@ -7,6 +7,7 @@ from pathlib import Path
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location("qqai_recovery", Path(__file__).parents[1] / "deployment/backup_restore.py")
 recovery = importlib.util.module_from_spec(spec)
@@ -38,10 +39,12 @@ class RecoveryTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="qqai-recovery-test-") as folder:
             base = Path(folder)
             archive = self.archive(base)
-            dest, manifest = recovery.isolate(archive, base / "isolated")
+            with patch.object(recovery, "run", side_effect=AssertionError("Isolated restore must not launch subprocesses")):
+                dest, manifest = recovery.isolate(archive, base / "isolated")
             self.assertTrue((dest / "host/srv/qqai-dsh/home/.dsh/fixture.json").is_file())
             self.assertFalse(manifest["gateway_included"])
             self.assertFalse(json.loads((dest / "VERIFIED.json").read_text())["services_started"])
+            self.assertEqual(json.loads((dest / "VERIFIED.json").read_text())["qq_login_state"], "not-assessed")
             self.assertEqual(dest.stat().st_mode & 0o777, 0o700)
             with self.assertRaisesRegex(ValueError, "not empty"):
                 recovery.isolate(archive, dest)

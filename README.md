@@ -4,6 +4,8 @@
 
 **当前状态：实施中，尚未部署完成或通过 QQ 验收。** 不继承旧 QQAI 代码、人格、记忆、数据库、Guard、多气泡或主动实现。工作区调研方案仅供参考，其中旧 V0.4、L1/L2 和旧资料迁移全部不执行。
 
+已推进到待用户 QQ 登录阶段：DSH、三个指定插件与官方 SnowLuma 已在服务器运行，DSH真实API回归、服务重启后的会话持久化、包含三个网关卷的备份和隔离恢复均已执行。备份另有经过校验的本机私有副本。QQ仍未登录，长期记忆、主动聊天、真实多气泡/图片发送、QQ重连及主观体验必须在用户参与后继续验收。
+
 用户最终确认保留 **Ubuntu 26.04 LTS**（替代最初要求的24.04），已通过腾讯云控制台确认主机指纹，SSH 始终严格校验。实机已安装 Node 24.22.2、DSH 0.2.1-rc.5、Docker 29.1.3、Compose 2.40.3 和中文字体。[新仓库](https://github.com/maxsssssssssss/QQAI_DSH)写权限已验证。用户确认已取得 SnowLuma 权利人对本次自动部署的书面授权；本项目尚未查看授权文本，按用户确认继续官方部署。
 
 DSH 已作为专用用户的 systemd 服务运行，仅监听 `127.0.0.1:3080`，三插件已同时装载。服务器真实 DeepSeek 测试通过中文多轮、鲸鱼娘人格、Nekowhale 检索/选图/中文模板、Search/Fetch、真实像素识别与追问；[服务器证据](docs/evidence/20261031-dsh-server-api.json)与[重启后同会话召回](docs/evidence/20261031-dsh-server-restart.json)均使用合成数据。**这些不是实际 QQ 验收，也不是长期记忆验证。** 用户已授权从 2026-11-01 起按官方价格继续启用 Search/Fetch。
@@ -15,6 +17,7 @@ DSH 已作为专用用户的 systemd 服务运行，仅监听 `127.0.0.1:3080`�
 - [DSH 运行核查](docs/dsh-runtime-audit.md)
 - [三插件兼容适配](docs/plugin-compatibility-audit.md)
 - [备份与恢复](docs/backup-restore.md)
+- [运行、隧道与用户醒来后的步骤](docs/operations.md)
 - [测试证据与验收矩阵](docs/acceptance.md)
 - [初始版本锁](versions.lock.json)
 

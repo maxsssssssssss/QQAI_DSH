@@ -19,6 +19,7 @@ import urllib.request
 
 REPOSITORY = "motricseven7/snowluma"
 VERSION = "v2.2.1"
+CANONICAL_TAG = "docker.io/" + REPOSITORY + ":" + VERSION
 INDEX = "sha256:29536cd34e9c9c3f8a942be4e5cd6a17d366acd9b2096aa56b5863d024a80d23"
 MANIFEST = "sha256:74d6874a4240636dca700734f31fbce7d0735cbce6bb43780dd8e3788eddccc9"
 CONFIG = "sha256:f819e96808d03205ba2a6a152903de9e3b0aa01787ea6d1da5091b4e4e333fc1"
@@ -155,8 +156,9 @@ def pack(root, registry, manifest, diff_ids):
         "manifests": [{"mediaType": manifest["mediaType"], "digest": MANIFEST,
             "size": registry.path(MANIFEST).stat().st_size,
             "platform": {"architecture": "amd64", "os": "linux"},
-            "annotations": {"org.opencontainers.image.ref.name": REPOSITORY + ":" + VERSION}}]})
-    transport = [{"Config": "blobs/sha256/" + CONFIG.split(":")[1], "RepoTags": [REPOSITORY + ":" + VERSION],
+            "annotations": {"io.containerd.image.name": CANONICAL_TAG,
+                            "org.opencontainers.image.ref.name": VERSION}}]})
+    transport = [{"Config": "blobs/sha256/" + CONFIG.split(":")[1], "RepoTags": [CANONICAL_TAG],
         "Layers": ["blobs/sha256/" + item["digest"].split(":")[1] for item in manifest["layers"]],
         "LayerSources": dict(zip(diff_ids, manifest["layers"]))}]
     write_json(root / "manifest.json", transport)
@@ -164,7 +166,8 @@ def pack(root, registry, manifest, diff_ids):
         "manifest_digest": MANIFEST, "config_digest": CONFIG, "layers": manifest["layers"],
         "diff_ids": diff_ids, "status": "all-original-registry-bytes-verified",
         "modified_image_contents": False, "uncompressed_diff_ids_verified": True,
-        "docker_import_image_id": CONFIG, "docker_import_repo_tag": REPOSITORY + ":" + VERSION,
+        "docker_containerd_image_id": MANIFEST, "docker_classic_image_id": CONFIG,
+        "docker_import_repo_tag": CANONICAL_TAG,
         "transport_format": "OCI layout with Docker tar-import manifest; original compressed layers and config unchanged"}
     write_json(root / "transfer-evidence.json", evidence)
     archive = root / ("snowluma-" + VERSION + "-amd64-original.tar")
@@ -184,7 +187,8 @@ def pack(root, registry, manifest, diff_ids):
     (root / "SHA256SUMS").write_text(value + "  " + archive.name + "\n")
     (root / "SHA256SUMS").chmod(0o600)
     print(json.dumps({"archive": str(archive), "bytes": archive.stat().st_size,
-                      "sha256": value, "image_id": CONFIG}), flush=True)
+                      "sha256": value, "manifest_digest": MANIFEST,
+                      "config_digest": CONFIG, "canonical_tag": CANONICAL_TAG}), flush=True)
 
 
 def main():
@@ -197,7 +201,8 @@ def main():
     root = private_directory(args.output_dir)
     registry, manifest, diff_ids = prepare(root, args.cached_only or args.verify_only)
     if args.verify_only:
-        print(json.dumps({"verified": True, "image_id": CONFIG, "layers": len(diff_ids), "archive_rewritten": False}))
+        print(json.dumps({"verified": True, "manifest_digest": MANIFEST, "config_digest": CONFIG,
+                          "layers": len(diff_ids), "archive_rewritten": False}))
     else:
         pack(root, registry, manifest, diff_ids)
 

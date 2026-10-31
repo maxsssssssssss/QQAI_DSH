@@ -167,7 +167,8 @@ def backup(output_dir):
                     "gateway_included": bool(volumes), "gateway_containers": containers,
                     "dsh_was_active": active,
                     "dependencies_excluded": True,
-                    "contains_private_credentials_and_qq_login": True}
+                    "contains_private_credentials": True,
+                    "qq_login_state": "not-assessed"}
         (stage / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
         sums = {str(p.relative_to(stage)): digest(p) for p in stage.rglob("*") if p.is_file()}
         (stage / "checksums.json").write_text(json.dumps(sums, indent=2) + "\n")
@@ -261,6 +262,7 @@ def isolate(archive, destination):
         extract_inner(payload / "volumes" / f"{name}.tar.gz", target)
     (dest / "VERIFIED.json").write_text(json.dumps({"archive_sha256": expected,
         "project": PROJECT, "gateway_included": manifest["gateway_included"],
+        "qq_login_state": "not-assessed",
         "isolated_only": True, "services_started": False}, indent=2) + "\n")
     return dest, manifest
 

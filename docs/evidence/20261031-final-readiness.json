@@ -1,0 +1,71 @@
+{
+  "at": "2026-10-31T09:45:12.059991+08:00",
+  "dsh": {
+    "service": {
+      "ActiveState": "active",
+      "SubState": "running",
+      "MainPID": "144995",
+      "NRestarts": "0",
+      "MemoryCurrent": "248070144",
+      "MemoryPeak": "414494720",
+      "User": "dsh",
+      "Group": "dsh"
+    },
+    "listeners": [
+      "127.0.0.1:3001",
+      "127.0.0.1:3000",
+      "127.0.0.1:5099",
+      "127.0.0.1:6081",
+      "127.0.0.1:3080"
+    ],
+    "all_application_ports_loopback": true,
+    "unauthenticated_rpc_http_status": 401,
+    "healthy": true,
+    "scope": "process and authentication readiness only; not model or QQ acceptance"
+  },
+  "snowluma": {
+    "state": "running",
+    "restart_count": 0,
+    "image_id": "sha256:74d6874a4240636dca700734f31fbce7d0735cbce6bb43780dd8e3788eddccc9",
+    "runtime": {
+      "name": "@snowluma/runtime",
+      "version": "2.2.1",
+      "node": "v24.22.1"
+    },
+    "ports": {
+      "3000/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "3000"
+        }
+      ],
+      "3001/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "3001"
+        }
+      ],
+      "5099/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "5099"
+        }
+      ],
+      "6081/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "6081"
+        }
+      ]
+    },
+    "http": {
+      "5099": 200,
+      "6081": 200
+    }
+  },
+  "qq_sending_enabled": false,
+  "dry_run": true,
+  "proactive_enabled": false,
+  "onebot_tokens_present": true,
+  "qq_login_and_qq_acceptance": "pending-user"
+}

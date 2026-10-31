@@ -1,0 +1,23 @@
+{
+  "time": "2026-10-31T01:37:22.595310+00:00",
+  "scope": "real stopped-service backup and isolated restore; QQ has not logged in",
+  "backup": {
+    "archive": "/var/backups/qqai-dsh/qqai-dsh-20261031T013718066498Z.tar",
+    "sha256_file": "/var/backups/qqai-dsh/qqai-dsh-20261031T013718066498Z.tar.sha256",
+    "gateway_included": true,
+    "previous_running_state_restored": true
+  },
+  "restore": {
+    "verified_destination": "/var/lib/qqai-dsh/restore-check/qqai-dsh-20261031T013718066498Z",
+    "gateway_included": true,
+    "isolated_only": true,
+    "services_started": false
+  },
+  "qq_login_state_tested": false,
+  "off_server_copy": {
+    "relative_path": ".private/backups/qqai-dsh-20261031T013718066498Z.tar",
+    "sha256_verified": true,
+    "bytes": 26071040,
+    "protection": "Windows ACL: current user and SYSTEM only; Git ignored"
+  }
+}

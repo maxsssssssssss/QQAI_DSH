@@ -1,6 +1,6 @@
 {
   "recorded_date": "2026-10-31",
-  "status": "server-dsh-real-api-verified-gateway-preparing-qq-unverified",
+  "status": "server-services-running-real-dsh-api-and-isolated-restore-verified-awaiting-user-qq-login",
   "node": {
     "version": "24.22.2",
     "linux_x64_sha256": "48cc0e21e048790e54c0cf5749c2725005313d652651c40b7a21feb9697aaf75",
@@ -35,7 +35,11 @@
     "license_status": "user-confirms-rightsholder-written-authorization-for-this-deployment",
     "image": "motricseven7/snowluma",
     "image_index_digest": "sha256:29536cd34e9c9c3f8a942be4e5cd6a17d366acd9b2096aa56b5863d024a80d23",
-    "image_config_digest": "sha256:f819e96808d03205ba2a6a152903de9e3b0aa01787ea6d1da5091b4e4e333fc1"
+    "image_config_digest": "sha256:f819e96808d03205ba2a6a152903de9e3b0aa01787ea6d1da5091b4e4e333fc1",
+    "runtime_package_version_verified": "2.2.1",
+    "container_node_verified": "24.22.1",
+    "docker29_local_image_id": "sha256:74d6874a4240636dca700734f31fbce7d0735cbce6bb43780dd8e3788eddccc9",
+    "transport_archive_sha256": "d4788c192397e41ea11f52ffc7817290a2f1088a293e5d01cc5d215d71249efb"
   },
   "server": {
     "os": "Ubuntu 26.04 LTS",

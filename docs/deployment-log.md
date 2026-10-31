@@ -40,3 +40,14 @@
 - 锁定了实际runtime npm依赖和三插件pnpm依赖，全新临时profile的frozen安装及原生canvas通过，锁未变化。
 - 腾讯云直连Docker Hub超时；独立正确IP的TLS验证也被重置，未改全局DNS或关闭TLS。转为本地从官方registry下载原始镜像，逐一验证manifest/config/压缩层及diff_id，再通过SSH私有传输；不构建或公开分发整合镜像。
 
+## 2026-10-31：网关与恢复准备完成，等待QQ登录
+
+- 官方SnowLuma镜像13个压缩层及其解压diff_id均通过校验；运输包736563200字节，SHA256为d4788c192397e41ea11f52ffc7817290a2f1088a293e5d01cc5d215d71249efb，服务器再次校验通过。
+- Docker29的containerd存储将该OCI镜像的manifest摘要作为image ID；初次未规范化tag造成按tag查找失败，按原manifest成功验证后仅修正本地名称。离线Compose固定实证manifest ID并pull_policy:never；没有更换或重建镜像内容。
+- qqai-dsh-snowluma已运行，实际 `/app/runtime/package.json` 为 @snowluma/runtime 2.2.1，容器Node v24.22.1。WebUI5099和noVNC6081均HTTP200，四端口全部127.0.0.1。QQ尚未登录，HOOK_AUTOLOAD=0，协议个人阅读/接受留在官方WebUI。
+- 初始WebUI随机密码通过root0600文件注入；官方自动生成的HTTP/WS OneBot token已直接写入Aurabot私有配置，值未输出。Aurabot enabled=false、dryRun=true、speakUp.enabled=false，owner/bot号码尚未设定。
+- 临时合成测试观察插件与systemd audit dropin已移除。额外session-log上传仍关闭，生产安全配置保留。DSH与Snow在备份后均恢复运行，未出现自动重启计数。
+- 执行真实一致性备份：停止本项目DSH与Snow，保存DSH数据、凭据、部署源码/锁和三个命名卷，再恢复原运行状态。隔离恢复通过，未启动第二套服务；没有把未登录的QQ状态宣称为登录态恢复成功。
+- 私有备份26071040字节，已复制到本机 `.private/backups/` 并校验SHA256。`.private`的NTFS ACL限制为当前Windows用户与SYSTEM，Git忽略该目录。管理入口和随机密码另保存在该目录内的admin-access.txt，未写入公开报告。
+- 当前仓库核心提交0794df249e8beb3e0501dcf3e985b70cc22ad575；网关与备份收尾会另行提交。仍待用户在官方面板确认协议、扫码/设备验证及提供主人QQ号，随后继续全部真实QQ功能、长期记忆、主动行为、重连和主观体验验收。
+
