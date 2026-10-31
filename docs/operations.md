@@ -30,10 +30,11 @@ sudo python3 /opt/qqai-dsh/source/deployment/healthcheck.py
 sudo systemctl restart qqai-dsh.service
 sudo docker compose -p qqai-dsh \
   -f /opt/qqai-dsh/source/deployment/snowluma.compose.yml \
-  -f /opt/qqai-dsh/source/deployment/snowluma.offline.compose.yml ps
+  -f /opt/qqai-dsh/source/deployment/snowluma.offline.compose.yml \
+  -f /opt/qqai-dsh/source/deployment/snowluma.ready.compose.yml ps
 ```
 
-本部署因腾讯云直连Docker Hub失败，使用原官方镜像的离线传输；第二个Compose文件指定已经核实的本地镜像ID并禁止自动拉取。普通恢复和更新不要漏掉该文件。镜像版本、manifest/config digest以及离线传输方法见[Snow运行文档](snowluma-runtime.md)。
+本部署因腾讯云直连Docker Hub失败，使用原官方镜像的离线传输；第二个Compose文件指定已经核实的本地镜像ID并禁止自动拉取，第三个ready文件保持已启用的自动注入。普通恢复和更新须保留这三份文件的顺序，不能只应用自动注入为0的普通模板。镜像版本、manifest/config digest以及离线传输方法见[Snow运行文档](snowluma-runtime.md)。
 
 DSH健康检查用未鉴权RPC返回401确认认证生效，不把未鉴权GET必须返回200当作条件。该检查不等价于模型、QQ连接或主观自然度验收。
 
@@ -59,23 +60,27 @@ ssh -F "$env:USERPROFILE/.ssh/config" `
 
 2026-10-31，用户完成官方协议确认和QQ登录；主人私聊的中文多气泡、上下文与人格、动画GIF顺序、入站PNG识别与追问、中文文字表情、搜索和Fetch均已有真实QQ证据。聊天媒体阶段12次已观察模型请求均为Flash / Thinking Off。[聊天与媒体证据](evidence/20261031-qq-chat-media.json)
 
-随后13:39原生定时器完成真实自然记忆提炼。用户跳过纠错并停止后续测试，新会话召回、主动及未回复、网关重启恢复、登录后备份恢复仍未验收。主动关闭，整理时间已恢复04:00/16:00。下面的完整步骤留作后续参考，本轮不继续执行。
+随后13:39原生定时器完成真实自然记忆提炼，整理时间恢复04:00/16:00。用户跳过纠错并一度停止后续测试，之后授权登录后备份、恢复检查及主动配置。15:10登录后快照、隔离提取和离机校验已完成；自动注入已配置并验证，但QQ自动在线仍失败。用户最新要求“不要搞这个了，下一项主动聊天频率”，因此已停止网关重启和登录测试。当前QQ停在登录页、OneBot disconnected；不能称为当前可正常收发或完整恢复通过。[本轮证据](evidence/20261031-recovery-proactive.json)
+
+下面的完整步骤仅作未来参考，不是本轮继续执行或已经通过的清单。新会话长期记忆召回、主动实际行为、长期运行等仍分别记录验收边界。
 
 1. 用户已经确认取得SnowLuma权利人对本次自动部署的书面授权；官方WebUI内EULA与隐私协议的个人阅读/接受状态单独处理，不伪造该记录。
 2. 用户在noVNC完成机器人QQ扫码及任何设备验证。不得代替验证或重复绕过平台限制。
 3. 用户确认机器人QQ身份和唯一主人QQ号。把号码写进私有Aurabot配置，不进Git。群白名单保持空；只开放机主私聊。
 4. 工程师确认OneBot token配置、用户模块已加载、所有hash补丁与实际QQ会话工具清单正确，然后才开启Aurabot真实发送；保持其他平台发帖、文件发送、语音和头像文件输入关闭。
 5. 在真实QQ测试多轮/多气泡、人格、合成长期记忆与纠错、跨会话召回、图片及追问、Neko图/GIF/中文模板、搜索和Fetch。模型工具成功不代替QQ收到图片。
-6. 确认原生主动聊天频率、安静时段及未回复行为后启用speakup；purpose保持关闭。以真实调度验证，不能只手工触发一次代替。
+6. 原生主动配置现已按用户要求启用，具体值见下节；purpose保持关闭。真实行为应以原生调度验证，不能只手工触发一次代替。
 7. 登录后再分别重启DSH和网关，验证QQ重连、无重复发送与登录态恢复；更新备份并做隔离恢复演练。确认观察窗口中的资源与错误情况后，再记录长期运行结果。
 
 独立自动化/真实API测试使用合成数据。运行目录可能保留名为qqai-synthetic的验收会话；这些是本项目新测试记录，不是旧项目迁移数据。真实QQ测试另有接收端确认及筛选后的运行元数据，公开证据不含私人聊天正文或账号标识；上述合成会话仍不替代Aurabot长期记忆验收。
 
-## 待完成的网关自动接入
+## 网关自动注入与当前登录限制
 
-当前容器使用 `SNOWLUMA_HOOK_AUTOLOAD=0`，已由官方接口手动接入现有QQ进程。该开关在进程启动时读取，环境变量优先于配置文件；没有已核实的官方运行时接口可持久切换。仅restart旧容器不会应用环境变量变化。
+当前容器已使用 `SNOWLUMA_HOOK_AUTOLOAD=1`。第三份 `deployment/snowluma.ready.compose.yml` 已应用，沿用同一官方镜像和三个命名卷。受控冷启动已证明QQ进程自动启动、Hook自动注入并连接；这些进程状态不等于QQ账号已经在线。
 
-`deployment/snowluma.ready.compose.yml` 已准备但未应用。未来维护需先确认无模型回合或发信在途、停止DSH，再将它作为第三份Compose应用；保持原三卷，不运行down -v：
+三次冷启动均未完成QQ自动在线，包括用户确认勾选QQ原生“自动登录”并登录之后的再次重启。用户已停止这项排查，当前停留QQ登录页、Aurabot OneBot disconnected。用户第二次亲自登录后，保持运行的同一个DSH进程曾自动重连；62条近期QQ历史、143条DSH记录保留，记忆和会话哈希一致，限定观察窗口内未出现新消息或重复消息。这证明该窗口的数据保全和登录后的连接恢复，不证明无人操作的QQ自动恢复或长期无重复保证。
+
+未来另行维护需先确认无模型回合或发信在途；若需重建，使用完整三文件命令并保留原三卷，不能运行down -v。下面是后续维护命令，不是在用户停止排查后继续执行的要求：
 
 ```bash
 sudo docker compose -p qqai-dsh \
@@ -85,7 +90,23 @@ sudo docker compose -p qqai-dsh \
   up -d --no-deps --pull never --no-build --force-recreate snowluma
 ```
 
-此操作属于尚未完成的后续维护。AUTOLOAD只自动注入，不代替QQ登录；若QQ要求快速登录、扫码或设备验证，应由用户在noVNC操作。账号和HTTP/WS恢复后再启动DSH、检查真实消息与登录后备份，不能预先称为自动恢复成功。
+AUTOLOAD只自动注入，不代替QQ登录；若QQ要求快速登录、扫码或设备验证，应由用户在noVNC操作。不要伪造登录状态、盲试参数或把手工load算成自动恢复。启动脚本和supervisor配置已与固定官方源码核对一致，QQ进程HOME为/app、UID1000，未发现清空QQ配置或禁用自动登录的启动参数。[官方自动注入说明](https://github.com/SnowLuma/SnowLuma.Docker.Framework/blob/3f388b17f8baf47b4c2c9606b8a3121eb8599fef/README.md#自动注入)
+
+## 当前主动聊天频率
+
+| 字段 | 当前值 |
+|---|---|
+| speakUp.enabled | true |
+| maxPerDay | 20，普通主动调度触发次数，不是气泡数或成功送达数 |
+| minIntervalMinutes / maxIntervalMinutes | 30 / 60 |
+| idleMinutes | 40 |
+| awakeFrom / awakeTo | 8 / 23，即北京时间08:00至23:00前 |
+| nudge | false，不执行未回复追问 |
+| purpose模块 | false，不并行启用第二套主动引擎 |
+
+仅修改以上指定字段，其余业务配置核对未变。服务进程与主机时区均为Asia/Shanghai。原生调度状态新建时count=0，nextAt为2026-10-31 16:23:25.757（北京时间）；没有清零已有当日次数。该时间是当时保存的排期快照，不承诺届时实际发出消息，后续排期以运行状态为准。
+
+原生调度每分钟检查，受活动窗口、闲置时间、静音和模型沉默影响，20次是普通调度上限。当前QQ未登录，实际主动模型决策和QQ送达均未验收，不能写成主动功能已实测通过。以后维护应保留当天day/count，检查nextAt而非盲目重置；重启会清空进程内最近私聊时间，因此40分钟闲置条件跨进程重启的连续性仍需单独处理与验证。
 
 ## 费用与版本
 

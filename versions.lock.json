@@ -1,6 +1,6 @@
 {
   "recorded_date": "2026-10-31",
-  "status": "qq-chat-and-media-usable-user-stopped-further-acceptance",
+  "status": "native-proactive-configured-qq-login-pending-user-stopped-gateway-testing",
   "node": {
     "version": "24.22.2",
     "linux_x64_sha256": "48cc0e21e048790e54c0cf5749c2725005313d652651c40b7a21feb9697aaf75",
@@ -100,13 +100,26 @@
     }
   ],
   "runtime_state": {
-    "daily_proactive_enabled": false,
-    "gateway_hook_autoload_enabled": false,
+    "daily_proactive_enabled": true,
+    "gateway_hook_autoload_enabled": true,
     "automatic_qq_restart_recovery_verified": false,
     "memory_schedule": [
       "04:00",
       "16:00"
     ],
-    "acceptance_complete": false
+    "acceptance_complete": false,
+    "qq_online_at_last_check": false,
+    "native_proactive": {
+      "enabled": true,
+      "maxPerDay": 20,
+      "minIntervalMinutes": 30,
+      "maxIntervalMinutes": 60,
+      "idleMinutes": 40,
+      "awakeFrom": 8,
+      "awakeTo": 23,
+      "nudge": false
+    },
+    "native_proactive_schedule_verified": true,
+    "native_proactive_delivery_verified": false
   }
 }

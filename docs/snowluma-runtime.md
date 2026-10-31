@@ -1,6 +1,6 @@
 # SnowLuma 官方镜像部署记录
 
-日期：2026-10-31（Asia/Shanghai）。官方镜像已在服务器运行，用户亲自完成协议确认和QQ登录；经官方进程load接口接入后，实际主人QQ聊天与媒体通过。用户随后停止进一步测试；当前自动注入仍为0，重启恢复未验收。本文保留首次准备的源码和镜像核查过程，最新状态以[部署日志](deployment-log.md)和[运维记录](operations.md)为准。
+日期：2026-10-31（Asia/Shanghai）。官方镜像已在服务器运行，早前实际主人QQ聊天与媒体通过。后续按用户新授权已应用ready Compose，当前自动注入为1，Linux QQ启动及自动注入成功；QQ自身自动登录未通过，用户停止继续调查，当前账号在登录页、OneBot断连。本文保留首次准备的源码和镜像核查过程，最新状态以[部署日志](deployment-log.md)、[运维记录](operations.md)和[维护证据](evidence/20261031-recovery-proactive.json)为准。
 
 ## 固定发行物
 

@@ -9,7 +9,7 @@
 - `/etc/qqai-dsh`：服务凭据。
 - `/opt/qqai-dsh/source`、可选 `/opt/qqai-dsh/deployment`、应用 package.json/package-lock.json/pnpm-lock.yaml。
 - `/etc/systemd/system/qqai-dsh.service` 与生产用 `qqai-dsh.service.d` drop-in。临时审计 drop-in 应在最终备份前由主任务移除。
-- 本项目 SnowLuma 的三个官方挂载命名卷：`qqai-dsh-snowluma-data`（`/app/data`）、`qqai-dsh-qq-config`（`/app/.config`）、`qqai-dsh-qq-data`（`/app/.local/share`）。Compose 源文件位于项目 `deployment/snowluma.compose.yml`，部署路径 `/opt/qqai-dsh/source/deployment/snowluma.compose.yml`，项目名 `qqai-dsh`、服务名 `snowluma`。
+- 本项目 SnowLuma 的三个官方挂载命名卷：`qqai-dsh-snowluma-data`（`/app/data`）、`qqai-dsh-qq-config`（`/app/.config`）、`qqai-dsh-qq-data`（`/app/.local/share`）。当前Compose使用项目 `deployment/snowluma.compose.yml`、`deployment/snowluma.offline.compose.yml`、`deployment/snowluma.ready.compose.yml`，按此顺序应用；服务器源目录为 `/opt/qqai-dsh/source`，项目名 `qqai-dsh`、服务名 `snowluma`。第三份文件保持已启用的自动注入，不能漏掉后退回普通模板的0。
 
 备份不包含 SSH PEM，不收集整个宿主。`node_modules`、`.git`、Python 缓存不归档；依赖按保存的 npm/pnpm 锁重装，再应用固定 hash 补丁。Docker 镜像不打包；恢复使用 Compose 固定的官方 digest，不重新分发专有软件。
 
@@ -24,6 +24,8 @@ sudo /opt/qqai-dsh/source/deployment/backup.sh
 默认输出 `/var/backups/qqai-dsh/qqai-dsh-<UTC时间>.tar` 及 `.tar.sha256`。可用 `--output-dir /绝对/私有目录` 改位置；不能放入被备份的数据树。
 
 脚本先记录 DSH 与带本项目 Compose 标签的 SnowLuma 容器运行状态，停止 DSH，再停止原先正在运行的本项目 SnowLuma 容器，从宿主读取其 local volume mountpoint。DSH 处于 activating/reloading 等过渡状态时拒绝；快照前确认 MainPID 已为零。它不停止其他项目、不创建 helper 容器、不拉镜像。复制完成或遇到错误后，先恢复原先运行的网关，再恢复原先运行的 DSH。原本停止的服务保持停止。恢复运行状态失败会明确返回非零。
+
+这里的“恢复运行状态”仅指进程启动。当前已经观察到QQ冷启动需要用户再次登录，不能把脚本返回成功当成QQ在线。若先由工程师预停两服务再调用备份，它们会继续保持停止，应在记录中分别写明维护前运行状态与调用脚本时状态；恢复登录由用户在官方界面完成，不绕过设备验证。
 
 归档内含 host 快照、每卷快照、manifest 与逐文件 SHA-256。外层另有 SHA-256。`gateway_included: false` 表示当时没有网关卷，这类备份只能证明 DSH 数据备份，不能作为 QQ 登录态恢复验收证据。Docker 已安装但不可访问、运行中网关缺卷、卷被其他运行容器共用时，脚本拒绝宣称完成一致性备份。
 
@@ -66,15 +68,31 @@ sudo /私有/恢复脚本目录/restore.sh /私有/备份.tar \
 3. 使用恢复工具链的 pnpm，在 `/srv/qqai-dsh/home/.dsh/profiles/web` 执行 `install --frozen-lockfile --ignore-scripts`。不要运行 `configure-dsh-profile.mjs` 或完整 `install-dsh-profile.sh`，它们用于初始化，会重置运行偏好。
 4. 执行并验证本项目 `scripts/patch-plugin-media.mjs`，参数为该 profile 下 Aurabot 与 Nekowhale 的安装目录；服务 ExecStartPre 会再次校验六个文件的固定 hash 补丁。
 5. 核对 `/etc/qqai-dsh/deepseek-api-key` 为 root:root 0600；按保存的 service 安装/daemon-reload。先启动仅 loopback 的 DSH，保持发送关闭。分别验证三插件装载、人格来源、工具白名单、真实 DeepSeek 与记忆召回。
-6. 使用保存的官方镜像 digest 与同名三卷启动 SnowLuma，保持 EULA/设备验证流程，不自动跳过 QQ 平台验证。核对机器人身份、OneBot token、loopback 端口、只存在一个响应所有者。
+6. 使用保存的官方镜像 digest 与同名三卷启动 SnowLuma；当前部署必须按普通、offline、ready顺序应用三份Compose，保持AUTOLOAD=1。保持EULA/设备验证流程，不自动跳过QQ平台验证。核对机器人身份、OneBot token、loopback端口、只存在一个响应所有者。自动注入不等于QQ自动在线。
 7. 完成实际 QQ 收发和数据召回回归后，才明确开启发送与原生主动功能；恢复不能用“进程起来了”代替验收。
 
 在同一服务器回滚版本时，先备份，再将旧服务/数据留在独立私有位置，不由本脚本删除。固定 hash 补丁不匹配时停止升级，不能为了启动而取消检查。恢复脚本的 `--apply` 故意不提供覆盖现有部署的选项。
 
 ## 已有验证与待完成项
 
-本地已运行 4 项合成归档检查：隔离提取且不覆写、外层校验损坏拒绝、目录穿越/跨根链接/特殊文件拒绝、仅跳过明确的 Chromium 临时符号链接。它们不是服务器备份恢复验收。主任务须在实际服务器执行一次备份与默认隔离恢复演练，记录含不含已登录 QQ 卷及服务恢复状态；测试结果追加到部署日志，不把私有快照提交仓库。
+本地已运行4项合成归档检查：隔离提取且不覆写、外层校验损坏拒绝、目录穿越/跨根链接/特殊文件拒绝、仅跳过明确的Chromium临时符号链接。实际服务器已分别完成登录前、登录后快照和隔离恢复。隔离恢复不启动QQ或DSH副本；实际启动恢复副本、QQ无人操作自动恢复及长期运行仍未验收。用户已停止当前网关恢复排查，不因此继续重启或登录测试。
 
 ## 本次实际演练
 
-2026-10-31 已在腾讯云实际停止本项目两服务，制作包含三个网关卷的私有备份，恢复原运行状态后，在隔离目录通过checksum与提取验证。归档26071040字节，另有NTFS ACL仅允许当前Windows用户与SYSTEM的本机副本，SHA256一致。详见 `docs/evidence/20261031-backup-restore.json`。QQ尚未登录，本次不证明QQ登录态恢复或重连成功。
+2026-10-31首次演练：在腾讯云停止本项目两服务，制作包含三个网关卷的私有备份，在隔离目录通过checksum与提取验证。归档26,071,040字节，另有NTFS ACL仅允许当前Windows用户与SYSTEM的本机副本，SHA256一致。该快照制作时QQ尚未登录，不证明登录态恢复或重连成功。[首次证据](evidence/20261031-backup-restore.json)
+
+2026-10-31 15:10（北京时间）另做了登录后的完整一致性快照：
+
+| 项目 | 记录 |
+|---|---|
+| 服务器归档 | `/var/backups/qqai-dsh/qqai-dsh-20261031T071018344617Z.tar` |
+| 归档大小 | 295,311,360字节 |
+| SHA256 | `47895aa95a1cff0870ec5e8dfa6a4a9404e4e3cb03caafba7e3b2e129b17f965` |
+| 隔离恢复目录 | `/var/lib/qqai-dsh/restore-check/postlogin-qqai-dsh-20261031T071018344617Z` |
+| 文件比对 | 3697个文件一致 |
+| 恢复数据检查 | 记忆5条、会话映射1项、聊天流水24条 |
+| 离机副本 | 本机`.private/backups/`归档与校验文件完整，SHA256一致 |
+
+该快照包含当时已登录QQ的三卷和DSH数据，制作时间早于后续AUTOLOAD切换、QQ界面自动登录选项调整和新主动频率；不能说它已包含最终运行配置。恢复这份快照时须结合当前版本记录重新审核上述变化，保持恢复脚本默认关闭发送与主动的保护，不直接把旧偏好当成当前配置。
+
+隔离恢复已验证数据可完整提取，没有覆盖生产目录、启动恢复副本或连接第二个QQ机器人。之后使用原生产卷的重启检查中，62条近期QQ历史、143条DSH记录仍在，记忆与会话哈希一致，限定观察窗口没有新消息或重复消息；用户登录后DSH同进程曾自动重连。三次冷启动仍未完成QQ自动在线，不能把数据完整性或手动登录后的重连当作完整QQ自动恢复。[本轮证据](evidence/20261031-recovery-proactive.json)

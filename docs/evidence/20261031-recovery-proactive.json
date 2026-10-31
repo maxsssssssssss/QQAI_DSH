@@ -1,0 +1,261 @@
+{
+  "recordedAt": "2026-10-31T15:35:00.710180+08:00",
+  "scope": "requested gateway recovery and native proactive configuration; gateway testing later stopped by user",
+  "backup": {
+    "stage": "post-login-backup-and-isolated-restore",
+    "at": "2026-10-31T07:10:34.804939+00:00",
+    "archive": "/var/backups/qqai-dsh/qqai-dsh-20261031T071018344617Z.tar",
+    "archiveBytes": 295311360,
+    "archiveSha256": "47895aa95a1cff0870ec5e8dfa6a4a9404e4e3cb03caafba7e3b2e129b17f965",
+    "restoredDirectory": "/var/lib/qqai-dsh/restore-check/postlogin-qqai-dsh-20261031T071018344617Z",
+    "volumes": [
+      "qqai-dsh-qq-config",
+      "qqai-dsh-qq-data",
+      "qqai-dsh-snowluma-data"
+    ],
+    "verifiedFiles": 3697,
+    "verifiedBytes": 461233116,
+    "allComparedFilesMatch": true,
+    "memoryJsonValid": true,
+    "memoryItems": 5,
+    "sessionsJsonValid": true,
+    "sessionMappings": 1,
+    "chatlogValidLines": 24,
+    "maintenancePreStoppedServices": true,
+    "restoredCopyStarted": false,
+    "liveDataOverwritten": false,
+    "offServerCopy": {
+      "location": "project .private/backups/",
+      "sha256Verified": true,
+      "sha256": "47895aa95a1cff0870ec5e8dfa6a4a9404e4e3cb03caafba7e3b2e129b17f965",
+      "bytes": 295311360
+    }
+  },
+  "autoload": {
+    "stage": "apply-autoload",
+    "at": "2026-10-31T07:11:58.009660+00:00",
+    "sameImage": true,
+    "sameThreeVolumesAndMountpoints": true,
+    "hookAutoload": "1",
+    "onlyEnvironmentChange": "SNOWLUMA_HOOK_AUTOLOAD",
+    "manualLoadCalled": false,
+    "containerRunning": true,
+    "containerStartedAt": "2026-10-31T07:11:57.815289299Z",
+    "dshStarted": false
+  },
+  "firstRecovery": {
+    "stage": "start-dsh",
+    "at": "2026-10-31T07:17:52.353797+00:00",
+    "snow": {
+      "consentAccepted": true,
+      "mustChangePassword": false,
+      "processes": [
+        {
+          "pid": 80,
+          "injected": true,
+          "connected": true,
+          "loggedIn": true,
+          "hasAccount": true,
+          "status": "online"
+        }
+      ],
+      "qqConnectedAccountCount": 1,
+      "connections": [
+        {
+          "adapters": [
+            {
+              "kind": "httpServer",
+              "status": "ok",
+              "hasError": false
+            },
+            {
+              "kind": "wsServer",
+              "status": "ok",
+              "hasError": false
+            }
+          ]
+        }
+      ]
+    },
+    "botIdentityMatches": true,
+    "preStartPrivateDataFilesUnchanged": 6,
+    "dshServiceStarted": true,
+    "firstRecreationRequiredUserLogin": true
+  },
+  "controlledRecoveryAfterManualLogin": {
+    "stage": "verify-controlled",
+    "checkedAt": "2026-10-31T07:22:11.024124+00:00",
+    "restartStartedAt": "2026-10-31T07:18:57.407872+00:00",
+    "snow": {
+      "consentAccepted": true,
+      "mustChangePassword": false,
+      "processes": [
+        {
+          "pid": 80,
+          "injected": true,
+          "connected": true,
+          "loggedIn": true,
+          "hasAccount": true,
+          "status": "online"
+        }
+      ],
+      "qqConnectedAccountCount": 1,
+      "connections": [
+        {
+          "adapters": [
+            {
+              "kind": "httpServer",
+              "status": "ok",
+              "hasError": false
+            },
+            {
+              "kind": "wsServer",
+              "status": "ok",
+              "hasError": false
+            }
+          ]
+        }
+      ]
+    },
+    "dshSameProcessInvocation": true,
+    "aurabotConnected": true,
+    "botIdentityMatches": true,
+    "disconnectTransitions": 8,
+    "connectTransitions": 1,
+    "historyBefore": 62,
+    "historyAfter": 62,
+    "oldHistoryIdsPreserved": true,
+    "duplicateMessageIds": 0,
+    "newMessageIds": 0,
+    "ownerSeqBefore": 142,
+    "ownerSeqAfter": 142,
+    "oldSessionRecordsPreserved": 143,
+    "memoryByteIdentical": true,
+    "sessionMappingByteIdentical": true,
+    "statsBefore": {
+      "received": 0,
+      "sent": 0,
+      "errors": 0
+    },
+    "statsAfter": {
+      "received": 0,
+      "sent": 0,
+      "errors": 0
+    },
+    "sameContainerAndImage": true,
+    "manualLoadCalled": false,
+    "requiresUserQqLogin": true,
+    "scope": "manual QQ login followed by automatic Aurabot reconnect; not unattended QQ login"
+  },
+  "thirdColdStart": {
+    "hookAutoload": "1",
+    "linuxQqStarted": true,
+    "automaticallyInjected": true,
+    "qqAutomaticallyOnline": false,
+    "aurabotState": "disconnected",
+    "userConfirmedAutoLoginCheckbox": true,
+    "desktopObserved": "QQ credential login page, password empty, auto-login and remember-password options not retained",
+    "furtherLoginAndRestartTestingStoppedByUser": true,
+    "manualInjectionCalled": false
+  },
+  "proactive": {
+    "stage": "proactive-status",
+    "at": "2026-10-31T15:33:13.421222+08:00",
+    "speakUp": {
+      "enabled": true,
+      "idleMinutes": 40,
+      "minIntervalMinutes": 30,
+      "maxIntervalMinutes": 60,
+      "maxPerDay": 20,
+      "nudge": false,
+      "awakeFrom": 8,
+      "awakeTo": 23
+    },
+    "state": {
+      "day": "Sat Oct 31 2026",
+      "count": 0,
+      "nextAt": 1793435005757.4663,
+      "last": 0
+    },
+    "nextAtBeijing": "2026-10-31T16:23:25.757466+08:00",
+    "serviceTimezone": "Asia/Shanghai",
+    "hostTimezone": "Asia/Shanghai",
+    "otherRuntimeConfigUnchanged": true,
+    "model": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash",
+      "reasoningEffort": "off",
+      "vision": "auto"
+    },
+    "memory": {
+      "enabled": true,
+      "recallCount": 6,
+      "dailyConsolidate": true,
+      "consolidateTimes": [
+        "04:00",
+        "16:00"
+      ]
+    },
+    "purposeEnabled": false,
+    "onebotState": "disconnected",
+    "transactionVerified": true,
+    "counterResetByScript": false,
+    "nativeDeadlineObserved": true,
+    "deliveryAcceptance": "not-verified-QQ-login-pending",
+    "gatewayFurtherTesting": "stopped-at-user-request",
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261031-recovery-proactive/proactive-6z5kscme"
+  },
+  "proactiveTransaction": {
+    "operation": "enable-native-proactive",
+    "target": {
+      "enabled": true,
+      "maxPerDay": 20,
+      "minIntervalMinutes": 30,
+      "maxIntervalMinutes": 60,
+      "idleMinutes": 40,
+      "awakeFrom": 8,
+      "awakeTo": 23,
+      "nudge": false
+    },
+    "startedUtc": "2026-10-31T07:32:19.723770+00:00",
+    "stateWriteAttempted": false,
+    "saveRequestAttempted": true,
+    "rollbackAttempted": false,
+    "modelOrManualFireRequested": false,
+    "serviceRestartRequested": false,
+    "ok": true,
+    "stage": "verified",
+    "reviewRequired": false,
+    "otherDiskConfigUnchanged": true,
+    "otherLiveConfigUnchanged": true,
+    "configOwnerAndModePreserved": true,
+    "purposeDisabled": true,
+    "statePreservation": {
+      "stateExistedBefore": false,
+      "scriptCreatedState": false,
+      "counterResetByScript": false,
+      "nativeStateObservedAfter": false
+    },
+    "nativeDeadlineObserved": false,
+    "nativeDeadlineMs": null,
+    "acceptance": "configuration verified; native model decision and QQ receipt not yet verified",
+    "completedUtc": "2026-10-31T07:32:19.809478+00:00"
+  },
+  "unchanged": {
+    "componentVersions": true,
+    "officialImage": true,
+    "allThreeOriginalVolumes": true,
+    "persona": true,
+    "model": true,
+    "thinking": true,
+    "memory": true,
+    "search": true
+  },
+  "acceptance": {
+    "nativeScheduleGenerated": true,
+    "realProactiveModelTurnObserved": false,
+    "realProactiveQqDeliveryVerified": false,
+    "unattendedQqRecoveryVerified": false,
+    "originalCompleteAcceptance": false
+  }
+}
