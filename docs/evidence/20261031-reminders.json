@@ -1,0 +1,293 @@
+{
+  "recordedAt": "2026-10-31T16:58:59.733146+08:00",
+  "scope": "owner-only durable reminder extension; no component upgrade or gateway restart",
+  "initialInstallation": {
+    "operation": "install-owner-reminders",
+    "ok": true,
+    "serviceRestarted": false,
+    "gatewayRestarted": false,
+    "modelOrTestMessageRequested": false,
+    "existingStateWritten": false,
+    "nativeScheduleEdited": false,
+    "saveRequestAttempted": true,
+    "backupFileCount": 7,
+    "isolatedRestoreVerified": true,
+    "enabled": true,
+    "moduleLoaded": true,
+    "otherConfigUnchanged": true,
+    "credentialsUnchanged": true,
+    "moduleSha256": {
+      "engine.mjs": "c27b765bb9d60228943d5a09767ce673a6ab0ba9b3db757cc8cd6b0de4f5d08d",
+      "index.mjs": "828f077b67183fcc9dce3c53880f4214a4e2670d5250b60bbbbf9cb2ec222157"
+    }
+  },
+  "realModelAndControlledStage": {
+    "operation": "authorized-single-qq-reminder-test-and-prefix-fix",
+    "ok": true,
+    "gatewayRestarted": false,
+    "dshRestarted": false,
+    "model": {
+      "scope": "real DeepSeek + actual reminder engine with isolated durable store; operator stages one scheduled QQ test after successful checks",
+      "ok": true,
+      "model": "deepseek-flash",
+      "thinking": "disabled",
+      "calls": 13,
+      "usage": {
+        "prompt_tokens": 34205,
+        "completion_tokens": 1396,
+        "total_tokens": 35601
+      },
+      "cases": [
+        {
+          "label": "relative-once",
+          "operations": [
+            {
+              "name": "qq_reminder_create",
+              "ok": true
+            }
+          ],
+          "completed": true
+        },
+        {
+          "label": "cancellable-once",
+          "operations": [
+            {
+              "name": "qq_reminder_create",
+              "ok": true
+            }
+          ],
+          "completed": true
+        },
+        {
+          "label": "daily-night",
+          "operations": [
+            {
+              "name": "qq_reminder_create",
+              "ok": true
+            }
+          ],
+          "completed": true
+        },
+        {
+          "label": "weekly",
+          "operations": [
+            {
+              "name": "qq_reminder_create",
+              "ok": true
+            }
+          ],
+          "completed": true
+        },
+        {
+          "label": "list",
+          "operations": [
+            {
+              "name": "qq_reminder_list",
+              "ok": true
+            }
+          ],
+          "completed": true
+        },
+        {
+          "label": "cancel-three",
+          "operations": [
+            {
+              "name": "qq_reminder_cancel",
+              "ok": true
+            },
+            {
+              "name": "qq_reminder_cancel",
+              "ok": true
+            },
+            {
+              "name": "qq_reminder_cancel",
+              "ok": true
+            }
+          ],
+          "completed": true
+        },
+        {
+          "label": "ambiguous-time",
+          "operations": [],
+          "completed": true
+        }
+      ],
+      "qqSentByProbe": false,
+      "staged": {
+        "newTasks": 1,
+        "cancelledTests": 0,
+        "scheduledTests": 1,
+        "dueAt": 1793436991144,
+        "initiallyConfirmed": 0,
+        "privateStoreMode": "0600"
+      },
+      "naturalTimeParsingVerified": true,
+      "ambiguousTimeDidNotCreate": true,
+      "realToolEffectsVerified": true,
+      "recordDir": "/var/lib/qqai-dsh/maintenance/20261031-reminders/model-bLFqh2"
+    },
+    "modelExit": 0,
+    "installation": {
+      "operation": "install-owner-reminders",
+      "ok": true,
+      "serviceRestarted": false,
+      "gatewayRestarted": false,
+      "modelOrTestMessageRequested": false,
+      "existingStateWritten": false,
+      "nativeScheduleEdited": false,
+      "saveRequestAttempted": true,
+      "backupFileCount": 10,
+      "isolatedRestoreVerified": true,
+      "enabled": true,
+      "moduleLoaded": true,
+      "otherConfigUnchanged": true,
+      "credentialsUnchanged": true,
+      "moduleSha256": {
+        "engine.mjs": "c27b765bb9d60228943d5a09767ce673a6ab0ba9b3db757cc8cd6b0de4f5d08d",
+        "index.mjs": "b943245ab7d2e59a7fa4505f475b4f00b0fa516f6a55e112cf6558f7a53543f6"
+      },
+      "recordDir": "/var/lib/qqai-dsh/maintenance/20261031-reminders/reminders-obfd36c9"
+    }
+  },
+  "restart": {
+    "operation": "dsh-restart-with-pending-reminder",
+    "ok": true,
+    "gatewayRestartRequested": false,
+    "at": "2026-10-31T16:54:02.796255+08:00",
+    "dshProcessChanged": true,
+    "gatewayProcessUnchanged": true,
+    "qqReconnected": true,
+    "botIdentityMatches": true,
+    "byteIdenticalFiles": {
+      "config.json": true,
+      "memories.json": true,
+      "sessions.json": true,
+      "speakup.json": true,
+      "modules-data/qqai-heybox-reader/reader-state.json": true,
+      "modules-data/qqai-reminders/reminders.json": true
+    },
+    "reminderStillPending": true,
+    "reminderDueAt": 1793436991144,
+    "confirmedBeforeDue": 0,
+    "backupFiles": 6
+  },
+  "preservation": {
+    "otherConfigurationExactlyUnchanged": true,
+    "privateStateByteIdenticalToPredeployment": {
+      "memories.json": false,
+      "sessions.json": true,
+      "speakup.json": true
+    },
+    "memoryFactsAndOtherFieldsUnchanged": true,
+    "normalMemoryReadStatisticsChanged": [
+      "hits",
+      "lastHit"
+    ],
+    "nativeCountAndDeadlineUnchanged": true,
+    "gatewayProcessUnchanged": true,
+    "gatewayImageUnchanged": true,
+    "liveReminderMode": "0o600"
+  },
+  "runtimeModuleSha256": {
+    "index.mjs": "b943245ab7d2e59a7fa4505f475b4f00b0fa516f6a55e112cf6558f7a53543f6",
+    "engine.mjs": "c27b765bb9d60228943d5a09767ce673a6ab0ba9b3db757cc8cd6b0de4f5d08d"
+  },
+  "automatedRegression": {
+    "engine": 19,
+    "module": 19,
+    "passed": 38,
+    "failed": 0,
+    "kind": "synthetic regression; not real API or QQ evidence"
+  },
+  "scheduledDelivery": {
+    "at": "2026-10-31T16:56:58.188659+08:00",
+    "status": {
+      "ok": true,
+      "enabled": true,
+      "timezone": "Asia/Shanghai",
+      "pollSeconds": 5,
+      "version": 1,
+      "ready": true,
+      "storageFailed": false,
+      "disposed": false,
+      "inFlight": false,
+      "counts": {
+        "pending": 0,
+        "sending": 0,
+        "completed": 1,
+        "cancelled": 0,
+        "uncertain": 0,
+        "expired": 0
+      },
+      "totals": {
+        "created": 1,
+        "confirmed": 1,
+        "uncertain": 0,
+        "expired": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "lastAttemptAt": 1793436993776,
+        "lastConfirmedAt": 1793436994052
+      },
+      "lastTickAt": 1793437013772,
+      "nextAt": null,
+      "maximumActive": 50,
+      "maximumCatchUpHours": 24
+    },
+    "tests": [
+      {
+        "testLabel": "部署验收·定时提醒",
+        "status": "completed",
+        "nextAt": 1793436991144,
+        "attemptAt": 1793436993776,
+        "lastSentAt": 1793436994052,
+        "sentCount": 1,
+        "validReceiptRecorded": true,
+        "sameOwner": true
+      }
+    ],
+    "qqOnline": true,
+    "identityMatches": true,
+    "nativeState": {
+      "count": 1,
+      "nextAt": 1793438194288.2305,
+      "last": 1793435039766,
+      "nudgedFor": null
+    },
+    "gatewayStartedAt": "2026-10-31T07:23:07.091262348Z",
+    "gatewayImageId": "sha256:74d6874a4240636dca700734f31fbce7d0735cbce6bb43780dd8e3788eddccc9",
+    "qqHistory": {
+      "部署验收·定时提醒": {
+        "actualReminderMessages": 1,
+        "duplicateMessageIds": 0
+      },
+      "专用提醒验收": {
+        "actualReminderMessages": 0,
+        "duplicateMessageIds": 0
+      },
+      "取消验收": {
+        "actualReminderMessages": 0,
+        "duplicateMessageIds": 0
+      }
+    },
+    "confirmedLatenessMs": 2908
+  },
+  "recipientConfirmation": {
+    "confirmed": true,
+    "userReply": "已收到",
+    "scope": "one explicitly authorized outbound scheduled test reminder"
+  },
+  "backupLocations": {
+    "firstPrechange": "/var/lib/qqai-dsh/maintenance/20261031-reminders/reminders-1sf752o0",
+    "beforeFinalEnable": "/var/lib/qqai-dsh/maintenance/20261031-reminders/reminders-obfd36c9",
+    "restartCheck": "/var/lib/qqai-dsh/maintenance/20261031-reminders/restart-o6uomyga"
+  },
+  "ownerQqNaturalLanguageAcceptance": {
+    "complete": false,
+    "userDeferredFurtherInput": true,
+    "issueObserved": "prefixed prompt session identifier did not match normalized tool identifier; mutation safely denied",
+    "fix": "normalize optional session- prefix consistently; three targeted regression cases pass",
+    "realQqOwnerEntryRetestAfterFix": false
+  },
+  "overallProjectAcceptanceComplete": false
+}

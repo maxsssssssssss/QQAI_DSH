@@ -14,6 +14,8 @@
 
 新增只读小黑盒模块已启用；真实登录态、文章读取、独立模型判断、原生主动回合与实际QQ分享均通过，用户确认收到。文章作为原生主动回合的可选素材，不另开发信定时器；小黑盒写权限保持全关。[接入说明](docs/heybox-reader.md)
 
+主人专用提醒模块已部署启用，支持北京时间的一次性、每天和每周提醒，以及查看、取消；到点发送一条文字，不额外调用模型、不追问，也不修改原生主动额度。38项合成边界测试、真实Flash/off工具操作、DSH重启后任务保留及定时QQ投递通过；实际仅发送一条测试提醒，用户确认收到。主人QQ自然语言创建/取消复测因暂不方便已延后，未将出站测试当作该项全链路验收。[提醒说明与验收边界](docs/reminders.md)
+
 用户最终确认保留 **Ubuntu 26.04 LTS**（替代最初要求的24.04），已通过腾讯云控制台确认主机指纹，SSH 始终严格校验。实机已安装 Node 24.22.2、DSH 0.2.1-rc.5、Docker 29.1.3、Compose 2.40.3 和中文字体。[新仓库](https://github.com/maxsssssssssss/QQAI_DSH)写权限已验证。用户确认已取得 SnowLuma 权利人对本次自动部署的书面授权；本项目尚未查看授权文本，按用户确认继续官方部署。
 
 DSH 已作为专用用户的 systemd 服务运行，仅监听 `127.0.0.1:3080`，三插件已同时装载。服务器真实 DeepSeek 测试通过中文多轮、鲸鱼娘人格、Nekowhale 检索/选图/中文模板、Search/Fetch、真实像素识别与追问；[服务器证据](docs/evidence/20261031-dsh-server-api.json)与[重启后同会话召回](docs/evidence/20261031-dsh-server-restart.json)均使用合成数据。**这些不是实际 QQ 验收，也不是长期记忆验证。** 用户已授权从 2026-11-01 起按官方价格继续启用 Search/Fetch。
@@ -28,6 +30,7 @@ DSH 已作为专用用户的 systemd 服务运行，仅监听 `127.0.0.1:3080`�
 - [备份与恢复](docs/backup-restore.md)
 - [运行、隧道与用户醒来后的步骤](docs/operations.md)
 - [小黑盒只读文章与 QQ 分享接入](docs/heybox-reader.md)
+- [主人专用提醒与恢复规则](docs/reminders.md)
 - [测试证据与验收矩阵](docs/acceptance.md)
 - [真实 QQ 验收操作步骤](docs/qq-acceptance-procedure.md)
 - [初始版本锁](versions.lock.json)

@@ -14,6 +14,7 @@
 | DSH_HOME | /srv/qqai-dsh/home/.dsh |
 | 独立工作区 | /srv/qqai-dsh/workspace |
 | Aurabot私有配置、记忆、模块 | DSH_HOME/plugins-data/aurabot |
+| 专用提醒任务与回执 | DSH_HOME/plugins-data/aurabot/modules-data/qqai-reminders/reminders.json |
 | Nekowhale资源 | DSH_HOME/nekowhale-stickers |
 | API凭据 | /etc/qqai-dsh/deepseek-api-key，root:root、0600 |
 | Snow管理初始密码 | /etc/qqai-dsh/snowluma.env，root:root、0600 |
@@ -107,6 +108,16 @@ AUTOLOAD只自动注入，不代替QQ登录；若QQ要求快速登录、扫码�
 仅修改以上指定字段，其余业务配置核对未变。服务进程与主机时区均为Asia/Shanghai。原生调度状态新建时count=0，nextAt为2026-10-31 16:23:25.757（北京时间）；没有清零已有当日次数。该时间是当时保存的排期快照，不承诺届时实际发出消息，后续排期以运行状态为准。
 
 原生调度每分钟检查，受活动窗口、闲置时间、静音和模型沉默影响，20次是普通调度上限。QQ现已由用户普通登录，16:24左右完成一次原生主动模型决策与QQ小黑盒分享，用户确认收到；计数0→1，下一次17:16:34，间隔52.58分钟。新增小黑盒阅读只给已有主动回合提供可选素材，不再增加发信器。以后维护应保留当天day/count，检查nextAt而非盲目重置；重启会清空进程内最近私聊时间，因此40分钟闲置条件跨进程重启的连续性仍需单独处理与验证。
+
+## 专用提醒运行与维护
+
+`qqai-reminders` 已部署启用，支持主人私聊中创建、查看和取消一次性、每天或每周提醒。时间统一按北京时间；明确指定的夜间提醒也会执行。调度每5秒检查，到点使用真实QQ纯文字发送，一条提醒对应一条气泡，正文不会当作命令或媒体标记执行，到点不额外调用DeepSeek，也不会因未回复继续催促。该模块不修改原生 `speakUp` 的20次额度、排期或小黑盒分享设置。[完整提醒说明](reminders.md)
+
+38项合成边界回归已通过，其中引擎与模块各19项。真实API、受控DSH重启及QQ出站测试须单独记录；主人从QQ自然语言创建、查询、取消及接收体验因暂不方便而延后。运维在用户授权内使用的受控合成输入，不算真实QQ入站消息，不能据此宣称主人交互已经验收。
+
+每次实际发送前检查总开关、试运行、主人静音、QQ连接和机器人真实身份。离线期间保留任务；恢复后24小时以内的逾期任务最多补发一次，超过24小时的一次性任务过期，重复任务跳过积压。发送前持久化尝试，回执缺失或进程中断时保留“发送结果待核实”并暂停该任务，不自动重发。管理侧通过已有受保护连接读取 `/aurabot/api/ext/qqai-reminders/state` 的聚合状态；只有 `enabled=true`、`ready=true` 且 `storageFailed=false` 才算提醒调度可运行。
+
+首次增量备份在 `/var/lib/qqai-dsh/maintenance/20261031-reminders/reminders-1sf752o0/`，`before/` 与 `isolated-restore/` 的7个文件已验证一致。它覆盖配置、记忆、会话映射和相关状态，未操作QQ登录卷，也不替代既有完整备份。更新代码前关闭该模块的两个开关，使用 `deployment/install-reminders.py` 重新建立私有备份；回滚只处理提醒模块，不能恢复整份旧配置或旧主动状态覆盖后续变化。恢复旧提醒状态还须核对发送回执，避免重新引入已发任务。
 
 ## 费用与版本
 
