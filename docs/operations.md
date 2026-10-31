@@ -57,7 +57,9 @@ ssh -F "$env:USERPROFILE/.ssh/config" `
 
 ## QQ接入与后续验收
 
-截至2026-10-31 13:37（Asia/Shanghai），用户已完成官方协议确认和QQ登录；主人私聊的中文多气泡、上下文与人格、动画GIF顺序、入站PNG识别与追问、中文文字表情、搜索和Fetch均已有真实QQ证据。12次已观察模型请求均为Flash / Thinking Off。长期记忆、主动及未回复行为、网关重启恢复、登录后备份恢复和持续运行仍待验收。[聊天与媒体证据](evidence/20261031-qq-chat-media.json)
+2026-10-31，用户完成官方协议确认和QQ登录；主人私聊的中文多气泡、上下文与人格、动画GIF顺序、入站PNG识别与追问、中文文字表情、搜索和Fetch均已有真实QQ证据。聊天媒体阶段12次已观察模型请求均为Flash / Thinking Off。[聊天与媒体证据](evidence/20261031-qq-chat-media.json)
+
+随后13:39原生定时器完成真实自然记忆提炼。用户跳过纠错并停止后续测试，新会话召回、主动及未回复、网关重启恢复、登录后备份恢复仍未验收。主动关闭，整理时间已恢复04:00/16:00。下面的完整步骤留作后续参考，本轮不继续执行。
 
 1. 用户已经确认取得SnowLuma权利人对本次自动部署的书面授权；官方WebUI内EULA与隐私协议的个人阅读/接受状态单独处理，不伪造该记录。
 2. 用户在noVNC完成机器人QQ扫码及任何设备验证。不得代替验证或重复绕过平台限制。
@@ -68,6 +70,22 @@ ssh -F "$env:USERPROFILE/.ssh/config" `
 7. 登录后再分别重启DSH和网关，验证QQ重连、无重复发送与登录态恢复；更新备份并做隔离恢复演练。确认观察窗口中的资源与错误情况后，再记录长期运行结果。
 
 独立自动化/真实API测试使用合成数据。运行目录可能保留名为qqai-synthetic的验收会话；这些是本项目新测试记录，不是旧项目迁移数据。真实QQ测试另有接收端确认及筛选后的运行元数据，公开证据不含私人聊天正文或账号标识；上述合成会话仍不替代Aurabot长期记忆验收。
+
+## 待完成的网关自动接入
+
+当前容器使用 `SNOWLUMA_HOOK_AUTOLOAD=0`，已由官方接口手动接入现有QQ进程。该开关在进程启动时读取，环境变量优先于配置文件；没有已核实的官方运行时接口可持久切换。仅restart旧容器不会应用环境变量变化。
+
+`deployment/snowluma.ready.compose.yml` 已准备但未应用。未来维护需先确认无模型回合或发信在途、停止DSH，再将它作为第三份Compose应用；保持原三卷，不运行down -v：
+
+```bash
+sudo docker compose -p qqai-dsh \
+  -f /opt/qqai-dsh/source/deployment/snowluma.compose.yml \
+  -f /opt/qqai-dsh/source/deployment/snowluma.offline.compose.yml \
+  -f /opt/qqai-dsh/source/deployment/snowluma.ready.compose.yml \
+  up -d --no-deps --pull never --no-build --force-recreate snowluma
+```
+
+此操作属于尚未完成的后续维护。AUTOLOAD只自动注入，不代替QQ登录；若QQ要求快速登录、扫码或设备验证，应由用户在noVNC操作。账号和HTTP/WS恢复后再启动DSH、检查真实消息与登录后备份，不能预先称为自动恢复成功。
 
 ## 费用与版本
 

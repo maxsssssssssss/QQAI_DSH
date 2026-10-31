@@ -1,6 +1,6 @@
 # SnowLuma 官方镜像部署记录
 
-日期：2026-10-31（Asia/Shanghai）。当前完成官方 Registry 元数据核实与本项目 Compose 准备；此文不声称容器已运行或 QQ 已登录。实际执行与验收追加到部署日志。已用 PyYAML 解析并检查固定 digest、loopback 端口、命名卷及未设置协议接受／密码变量。本地 Docker 的 WSL 集成不可用，正式 `docker compose config --quiet` 检查留给服务器执行。
+日期：2026-10-31（Asia/Shanghai）。官方镜像已在服务器运行，用户亲自完成协议确认和QQ登录；经官方进程load接口接入后，实际主人QQ聊天与媒体通过。用户随后停止进一步测试；当前自动注入仍为0，重启恢复未验收。本文保留首次准备的源码和镜像核查过程，最新状态以[部署日志](deployment-log.md)和[运维记录](operations.md)为准。
 
 ## 固定发行物
 
@@ -131,4 +131,4 @@ docker compose -p qqai-dsh \
 
 OneBot token 没有在已核查源码中发现对应预置环境变量；准确字段是 `/app/data/config/onebot.json` 的 `networks.httpServers[].accessToken` 与 `networks.wsServers[].accessToken`。官方 Docker 入口已首次分别生成 32 随机字节的 token。工程师可私有读取并同步 Aurabot 的 HTTP／WS token，不能在报告中输出值。[固定 OneBot 配置实现](https://github.com/SnowLuma/SnowLuma/blob/8ffd314260e9e2b6967eeca494d87aa5be046c34/packages/onebot/src/config.ts)
 
-首次准备私有随机密码可执行 `sudo python3 deployment/prepare-snowluma-secrets.py`；现有有效私有文件不会被覆盖。实际容器已核验 runtime 2.2.1、Node v24.22.1，WebUI/noVNC HTTP200；QQ尚未登录。
+首次准备私有随机密码可执行 `sudo python3 deployment/prepare-snowluma-secrets.py`；现有有效私有文件不会被覆盖。实际容器已核验 runtime 2.2.1、Node v24.22.1，WebUI/noVNC HTTP200；准备阶段未登录QQ，后续实际登录记录见部署日志。

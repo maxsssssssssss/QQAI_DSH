@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-31T13:46:12.485343+08:00",
+  "naturalMemory": {
+    "source": "actual owner QQ synthetic messages",
+    "trigger": "original per-minute scheduler",
+    "temporaryScheduledTime": "13:39",
+    "manualExtractCalled": false,
+    "completed": true,
+    "added": 5,
+    "pending": 0,
+    "failed": 0,
+    "syntheticFacts": {
+      "oldDrinkAuto": true,
+      "saturdayEveningAlbumAuto": true,
+      "blueWhaleCollectionAuto": true
+    }
+  },
+  "memoryScheduleRestored": [
+    "04:00",
+    "16:00"
+  ],
+  "dailyProactiveEnabled": false,
+  "correction": "explicitly-skipped-by-user",
+  "newSessionRecall": "not-accepted-user-stopped-testing",
+  "proactiveAndUnanswered": "not-tested-user-stopped-testing",
+  "gatewayAutomaticRecovery": "pending-maintenance-HOOK_AUTOLOAD-still-0",
+  "postLoginBackupRestore": "not-tested",
+  "finalAcceptanceComplete": false
+}

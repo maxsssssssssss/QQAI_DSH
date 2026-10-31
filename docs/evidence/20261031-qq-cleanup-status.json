@@ -1,0 +1,102 @@
+{
+  "at": "2026-10-31T13:47:10.848526+08:00",
+  "scope": "passive operational checks after requested testing stop; no model or QQ message sent",
+  "dsh": {
+    "service": {
+      "ActiveState": "active",
+      "SubState": "running",
+      "MainPID": "220551",
+      "NRestarts": "0",
+      "MemoryCurrent": "415739904",
+      "MemoryPeak": "425041920",
+      "User": "dsh",
+      "Group": "dsh"
+    },
+    "listeners": [
+      "127.0.0.1:3001",
+      "127.0.0.1:3000",
+      "127.0.0.1:5099",
+      "127.0.0.1:6081",
+      "127.0.0.1:3080"
+    ],
+    "all_application_ports_loopback": true,
+    "unauthenticated_rpc_http_status": 401,
+    "healthy": true,
+    "scope": "process and authentication readiness only; not model or QQ acceptance"
+  },
+  "qq": {
+    "scope": "readiness and counters only; not a claim of QQ acceptance",
+    "enabled": true,
+    "dryRun": false,
+    "ownerConfigured": true,
+    "botConfigured": true,
+    "onebotState": "connected",
+    "botIdentityMatches": true,
+    "allowPrivateCount": 0,
+    "allowGroupCount": 0,
+    "stats": {
+      "received": 0,
+      "sent": 0,
+      "voice": 0,
+      "stickers": 0,
+      "errors": 0
+    },
+    "speakUpEnabled": false,
+    "speakUp": {
+      "count": 0,
+      "nextAt": 0,
+      "lastAt": null
+    },
+    "memoryLastConsolidate": {
+      "at": 1793425158500,
+      "added": 5,
+      "pending": 0,
+      "failed": 0
+    },
+    "modules": [
+      {
+        "id": "mood",
+        "enabled": true,
+        "running": "builtin",
+        "hasError": false
+      },
+      {
+        "id": "memory",
+        "enabled": true,
+        "running": "builtin",
+        "hasError": false
+      },
+      {
+        "id": "qq-tools",
+        "enabled": true,
+        "running": "builtin",
+        "hasError": false
+      },
+      {
+        "id": "speakup",
+        "enabled": true,
+        "running": "builtin",
+        "hasError": false
+      },
+      {
+        "id": "purpose",
+        "enabled": false,
+        "running": null,
+        "hasError": false
+      },
+      {
+        "id": "qqai-compat",
+        "enabled": true,
+        "running": "user",
+        "hasError": false
+      }
+    ]
+  },
+  "temporaryObserverRemoved": true,
+  "gatewayContainerRecreated": false,
+  "memorySchedule": [
+    "04:00",
+    "16:00"
+  ],
+  "furtherFunctionalTestingStoppedByUser": true
+}

@@ -1,0 +1,6 @@
+# Apply only after the operator has completed official consent and QQ login.
+# Preserve the same official image, loopback ports, and all three named volumes.
+services:
+  snowluma:
+    environment:
+      SNOWLUMA_HOOK_AUTOLOAD: "1"

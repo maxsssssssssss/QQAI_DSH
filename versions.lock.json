@@ -1,6 +1,6 @@
 {
   "recorded_date": "2026-10-31",
-  "status": "qq-connected-owner-only-real-acceptance-in-progress",
+  "status": "qq-chat-and-media-usable-user-stopped-further-acceptance",
   "node": {
     "version": "24.22.2",
     "linux_x64_sha256": "48cc0e21e048790e54c0cf5749c2725005313d652651c40b7a21feb9697aaf75",
@@ -98,5 +98,15 @@
       "before": "bfcae29f15c0737cb3be7664fa95fc4132108fbc486bf126302b09a19dd38bf0",
       "after": "59a57d510fcb26f3a1a9a70c03c83adf5bf332181c6deaedce29a4441ca79502"
     }
-  ]
+  ],
+  "runtime_state": {
+    "daily_proactive_enabled": false,
+    "gateway_hook_autoload_enabled": false,
+    "automatic_qq_restart_recovery_verified": false,
+    "memory_schedule": [
+      "04:00",
+      "16:00"
+    ],
+    "acceptance_complete": false
+  }
 }
