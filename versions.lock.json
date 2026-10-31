@@ -124,13 +124,13 @@
     "heybox_reader": {
       "enabled": true,
       "module": "qqai-heybox-reader",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "adapters/qqai-heybox-reader/index.mjs",
-      "sha256": "9bc32440d5bb437b025fd53d32acb0dd2d538a83b7cedd636c02a4f3a1d5a1da",
+      "sha256": "063a707e0fcacbfa82938d8c2ec4f4248c388cdf3b71262f69c1cd19fa562aeb",
       "upstream_api_sha256": "033737291d37f08edecd14ca83c049b434916deb51a64c3a60caee36e66b1faa",
       "interval_hours": 4,
       "max_rounds_per_day": 6,
-      "articles_per_round": 3,
+      "articles_per_round": 5,
       "awake_from": 8,
       "awake_to": 23,
       "timezone": "Asia/Shanghai",
@@ -138,7 +138,8 @@
       "external_write_capabilities": false,
       "real_read_api_verified": true,
       "independent_model_assessment_verified": true,
-      "native_share_delivery_verified": true
+      "native_share_delivery_verified": true,
+      "quantity_update_evidence": "docs/evidence/20261031-heybox-limit.json"
     },
     "reminders": {
       "enabled": true,

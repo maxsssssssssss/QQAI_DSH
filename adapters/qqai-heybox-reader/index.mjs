@@ -11,6 +11,7 @@ const WEB = 'https://www.xiaoheihe.cn'
 const FEED = '/bbs/app/feeds'
 const DETAIL = '/bbs/app/link/tree'
 const INTERVAL = 4 * 60 * 60_000
+const ARTICLES_PER_ROUND = 5
 const ARTICLE_TTL = 48 * 60 * 60_000
 const BYTE_LIMIT = 2 * 1024 * 1024
 const REGISTRY = Symbol.for('qqai.heybox-reader.leases.v1')
@@ -163,7 +164,7 @@ function initial(raw = {}) {
     confirmedToday: integer('confirmedToday'), confirmedTotal: integer('confirmedTotal'),
     read: boundedIds(raw.read), offered: boundedIds(raw.offered), confirmed: boundedIds(raw.confirmed),
     queue: (Array.isArray(raw.queue) ? raw.queue : []).filter((a) => idOf(a?.id) && typeof a?.body === 'string')
-      .slice(0, 3).map((a) => ({ id: a.id, url: canonical(a.id), title: cleanText(a.title, 180), body: cleanText(a.body), readAt: Number(a.readAt) || 0 })),
+      .slice(0, ARTICLES_PER_ROUND).map((a) => ({ id: a.id, url: canonical(a.id), title: cleanText(a.title, 180), body: cleanText(a.body), readAt: Number(a.readAt) || 0 })),
     blocked: ['auth', 'captcha', 'rate_limit'].includes(raw.blocked) ? raw.blocked : '',
     lastError: codes.has(raw.lastError) || raw.lastError === 'unknown' ? raw.lastError : '',
     cookieHash: /^[a-f0-9]{64}$/.test(raw.cookieHash || '') ? raw.cookieHash : '' }
@@ -218,7 +219,7 @@ export function createReader({ getConfig, getSettings, isOnline, isMuted, makeCl
       const rows = response?.result?.links || response?.result?.list
       if (!Array.isArray(rows)) fail('schema')
       const candidates = boundedIds(rows.map((x) => x?.linkid ?? x?.link_id))
-        .filter((id) => !state.read.includes(id) && !state.offered.includes(id)).slice(0, 3)
+        .filter((id) => !state.read.includes(id) && !state.offered.includes(id)).slice(0, ARTICLES_PER_ROUND)
       const secretParts = [cookie, ...cookie.split(';').map((p) => p.trim()).filter((p) => /^(?:pkey|user_pkey|x_xhh_tokenid)=/.test(p)).map((p) => p.slice(p.indexOf('=') + 1))].filter(Boolean)
       for (const id of candidates) {
         if (!authorized()) return
@@ -238,7 +239,7 @@ export function createReader({ getConfig, getSettings, isOnline, isMuted, makeCl
     if (!allowed() || !awake(now()) || !isNativeProactive(content, info, getConfig().ownerQQ) || !state.queue.length) return content
     try { expireQueue() } catch (error) { safeError(error); return content }
     if (state.cookieHash !== digest(getConfig().heybox.cookie)) return content
-    const articles = state.queue.filter((a) => !state.offered.includes(a.id)).slice(0, 3)
+    const articles = state.queue.filter((a) => !state.offered.includes(a.id)).slice(0, ARTICLES_PER_ROUND)
     if (!articles.length) return content
     const previous = structuredClone(state)
     try {
@@ -258,7 +259,7 @@ export function createReader({ getConfig, getSettings, isOnline, isMuted, makeCl
   }
   function status() {
     const sameDay = state.day === beijingDay(now())
-    return { enabled: getSettings()?.enabled === true, blocked: state.blocked, lastError: state.lastError,
+    return { enabled: getSettings()?.enabled === true, articlesPerRound: ARTICLES_PER_ROUND, blocked: state.blocked, lastError: state.lastError,
       day: beijingDay(now()), roundsToday: sameDay ? state.rounds : 0, nextBrowseAt: state.nextBrowseAt,
       lastBrowseAt: state.lastBrowseAt, lastOfferAt: state.lastOfferAt, lastConfirmedAt: state.lastConfirmedAt,
       queued: state.queue.length, readCount: state.read.length, offeredCount: state.offered.length,
@@ -294,7 +295,7 @@ function privateStore(file) {
 }
 
 export default {
-  id: 'qqai-heybox-reader', name: 'QQAI 小黑盒只读材料', version: '0.1.0',
+  id: 'qqai-heybox-reader', name: 'QQAI 小黑盒只读材料', version: '0.1.1',
   description: '只读文章供现有主动回合选择；不创建额外发信器或外部写工具',
   defaults: { enabled: false }, settings: [{ key: 'enabled', type: 'switch', label: '读取文章供原生主动聊天使用' }],
   setup(api) {

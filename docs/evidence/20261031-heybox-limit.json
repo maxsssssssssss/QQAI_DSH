@@ -1,0 +1,60 @@
+{
+  "ok": true,
+  "operation": "heybox-reader-five-articles",
+  "serviceRestartRequested": false,
+  "gatewayRestartRequested": false,
+  "configOrStateWriteRequested": false,
+  "manualModelOrQqSendRequested": false,
+  "at": "2026-10-31T18:20:03.886113+08:00",
+  "articlesPerRound": 5,
+  "moduleSha256": "063a707e0fcacbfa82938d8c2ec4f4248c388cdf3b71262f69c1cd19fa562aeb",
+  "moduleLoaded": true,
+  "hotReloadVerified": true,
+  "backupFiles": 6,
+  "backupRestoreVerified": true,
+  "bytePreserved": {
+    "config.before.json": true,
+    "reader.before.json": true,
+    "speakup.before.json": true,
+    "memories.before.json": true,
+    "sessions.before.json": true
+  },
+  "liveConfigUnchanged": true,
+  "serviceInvocationUnchanged": true,
+  "gatewayStartUnchanged": true,
+  "qqConnected": true,
+  "botIdentityMatches": true,
+  "readerScheduleUnchanged": true,
+  "nextBrowseAt": 1793448489166,
+  "queuedArticles": 0,
+  "recordDir": "/var/lib/qqai-dsh/maintenance/20261031-heybox-limit/limit-4upwq966",
+  "automatedRegression": {
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "syntheticOnly": true,
+    "covers": [
+      "six_candidates_read_first_five",
+      "five_articles_survive_reload",
+      "all_five_offered_once",
+      "existing_readonly_and_dedup_boundaries"
+    ]
+  },
+  "unchangedBehavior": {
+    "feed": "existing recommendation order",
+    "intervalHours": 4,
+    "awakeHoursBeijing": [
+      8,
+      23
+    ],
+    "maxRoundsPerDay": 6,
+    "maxSharedPerNativeTurn": 1,
+    "interestFilterAdded": false
+  },
+  "acceptance": {
+    "liveLimitAndHotReloadVerified": true,
+    "newFiveArticleWebsiteRoundObserved": false,
+    "newRealModelRequestPerformed": false,
+    "newQqTestMessageSent": false
+  }
+}

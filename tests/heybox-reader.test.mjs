@@ -15,7 +15,7 @@ const deferred = () => {
   const promise = new Promise((yes, no) => { resolve = yes; reject = no })
   return { promise, resolve, reject }
 }
-const feed = (ids = ['100101', '100102', '100103', '100104']) => ({ status: 'ok', result: {
+const feed = (ids = ['100101', '100102', '100103', '100104', '100105', '100106']) => ({ status: 'ok', result: {
   links: ids.map(linkid => ({ linkid, title: `合成趣闻 ${linkid}` })),
 } })
 const detail = id => ({ status: 'ok', result: { link: { title: `合成趣闻 ${id}`,
@@ -179,10 +179,11 @@ test('offline, muted, dry-run, disabled proactive and disabled reader neither br
   }
 })
 
-test('reads at most three articles per four-hour round and never stores or logs credentials', async t => {
+test('reads at most five articles per four-hour round and never stores or logs credentials', async t => {
   const f = fixture(t)
   await f.reader.tick()
-  assert.equal(f.calls.filter(x => x.path === '/bbs/app/link/tree').length, 3)
+  assert.deepEqual(f.calls.filter(x => x.path === '/bbs/app/link/tree').map(x => x.params.link_id),
+    ['100101', '100102', '100103', '100104', '100105'])
   assert.ok(f.calls.every(x => ['/bbs/app/feeds', '/bbs/app/link/tree'].includes(x.path)))
   const before = f.calls.length
   await f.reader.tick()
@@ -231,6 +232,38 @@ test('persisted article IDs survive restart and prevent duplicate reading or rep
     .every(x => !readBefore.includes(x.params.link_id)))
   const next = await second.reader.augment(prompt(), info())
   assert.notDeepEqual(next, offered, 'persisted offers must not repeat verbatim after restart')
+})
+
+test('all five queued articles survive reload and enter one prompt without repeated offers', async t => {
+  const first = fixture(t)
+  await first.reader.tick()
+  const ids = ['100101', '100102', '100103', '100104', '100105']
+  assert.deepEqual(first.state().queue.map(article => article.id), ids)
+  const saved = first.state()
+  first.reader.dispose()
+
+  const reloaded = fixture(t, { state: saved })
+  assert.deepEqual(reloaded.state().queue.map(article => article.id), ids,
+    'restoring persisted state must not discard the fourth and fifth articles')
+  const augmented = reloaded.reader.augment(prompt(), info())
+  const material = augmented.at(-1).text
+  const articles = JSON.parse(material.slice(material.indexOf('\n') + 1))
+  assert.deepEqual(articles.map(article => article.canonicalUrl),
+    ids.map(id => `https://www.xiaoheihe.cn/app/bbs/link/${id}`))
+  assert.ok(articles.every(article => article.body.includes('测试文章')),
+    'each offered article must include the retrieved body')
+  assert.equal(reloaded.calls.length, 0, 'persisted articles do not require another website read')
+  assert.deepEqual(reloaded.state().offered, ids)
+  assert.equal(reloaded.state().queue.length, 0)
+  assert.deepEqual(reloaded.reader.augment(prompt(), info()), prompt(),
+    'one set of five articles must not be offered twice')
+
+  const offeredState = reloaded.state()
+  reloaded.reader.dispose()
+  const afterOfferReload = fixture(t, { state: offeredState })
+  assert.deepEqual(afterOfferReload.reader.augment(prompt(), info()), prompt(),
+    'a second restart must preserve the consumed offer state')
+  assert.deepEqual(afterOfferReload.state().offered, ids)
 })
 
 test('daily browse quota survives reload and rolls over only on a new Beijing day', async t => {
@@ -308,7 +341,8 @@ test('credential echoes in article titles or bodies never enter stored or offere
     return article
   } })
   await f.reader.tick()
-  assert.equal(f.state().queue.length, 1, 'only the article without a credential echo may be queued')
+  assert.deepEqual(f.state().queue.map(article => article.id), ['100103', '100104', '100105'],
+    'only articles without a credential echo may be queued')
   const output = f.reader.augment(prompt(), info())
   const all = JSON.stringify({ saves: f.saves, logs: f.logs, status: f.reader.status(), output })
   assert.ok(!all.includes(COOKIE))
@@ -351,7 +385,7 @@ test('replacement generations wait for the old request and reject its late write
   assert.equal(first.calls.length, 1)
   assert.deepEqual(first.reader.augment(prompt(), info()), prompt())
   await replacement.reader.tick()
-  assert.equal(replacement.calls.filter(x => x.path === '/bbs/app/link/tree').length, 3)
+  assert.equal(replacement.calls.filter(x => x.path === '/bbs/app/link/tree').length, 5)
   assert.equal(replacement.state().rounds, 2, 'the previous reserved browse round must remain counted')
 })
 
