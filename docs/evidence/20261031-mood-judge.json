@@ -1,0 +1,69 @@
+{
+  "scope": "enable native mood.judge only; real DSH helper/parser verification with synthetic input",
+  "activation": {
+    "operation": "set-native-mood-judge",
+    "ok": true,
+    "serviceRestarted": false,
+    "qqMessageRequested": false,
+    "modelTestRequested": false,
+    "moodStateWritten": false,
+    "recordedAt": "2026-10-31T17:11:25.938115+08:00",
+    "beforeJudge": false,
+    "afterJudge": true,
+    "moodEnabled": true,
+    "halfLifeHours": 3,
+    "otherConfigurationUnchanged": true,
+    "isolatedBackupVerified": true,
+    "moodStateByteIdenticalDuringConfiguration": true,
+    "serviceProcessUnchanged": true,
+    "moduleLoaded": true,
+    "currentModel": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash",
+      "reasoningEffort": "off"
+    },
+    "onebotState": "connected",
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261031-mood/mood-1jx7m1ey"
+  },
+  "realModelValidation": {
+    "ok": true,
+    "qqMessageRequested": false,
+    "productionMoodWritten": false,
+    "realModelProbe": {
+      "scope": "real live DSH askModel and installed mood parser with synthetic input; not a natural QQ activity trigger or production mood/history change",
+      "ok": true,
+      "pending": false,
+      "startedAt": "2026-10-31T09:12:22.897Z",
+      "qqSendRequested": false,
+      "productionMoodWritten": false,
+      "memoryWritten": false,
+      "actualRequests": [
+        {
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off",
+          "maxTokens": 400
+        }
+      ],
+      "sourceSha256": {
+        "llm": "5a34b943fc03bf0162fc3c2f795a150d10c2bf2597dea3253c266717bf10724e",
+        "companion": "1aa6989025cca29b2050d06dcdfb34057141783c3f7bb946888528d1a952b5ea"
+      },
+      "validParsed": true,
+      "delta": 10,
+      "confidence": 0.95,
+      "wouldApply": true,
+      "finishedAt": "2026-10-31T09:12:23.443Z"
+    },
+    "temporaryModuleUnloaded": true,
+    "configByteIdenticalDuringProbe": true,
+    "productionMoodByteIdenticalDuringProbe": true,
+    "serviceProcessUnchanged": true,
+    "judgeEnabled": true,
+    "qqOnline": true,
+    "probeSourceSha256": "df66d850987196630f5b0ea54dcb11f5126fa5186b69ed725b79f0da362da5a3",
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261031-mood/probe-6f_f1_n6"
+  },
+  "naturalQqActivityTriggerObservedInThisTest": false,
+  "overallProjectAcceptanceComplete": false
+}

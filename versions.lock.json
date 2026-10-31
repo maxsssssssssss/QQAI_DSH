@@ -1,6 +1,6 @@
 {
   "recorded_date": "2026-10-31",
-  "status": "owner-reminders-deployed-scheduled-delivery-verified",
+  "status": "native-model-mood-judge-enabled",
   "node": {
     "version": "24.22.2",
     "linux_x64_sha256": "48cc0e21e048790e54c0cf5749c2725005313d652651c40b7a21feb9697aaf75",
@@ -168,6 +168,18 @@
       "recipient_confirmation": true,
       "synthetic_tests_passed": 38,
       "evidence": "docs/evidence/20261031-reminders.json"
+    },
+    "mood": {
+      "enabled": true,
+      "judge": true,
+      "half_life_hours": 3,
+      "provider": "deepseek-official",
+      "model": "deepseek-flash",
+      "reasoning_effort": "off",
+      "real_dsh_model_judgment_verified": true,
+      "synthetic_probe_applied_to_production_mood": false,
+      "natural_qq_trigger_acceptance_complete": false,
+      "evidence": "docs/evidence/20261031-mood-judge.json"
     }
   }
 }

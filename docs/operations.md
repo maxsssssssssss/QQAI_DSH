@@ -119,6 +119,21 @@ AUTOLOAD只自动注入，不代替QQ登录；若QQ要求快速登录、扫码�
 
 首次增量备份在 `/var/lib/qqai-dsh/maintenance/20261031-reminders/reminders-1sf752o0/`，`before/` 与 `isolated-restore/` 的7个文件已验证一致。它覆盖配置、记忆、会话映射和相关状态，未操作QQ登录卷，也不替代既有完整备份。更新代码前关闭该模块的两个开关，使用 `deployment/install-reminders.py` 重新建立私有备份；回滚只处理提醒模块，不能恢复整份旧配置或旧主动状态覆盖后续变化。恢复旧提醒状态还须核对发送回执，避免重新引入已发任务。
 
+## 模型判断心情
+
+2026-10-31 17:11 已启用原生 `mood.judge=true`，`mood.enabled=true` 与 `halfLifeHours=3` 保持不变。每轮正常对话回复发送后，用当前 DeepSeek Flash / Thinking Off 做一次短判断；心情变化会影响后续语气及已有行为权重。判断置信度低于0.6或变化绝对值小于2时不更新心情。此功能增加API用量，不改变日常主动次数和活动窗口。
+
+本次通过真实DSH `askModel` 和已安装心情解析器验证：合成关心话语返回delta=10、confidence=0.95。验证没有发送QQ，也没有把合成结果写进生产心情；配置、心情文件和DSH进程在验证期间保持不变，临时模块已卸载。证据见 [20261031-mood-judge.json](evidence/20261031-mood-judge.json)；不能把此探针算作已观察到真实QQ活动自动触发或主观体验通过。
+
+配置和原心情的私有备份及隔离副本位于 `/var/lib/qqai-dsh/maintenance/20261031-mood/mood-1jx7m1ey/`。恢复为关键词判断只需要热更新该开关，不恢复整份旧配置或心情历史：
+
+```bash
+sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
+  --record-dir /var/lib/qqai-dsh/maintenance/mood-rollback --disable
+```
+
+重新开启使用同一脚本的 `--enable`；也可在Aurabot心情设置打开“用模型判断心情”并保存。`scripts/mood-model-probe.mjs` 是运维临时模块源码，正常运行无需安装；已有结果标记时不会重复请求模型。
+
 ## 费用与版本
 
 用户已同意从北京时间2026-11-01 00:00起按官方价格持续启用DeepSeek Search/Fetch；当时公告为每千次成功请求各0.75美元。模型调用仍按官方Token价格计费，未授权自动充值、升级实例或购买额外服务。价格未来变化时应重新核实。[官方说明](https://api-docs.deepseek.com/guides/search/#billing)

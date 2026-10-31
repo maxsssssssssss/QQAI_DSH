@@ -1,5 +1,13 @@
 # 部署日志
 
+## 2026-10-31 17:12（Asia/Shanghai）：开启原生模型判断心情
+
+- 用户在获知额外模型调用后明确要求开启。新增 `deployment/set-mood-judge.py`，备份配置及已有心情状态并验证隔离副本，仅通过原生保存接口把 `mood.judge` 从false改为true；其他配置完全一致，心情文件未写，DSH及QQ未重启。心情模块保持开启、半衰期3小时，Flash/off保持不变。
+- 私有备份目录 `/var/lib/qqai-dsh/maintenance/20261031-mood/mood-1jx7m1ey/`。回滚只关闭judge，不覆盖旧配置、记忆、主动排期或心情历史。
+- 一次性探针调用实际DSH模型服务和固定版本的心情解析器，合成关心话语返回delta=10、confidence=0.95；实际请求provider=deepseek-official、model=deepseek-flash、reasoningEffort=off、maxTokens=400。没有Mock替代模型，也没有QQ测试发信或把测试结果写入生产心情。
+- 探针源码及结果保留在私有维护目录，运行模块已卸载；验证期间配置和心情逐字节一致，服务进程不变，QQ保持连接。源码、脱敏证据及说明同步到新仓库。此次验证不等同于正常QQ活动触发与主观体验验收。[证据](evidence/20261031-mood-judge.json)。
+
+
 ## 2026-10-31 17:00（Asia/Shanghai）：主人专用提醒部署及出站验收
 
 - 新增 `qqai-reminders` 独立模块与安装器；支持北京时间一次性、每天、每周，主人私聊创建/查询/取消，到点发送一个纯文字气泡，不调用额外模型、不追问、不占原生主动20次额度。明确预约的夜间提醒照常执行；未打开Shell、通用jobs或新的HTTP写入口。
