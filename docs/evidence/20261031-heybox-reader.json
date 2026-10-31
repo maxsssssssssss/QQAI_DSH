@@ -70,10 +70,10 @@
     "noLiveDataOverwritten": true
   },
   "moduleSha256": "9bc32440d5bb437b025fd53d32acb0dd2d538a83b7cedd636c02a4f3a1d5a1da",
-  "recordedAt": "2026-10-31T16:12:23.831832+08:00",
-  "scope": "read-only Heybox integration; no external platform writes; native sharing pending",
+  "recordedAt": "2026-10-31T16:27:54.004329+08:00",
+  "scope": "read-only Heybox articles with observed native proactive QQ sharing",
   "runtime": {
-    "at": "2026-10-31T16:09:09.710003+08:00",
+    "at": "2026-10-31T16:26:14.306876+08:00",
     "onebotState": "connected",
     "botIdentityMatches": true,
     "reader": {
@@ -85,14 +85,14 @@
       "roundsToday": 1,
       "nextBrowseAt": 1793448489166,
       "lastBrowseAt": 1793434089166,
-      "lastOfferAt": 0,
-      "lastConfirmedAt": 0,
-      "queued": 3,
+      "lastOfferAt": 1793435039821,
+      "lastConfirmedAt": 1793435052959,
+      "queued": 0,
       "readCount": 3,
-      "offeredCount": 0,
-      "confirmedCount": 0,
-      "confirmedSharesToday": 0,
-      "confirmedSharesTotal": 0,
+      "offeredCount": 3,
+      "confirmedCount": 1,
+      "confirmedSharesToday": 1,
+      "confirmedSharesTotal": 1,
       "inFlight": false,
       "disposed": false,
       "identityVerified": true
@@ -108,9 +108,9 @@
       "awakeTo": 23
     },
     "nativeState": {
-      "count": 0,
-      "nextAt": 1793435005757.4663,
-      "last": 0,
+      "count": 1,
+      "nextAt": 1793438194288.2305,
+      "last": 1793435039766,
       "nudgedFor": null
     },
     "purposeEnabled": false,
@@ -138,7 +138,7 @@
     ],
     "qqCounters": {
       "received": 0,
-      "sent": 0,
+      "sent": 3,
       "errors": 0
     }
   },
@@ -154,8 +154,81 @@
     "realReadApi": true,
     "independentRealModelAssessment": true,
     "nativeScheduledRead": true,
-    "nativeQqShareObserved": false,
-    "recipientConfirmed": false,
+    "nativeQqShareObserved": true,
+    "recipientConfirmed": true,
     "fullProjectAcceptance": false
+  },
+  "nativeShare": {
+    "at": "2026-10-31T16:26:40.373813+08:00",
+    "ownerSeqBefore": 142,
+    "ownerSeqAfter": 153,
+    "recordSequenceFieldPresent": true,
+    "newSessionRecordCount": 11,
+    "eventTypes": [
+      "agent/inbox/spliced",
+      "assistant/message",
+      "request/header",
+      "session/end-seed",
+      "step/end",
+      "step/start",
+      "turn/end",
+      "turn/start",
+      "user/message"
+    ],
+    "originalNativeDeadline": 1793435005757.4663,
+    "nativeCountBefore": 0,
+    "nativeCountAfter": 1,
+    "nativeLast": 1793435039766,
+    "nativeNextAt": 1793438194288.2305,
+    "actualArticlePromptObserved": true,
+    "sourceLinkInNewSessionRecords": true,
+    "turnEndObserved": true,
+    "readerState": {
+      "ok": true,
+      "enabled": true,
+      "blocked": "",
+      "lastError": "",
+      "day": "2026-10-31",
+      "roundsToday": 1,
+      "nextBrowseAt": 1793448489166,
+      "lastBrowseAt": 1793434089166,
+      "lastOfferAt": 1793435039821,
+      "lastConfirmedAt": 1793435052959,
+      "queued": 0,
+      "readCount": 3,
+      "offeredCount": 3,
+      "confirmedCount": 1,
+      "confirmedSharesToday": 1,
+      "confirmedSharesTotal": 1,
+      "inFlight": false,
+      "disposed": false,
+      "identityVerified": true
+    },
+    "actualModelRequests": [
+      {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash",
+        "reasoningEffort": "off"
+      }
+    ],
+    "modelConfig": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash",
+      "reasoningEffort": "off",
+      "vision": "auto"
+    },
+    "qqState": "connected",
+    "qqHistoryNewBotMessages": 3,
+    "qqHistoryContainsSharedArticle": true,
+    "qqHistoryArticleLinkMessages": 1,
+    "qqHistoryDuplicateMessageIds": 0,
+    "firstTriggerBeijing": "2026-10-31T16:23:59.766000+08:00",
+    "nextDeadlineBeijing": "2026-10-31T17:16:34.288230+08:00",
+    "nextIntervalMinutes": 52.58,
+    "recipientConfirmation": {
+      "received": true,
+      "source": "user confirmed in this project conversation",
+      "privateMessageTextPublished": false
+    }
   }
 }

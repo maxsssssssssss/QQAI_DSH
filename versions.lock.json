@@ -1,6 +1,6 @@
 {
   "recorded_date": "2026-10-31",
-  "status": "readonly-heybox-enabled-native-share-verification-pending",
+  "status": "readonly-heybox-native-share-verified",
   "node": {
     "version": "24.22.2",
     "linux_x64_sha256": "48cc0e21e048790e54c0cf5749c2725005313d652651c40b7a21feb9697aaf75",
@@ -120,7 +120,7 @@
       "nudge": false
     },
     "native_proactive_schedule_verified": true,
-    "native_proactive_delivery_verified": false,
+    "native_proactive_delivery_verified": true,
     "heybox_reader": {
       "enabled": true,
       "module": "qqai-heybox-reader",
@@ -138,7 +138,7 @@
       "external_write_capabilities": false,
       "real_read_api_verified": true,
       "independent_model_assessment_verified": true,
-      "native_share_delivery_verified": false
+      "native_share_delivery_verified": true
     }
   }
 }
