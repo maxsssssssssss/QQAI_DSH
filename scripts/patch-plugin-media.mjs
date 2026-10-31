@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { QQ_DELIVERY_PATCHES } from './qq-delivery-patch-spec.mjs'
 import { MEMORY_LIMIT_PATCHES } from './memory-limits-patch-spec.mjs'
+import { PROACTIVE_LIMIT_PATCHES } from './proactive-limits-patch-spec.mjs'
 
 const sha256 = (text) => createHash('sha256').update(text).digest('hex')
 // Preserve the previously deployed GIF-only hash as an explicit migration stage.
@@ -199,6 +200,7 @@ export const PATCHES = [
     stages: [MEMORY_CONSOLIDATION_PATCH, MEMORY_LIMIT_PATCHES[1]],
   },
   QQ_DELIVERY_PATCHES[1],
+  ...PROACTIVE_LIMIT_PATCHES,
 ]
 
 export function patchedSource(raw, spec) {

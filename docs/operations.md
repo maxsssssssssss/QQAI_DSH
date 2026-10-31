@@ -21,7 +21,7 @@
 | 网关容器 | qqai-dsh-snowluma |
 | 备份 | /var/backups/qqai-dsh，root私有 |
 
-systemd 使用 LoadCredential 把 Key 传入运行进程。配置、启动参数、Git和公开证据不含Key。`bootstrap-host.sh` 安装依赖；`install-dsh-profile.sh` 为新部署初始化profile；两者不是在线更新命令。尤其不要在运行中的陪伴系统上重跑初始化器，因为它会重新关闭发送、重置初始选项。升级应先备份、停服务、审核版本及六个文件的hash补丁，再安装锁定依赖并恢复同项目私有配置。当前文件清单、最终hash和Hub已审核中间版本迁移规则见[兼容性记录](plugin-compatibility-audit.md)；须同时保留安装器及其依赖 `scripts/qq-delivery-patch-spec.mjs`。
+systemd 使用 LoadCredential 把 Key 传入运行进程。配置、启动参数、Git和公开证据不含Key。`bootstrap-host.sh` 安装依赖；`install-dsh-profile.sh` 为新部署初始化profile；两者不是在线更新命令。尤其不要在运行中的陪伴系统上重跑初始化器，因为它会重新关闭发送、重置初始选项。升级应先备份、停服务、审核版本及七个文件的hash补丁，再安装锁定依赖并恢复同项目私有配置。当前文件清单、最终hash和Hub已审核中间版本迁移规则见[兼容性记录](plugin-compatibility-audit.md)；须同时保留安装器及其依赖 `scripts/qq-delivery-patch-spec.mjs`。
 
 ## 管理与健康检查
 
@@ -98,20 +98,20 @@ AUTOLOAD只自动注入，不代替QQ登录；若QQ要求快速登录、扫码�
 | 字段 | 当前值 |
 |---|---|
 | speakUp.enabled | true |
-| maxPerDay | 20，普通主动调度触发次数，不是气泡数或成功送达数 |
-| minIntervalMinutes / maxIntervalMinutes | 30 / 60 |
+| maxPerDay | 30，普通主动调度触发次数，不是气泡数或成功送达数 |
+| minIntervalMinutes / maxIntervalMinutes | 40 / 80 |
 | idleMinutes | 40 |
 | awakeFrom / awakeTo | 8 / 23，即北京时间08:00至23:00前 |
-| nudge | true，17:45按用户新指示开启；独立于普通20次额度 |
+| nudge | true，17:45按用户新指示开启；独立于普通30次额度 |
 | purpose模块 | false，不并行启用第二套主动引擎 |
 
 仅修改以上指定字段，其余业务配置核对未变。服务进程与主机时区均为Asia/Shanghai。原生调度状态新建时count=0，nextAt为2026-10-31 16:23:25.757（北京时间）；没有清零已有当日次数。该时间是当时保存的排期快照，不承诺届时实际发出消息，后续排期以运行状态为准。
 
-原生调度每分钟检查，受活动窗口、闲置时间、静音和模型沉默影响，20次是普通调度上限。QQ现已由用户普通登录，16:24左右完成一次原生主动模型决策与QQ小黑盒分享，用户确认收到；计数0→1，下一次17:16:34，间隔52.58分钟。新增小黑盒阅读只给已有主动回合提供可选素材，不再增加发信器。以后维护应保留当天day/count，检查nextAt而非盲目重置；重启会清空进程内最近私聊时间，因此40分钟闲置条件跨进程重启的连续性仍需单独处理与验证。
+原生调度每分钟检查，受活动窗口、闲置时间、静音和模型沉默影响，30次是普通调度上限。QQ现已由用户普通登录，16:24左右完成一次原生主动模型决策与QQ小黑盒分享，用户确认收到；计数0→1，下一次17:16:34，间隔52.58分钟。新增小黑盒阅读只给已有主动回合提供可选素材，不再增加发信器。以后维护应保留当天day/count，检查nextAt而非盲目重置；重启会清空进程内最近私聊时间，因此40分钟闲置条件跨进程重启的连续性仍需单独处理与验证。
 
 ## 专用提醒运行与维护
 
-`qqai-reminders` 已部署启用，支持主人私聊中创建、查看和取消一次性、每天或每周提醒。时间统一按北京时间；明确指定的夜间提醒也会执行。调度每5秒检查，到点使用真实QQ纯文字发送，一条提醒对应一条气泡，正文不会当作命令或媒体标记执行，到点不额外调用DeepSeek，也不会因未回复继续催促。该模块不修改原生 `speakUp` 的20次额度、排期或小黑盒分享设置。[完整提醒说明](reminders.md)
+`qqai-reminders` 已部署启用，支持主人私聊中创建、查看和取消一次性、每天或每周提醒。时间统一按北京时间；明确指定的夜间提醒也会执行。调度每5秒检查，到点使用真实QQ纯文字发送，一条提醒对应一条气泡，正文不会当作命令或媒体标记执行，到点不额外调用DeepSeek，也不会因未回复继续催促。该模块不修改原生 `speakUp` 的30次额度、排期或小黑盒分享设置。[完整提醒说明](reminders.md)
 
 38项合成边界回归已通过，其中引擎与模块各19项。真实Flash/off任务操作、受控DSH重启及QQ定时出站测试也已分别通过，用户确认收到唯一的测试提醒；[脱敏证据](evidence/20261031-reminders.json)记录各层结果。主人从QQ自然语言创建、查询、取消的完整交互复测因暂不方便而延后。运维受控合成输入不算真实QQ入站消息，不能据此宣称该项交互已经验收。
 
@@ -148,7 +148,7 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 
 `stickers.faces=true` 开启QQ系统小黄脸；不需要开启原生图片贴纸库。模型可用 `<face:捂脸>` 等格式，发送前转换为OneBot `face` 段；已从真实SnowLuma读取到330个数字编号表情，未知名称会剔除。Nekowhale原有GIF/图片功能继续保留。
 
-`speakUp.nudge=true` 开启原生未回复追问。每分钟在08:00–23:00活动窗口检查；机器人最近一次私聊是问句且晚于主人最后回复，经过15至40分钟时，该问题最多尝试一次，50%概率进入模型决策，模型仍可沉默。追问不消耗普通主动的20次计数，也不改其nextAt；追问产生的新问句仍可能再次成为目标，因此不能承诺主人持续不回时总共只追问一次。DSH重启会清空进程内最近问句，重启前的问题不会继续等待追问。purpose仍关闭。
+`speakUp.nudge=true` 开启原生未回复追问。每分钟在08:00–23:00活动窗口检查；机器人最近一次私聊是问句且晚于主人最后回复，经过15至40分钟时，该问题最多尝试一次，50%概率进入模型决策，模型仍可沉默。追问不消耗普通主动的30次计数，也不改其nextAt；追问产生的新问句仍可能再次成为目标，因此不能承诺主人持续不回时总共只追问一次。DSH重启会清空进程内最近问句，重启前的问题不会继续等待追问。purpose仍关闭。
 
 部署使用 `deployment/set-memory-and-chat-options.py`，固定版本与分阶段hash校验；只重启DSH，不重启QQ。14文件增量备份位于 `/var/lib/qqai-dsh/maintenance/20261031-memory-options/limits-k79uigg2/`，`before`与`isolated-restore`逐字节一致。覆盖配置、原生记忆、会话映射、聊天流水、主动/提醒/小黑盒/心情状态、profile和变更代码；不替代完整三卷备份。失败时安装器自动恢复被修改的代码与配置、重新启动DSH，不把旧记忆和任务状态覆盖回生产。
 
@@ -164,3 +164,16 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 生效检查可读取受保护的本机 `/aurabot/api/ext/qqai-compat/persona-state`，只返回文本hash与长度等元数据；真实模型验证见 `docs/evidence/20261031-persona-xiaojing.json`。当前源文件含末尾换行，其文件hash与去首尾空白后的运行文本hash不同，这是预期格式差异。
 
 本次备份目录 `/var/lib/qqai-dsh/maintenance/20261031-persona/persona-bn_xbes5/`。恢复只从备份配置提取旧 `ext.qqai-compat.botName` 与 `personaText`（不存在则空字符串），通过原生保存接口写回，并按原属主权限恢复 `adapter.before.mjs`、重载该模块。不能将整份旧配置、记忆、sessions或speakup覆盖回生产。部署脚本失败时执行同样的定向回滚。角色里提到编码能力不授予Shell/宿主文件权限，现有工具边界保持。
+
+
+## 2026-11-01：普通主动30次、随机40–80分钟
+
+用户授权仅调整 `maxPerDay=30`、`minIntervalMinutes=40`、`maxIntervalMinutes=80`；闲置40、活动时间08:00–23:00、nudge=true、purpose=false保持。闲置从双方最近一条私聊起算，包括机器人回复和主动消息；聊天不重新抽取nextAt。追问仍使用独立15–40分钟窗口，不计入普通30次。
+
+固定Aurabot的后端原把maxPerDay限制为20；新增 `scripts/proactive-limits-patch-spec.mjs` 将该唯一校验改为30。原界面数字输入无20上限，不改前端。中央补丁安装器及ExecStartPre现校验7个文件；部署/恢复须保留所有四个脚本：`patch-plugin-media.mjs`、`qq-delivery-patch-spec.mjs`、`memory-limits-patch-spec.mjs`、`proactive-limits-patch-spec.mjs`。其他6个文件最终hash未变。
+
+维护命令由本次暂存仓库运行 `deployment/update-native-proactive.py --record-dir /var/lib/qqai-dsh/maintenance/20261031-proactive-30`。脚本先确认当前QQ回合空闲，停DSH但不重启网关，备份14文件并在独立目录验证，再更新固定源码和三个配置字段。pnpm公开源码可为硬链接，备份只读，原子替换会解除本安装文件与共享inode的关联；私有状态仍要求普通单链接文件。
+
+唯一主动状态写入为停机期间 `nextAt=0`，day/count/last/nudgedFor保持，重启后由原生分钟tick按新间隔重排。此次恰跨北京时间午夜：旧日6次由原生日切变为新日0次，不是脚本重置。观察到新排期2026-11-01 00:47:30，处于新40–80分钟范围；夜间门槛仍阻止发信，08:00后才按条件考虑普通主动。
+
+备份 `/var/lib/qqai-dsh/maintenance/20261031-proactive-30/proactive-noqon_79/`，清单 `manifest.private.json` 和 `before/`、`isolated-restore/` 逐字节验证。回滚只恢复清单中变更的配置源码、启动校验脚本、原生三个字段；主动状态只让nextAt失效，保留当前day/count等字段；不恢复旧聊天、记忆、reader或reminders状态。失败由脚本执行上述回滚后恢复DSH。14项Node合成测试、6项原状态保留回归及硬链接隔离替换验证通过；已验证实际运行配置/原生排期/QQ重连，未强制模型或QQ消息测试。[分层证据](evidence/20261101-proactive-30.json)

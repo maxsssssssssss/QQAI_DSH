@@ -167,3 +167,10 @@ AURABOT_SOURCE_ROOT=/ABSOLUTE/AURABOT node tests/memory-consolidation.test.mjs
 ```
 
 未设置来源变量的用例会明确 skip；不能把 skip 当作通过。此次记录使用实际受审计源码路径运行，未跳过任何项。
+
+
+## 2026-11-01 原生普通主动上限适配
+
+新增第7个固定hash目标 `src/core/config.js`：仅将 `c.speakUp.maxPerDay = num(c.speakUp.maxPerDay, 3, 0, 20)` 的上限改为30；默认值和其他校验不变。原hash `1f6125e7be6f718d3c705d27479487b435b0dcdb36ec2eb74f40b30d784e8deb`，最终hash `0309e40efa56a99a4a381f8055be08af564ce0895b3d845f192f3dce11b23873`。前端 `f.num('speakUp.maxPerDay', { min: 0 })` 已支持30，无需前端改动。
+
+该补丁已纳入 `scripts/patch-plugin-media.mjs` 的安装/幂等/拒绝漂移/启动校验；其余6目标hash保持此前版本锁。实际normalize、面板merge及JSON往返验证保存30不再压回20；原生调度29→30后封顶、40–80排期、双方闲置40、夜间与追问独立规则均回归通过。实际部署和原生排期观察见 `docs/evidence/20261101-proactive-30.json`，不升级插件或替换原生主动引擎。

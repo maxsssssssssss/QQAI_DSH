@@ -157,3 +157,12 @@
 - 部署脚本 `deployment/set-whale-persona.py` 先对6个文件备份并验证隔离副本，再通过原生保存接口更新两个人格字段，原子更新适配模块并热加载。备份 `/var/lib/qqai-dsh/maintenance/20261031-persona/persona-bn_xbes5/`，包含旧模块、配置、memories、sessions、speakup、reader状态；不替代完整备份。除指定字段外配置不变，4个运行状态文件部署前后逐字节一致，DSH invocation和QQ容器启动时间未变，QQ在线且身份匹配。
 - 生效人格SHA256为 `f23e657fd0ed0bf11fbbb2e999c8c49a9441f6487dffbe517b77875e8de510f2`。Aurabot动态变量每轮使用同一persona filter，因此已有会话下轮即可取新文本，无需新建会话或清历史。
 - 13项本地回归无跳过通过；临时探针读取实际人格filter结果，与用户文本比对，再使用该文本调用一次真实DeepSeek Flash/off。546输入+71输出tokens，正确使用“小鲸”“主人”和“本小姐”。探针已卸载，配置/记忆不变，无QQ测试消息或会话写入。探针记录 `/var/lib/qqai-dsh/maintenance/20261031-persona/probe-esvi7j1d/`；本次未声称自然QQ收件/主观口吻已验收。
+
+
+## 2026-11-01 00:01：普通主动30次、随机40–80分钟
+
+- 用户明确授权上限30、随机40–80、闲置40，其他不变。只调整三个原生字段及后端上限20→30的精确hash补丁；前端已支持填写30，无需改动。启动校验覆盖7个唯一文件，其他6文件hash及所有组件版本保持。
+- 首次维护因未改动的pnpm配置源码有3个硬链接，触发通用私有文件的单链接检查；在写入业务配置前中止并恢复DSH。修正为仅允许只读备份固定公开源码的硬链接，仍以原子替换解除共享关联，合成硬链接测试确认共享原件不受影响；私有状态校验保持。另加固满页无turn边界时不宣称会话空闲的停机检查。
+- 最终14文件私有备份及隔离恢复通过，位置 `/var/lib/qqai-dsh/maintenance/20261031-proactive-30/proactive-noqon_79/`。只重启DSH，QQ网关启动时间不变，Aurabot自动重连且身份核对通过。聊天流水、memories、sessions、mood、recent-media、Heybox及reminder状态逐字节一致；小鲸人格、Flash/off、未回复追问等其他设置核对未变。
+- 安装器只写 `nextAt=0`；原生分钟tick自行生成40–80分钟范围排期，观察值00:47:30。维护恰跨北京时间午夜，原生日切将10月31日count6变为11月1日count0；没有手工清零day/count，last/nudgedFor等保留。活动窗口08:00–23:00仍生效，夜间排期不代表夜间发信。
+- 14项Node回归、6项状态保留回归和硬链接原子替换检查通过。实际运行30/40/80、原生排期及QQ重连均验证；没有人为触发模型、提前发QQ消息或声称新频率的长期收件验收。证据 `docs/evidence/20261101-proactive-30.json`。

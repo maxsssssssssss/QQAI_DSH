@@ -1,0 +1,93 @@
+{
+  "deployment": {
+    "ok": true,
+    "operation": "native-proactive-30-per-day-40-80-minutes",
+    "gatewayRestarted": false,
+    "testMessageRequested": false,
+    "memoryWritten": false,
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261031-proactive-30/proactive-noqon_79",
+    "onlyScheduleFieldWritten": "nextAt=0",
+    "nativeSchedule": {
+      "oldDay": "Sat Oct 31 2026",
+      "oldCount": 6,
+      "day": "Sun Nov 01 2026",
+      "count": 0,
+      "nativeDayRollover": true,
+      "countResetByInstaller": false,
+      "nextAt": 1793465250631.131,
+      "intervalRangeVerifiedMinutes": [
+        40,
+        80
+      ],
+      "nativeTimerObserved": true,
+      "atBeijing": "2026-11-01T00:47:30.631131+08:00"
+    },
+    "at": "2026-11-01T00:01:16.974200+08:00",
+    "targets": {
+      "speakUp": {
+        "maxPerDay": 30,
+        "minIntervalMinutes": 40,
+        "maxIntervalMinutes": 80
+      }
+    },
+    "isolatedRestoreVerified": true,
+    "backupFiles": 14,
+    "dshRestarted": true,
+    "qqReconnected": true,
+    "botIdentityMatches": true,
+    "gatewayProcessUnchanged": true,
+    "unrelatedConfigurationUnchanged": true,
+    "byteIdenticalState": {
+      "chatlog/2026-10-31.jsonl": true,
+      "memories.json": true,
+      "modules-data/qqai-heybox-reader/reader-state.json": true,
+      "modules-data/qqai-reminders/reminders.json": true,
+      "mood.json": true,
+      "recent-media.json": true,
+      "sessions.json": true
+    },
+    "sourceSha256": {
+      "src/core/config.js": "0309e40efa56a99a4a381f8055be08af564ce0895b3d845f192f3dce11b23873"
+    }
+  },
+  "finalRuntime": {
+    "at": "2026-11-01T00:01:30.497317+08:00",
+    "speakUp": {
+      "enabled": true,
+      "maxPerDay": 30,
+      "minIntervalMinutes": 40,
+      "maxIntervalMinutes": 80,
+      "idleMinutes": 40,
+      "awakeFrom": 8,
+      "awakeTo": 23,
+      "nudge": true
+    },
+    "nativeState": {
+      "day": "Sun Nov 01 2026",
+      "count": 0,
+      "nextAt": 1793465250631.131,
+      "last": 1793457435466
+    },
+    "model": {
+      "model": "deepseek-flash",
+      "reasoningEffort": "off"
+    },
+    "personaSha256": "f23e657fd0ed0bf11fbbb2e999c8c49a9441f6487dffbe517b77875e8de510f2",
+    "heyboxArticlesPerRound": 5,
+    "qqConnected": true,
+    "timezone": "Asia/Shanghai"
+  },
+  "validation": {
+    "nodeTestsPassed": 14,
+    "nodeTestsFailed": 0,
+    "nodeTestsSkipped": 0,
+    "existingStatePreservationTestsPassed": 6,
+    "hardLinkAtomicReplacementVerified": true,
+    "realRuntimeConfigVerified": true,
+    "nativeMinuteTimerScheduleVerified": true,
+    "manualModelRequestPerformed": false,
+    "qqTestMessageSent": false,
+    "naturalDayRolloverObserved": true,
+    "longTermDeliveryAcceptanceClaimed": false
+  }
+}
