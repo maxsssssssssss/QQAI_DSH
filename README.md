@@ -16,6 +16,7 @@ DSH 已作为专用用户的 systemd 服务运行，仅监听 `127.0.0.1:3080`�
 
 ## 实施记录
 
+- [2026-10-31 详细现状、全部关键配置与可选功能报告](docs/status-report-20261031.md)
 - [部署日志](docs/deployment-log.md)
 - [SnowLuma 许可核对](docs/snowluma-license-review.md)
 - [DSH 运行核查](docs/dsh-runtime-audit.md)

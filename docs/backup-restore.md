@@ -64,7 +64,7 @@ sudo /私有/恢复脚本目录/restore.sh /私有/备份.tar \
 1. 使用保存源码中的 `deployment/bootstrap-host.sh` 安装核验过的 Node 24、Docker、字体和 DSH 宿主依赖。此脚本不启动 DSH/SnowLuma，但其 npm install 可能修改应用依赖锁：执行前将恢复出的 app/package.json 和 package-lock.json 保留到 root 0700 临时目录，执行后恢复这两个原始文件，再按下一步 npm ci；不要把 bootstrap 修改后的锁当作备份原锁。
 2. 用 Node 24 自带 npm，分别在 `/opt/qqai-dsh/app` 和 `/srv/qqai-dsh/home/.dsh/toolchain` 对已恢复的 package-lock.json 执行 `npm ci`；pnpm 工具链可加 `--ignore-scripts`。所有目录归属专用 dsh 用户或由 root 安装后给予所需读取权限。
 3. 使用恢复工具链的 pnpm，在 `/srv/qqai-dsh/home/.dsh/profiles/web` 执行 `install --frozen-lockfile --ignore-scripts`。不要运行 `configure-dsh-profile.mjs` 或完整 `install-dsh-profile.sh`，它们用于初始化，会重置运行偏好。
-4. 执行并验证本项目 `scripts/patch-plugin-media.mjs`，参数为该 profile 下 Aurabot 与 Nekowhale 的安装目录；服务 ExecStartPre 会再次校验四处固定 hash 补丁。
+4. 执行并验证本项目 `scripts/patch-plugin-media.mjs`，参数为该 profile 下 Aurabot 与 Nekowhale 的安装目录；服务 ExecStartPre 会再次校验六个文件的固定 hash 补丁。
 5. 核对 `/etc/qqai-dsh/deepseek-api-key` 为 root:root 0600；按保存的 service 安装/daemon-reload。先启动仅 loopback 的 DSH，保持发送关闭。分别验证三插件装载、人格来源、工具白名单、真实 DeepSeek 与记忆召回。
 6. 使用保存的官方镜像 digest 与同名三卷启动 SnowLuma，保持 EULA/设备验证流程，不自动跳过 QQ 平台验证。核对机器人身份、OneBot token、loopback 端口、只存在一个响应所有者。
 7. 完成实际 QQ 收发和数据召回回归后，才明确开启发送与原生主动功能；恢复不能用“进程起来了”代替验收。

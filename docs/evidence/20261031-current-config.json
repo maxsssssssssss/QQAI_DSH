@@ -1,0 +1,417 @@
+{
+  "at": "2026-10-31T13:55:37.302684+08:00",
+  "scope": "read-only configuration and process metadata; no model/QQ acceptance test",
+  "sourceCommit": "cacf473985a81cd5612270f6b467dafa61fffda2",
+  "aurabot": {
+    "enabled": true,
+    "dryRun": false,
+    "setupDone": true,
+    "ownerLevel": "full",
+    "longTasks": false,
+    "gateway": "onebot",
+    "safeMode": false,
+    "model": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash",
+      "reasoningEffort": "off",
+      "vision": "auto"
+    },
+    "merge": {
+      "enabled": true,
+      "waitSec": 2.5,
+      "maxSec": 8,
+      "groupWaitSec": 5,
+      "groupMaxSec": 15
+    },
+    "speakUp": {
+      "enabled": false,
+      "idleMinutes": 40,
+      "minIntervalMinutes": 60,
+      "maxIntervalMinutes": 180,
+      "maxPerDay": 4,
+      "nudge": true,
+      "awakeFrom": 8,
+      "awakeTo": 23
+    },
+    "memory": {
+      "enabled": true,
+      "recallCount": 6,
+      "dailyConsolidate": true,
+      "consolidateTimes": [
+        "04:00",
+        "16:00"
+      ]
+    },
+    "mood": {
+      "enabled": true,
+      "halfLifeHours": 3,
+      "judge": false
+    },
+    "files": {
+      "enabled": false,
+      "maxMB": 50
+    },
+    "voice": {
+      "enabled": false,
+      "asr": false,
+      "engine": "auto",
+      "voice": "zh-CN-XiaoyiNeural",
+      "rate": "+0%",
+      "pitch": "+0Hz",
+      "autoChance": 0,
+      "autoMaxChars": 80
+    },
+    "stickers": {
+      "enabled": false,
+      "faces": false,
+      "autoChance": 0,
+      "collect": false,
+      "collectMode": "auto",
+      "fromGroups": false,
+      "fromPrivate": false,
+      "maxPerHour": 20,
+      "maxLibrary": 300,
+      "caption": false
+    },
+    "diary": {
+      "enabled": false,
+      "timesPerDay": 2,
+      "windowStart": "10:00",
+      "windowEnd": "23:30",
+      "minGapMinutes": 180,
+      "attachImage": true,
+      "minChars": 60,
+      "maxChars": 140,
+      "visibility": "all"
+    },
+    "qzoneSocial": {
+      "enabled": false,
+      "replyOwn": false,
+      "commentFriends": false,
+      "friendChance": 0,
+      "ownerChance": 0,
+      "like": false,
+      "maxPerDay": 8,
+      "intervalMin": 30
+    },
+    "bili": {
+      "enabled": false,
+      "autoBrowse": false,
+      "intervalHours": 4,
+      "maxRunsPerDay": 3,
+      "perRun": 3,
+      "comment": false,
+      "reply": false,
+      "shareToOwner": false,
+      "like": false,
+      "vision": false
+    },
+    "douyin": {
+      "enabled": false,
+      "autoBrowse": false,
+      "intervalHours": 4,
+      "maxRunsPerDay": 3,
+      "perRun": 5,
+      "ownerDm": false,
+      "shareTo": "douyin"
+    },
+    "heybox": {
+      "enabled": false,
+      "autoBrowse": false,
+      "intervalHours": 4,
+      "maxRunsPerDay": 6,
+      "perRun": 3,
+      "likeDaily": 0,
+      "commentDaily": 0,
+      "maxPostsPerDay": 0
+    },
+    "imageGen": {
+      "enabled": false,
+      "provider": "openai",
+      "size": "1024x1024",
+      "ownerOnly": true,
+      "seeOwn": true
+    },
+    "song": {
+      "enabled": false,
+      "ownerOnly": true,
+      "maxVoiceSec": 120
+    },
+    "local": {
+      "tts": false,
+      "image": false,
+      "song": false,
+      "asr": false
+    },
+    "bridge": {
+      "dshTools": false,
+      "http": false,
+      "allowTargets": "owner"
+    },
+    "snowluma": {
+      "autoStart": false,
+      "autoAttach": false,
+      "httpUrl": "http://127.0.0.1:3000",
+      "wsUrl": "ws://127.0.0.1:3001",
+      "webuiPort": 5099
+    },
+    "security": {
+      "dangerConfirm": false
+    },
+    "identities": {
+      "ownerConfigured": true,
+      "botConfigured": true,
+      "values": "redacted"
+    },
+    "allow": {
+      "private": 0,
+      "groups": 0
+    },
+    "chatModels": {
+      "privateDefault": {
+        "provider": "",
+        "model": "",
+        "reasoningEffort": ""
+      },
+      "groupDefault": {
+        "provider": "",
+        "model": "",
+        "reasoningEffort": ""
+      },
+      "privateOverrideCount": 0,
+      "groupOverrideCount": 0
+    },
+    "profilePerms": {
+      "qqNickname": "off",
+      "qqSignature": "off",
+      "qqAvatar": "off",
+      "biliSign": "off",
+      "biliAvatar": "off",
+      "qqFriendRequest": "off",
+      "whitelist": "off",
+      "douyinBrowse": "off",
+      "douyinLike": "off",
+      "douyinComment": "off",
+      "douyinShareOwner": "off",
+      "douyinDm": "owner",
+      "heyboxBrowse": "off",
+      "heyboxLike": "off",
+      "heyboxComment": "off",
+      "heyboxPost": "off"
+    },
+    "modules": {
+      "memory": {
+        "enabled": true,
+        "useBuiltin": false
+      },
+      "mood": {
+        "enabled": true,
+        "useBuiltin": false
+      },
+      "speakup": {
+        "enabled": true,
+        "useBuiltin": false
+      },
+      "qq-tools": {
+        "enabled": true,
+        "useBuiltin": false
+      },
+      "qqai-compat": {
+        "enabled": true,
+        "useBuiltin": false
+      },
+      "stickers": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "voice": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "group-admin": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "imagegen": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "diary": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "qzone-social": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "purpose": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "pet": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "bili": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "song": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "profile": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "contacts": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "douyin": {
+        "enabled": false,
+        "useBuiltin": false
+      },
+      "heybox": {
+        "enabled": false,
+        "useBuiltin": false
+      }
+    },
+    "group": {
+      "interjectChance": 0.15,
+      "quietHours": [
+        1,
+        8
+      ],
+      "cooldownSec": 90,
+      "maxPerHour": 6,
+      "minRecentMessages": 3,
+      "activeWindowSec": 300,
+      "minRelevance": 0.25,
+      "burstMax": 8,
+      "burstWindowSec": 120,
+      "ownerBriefEnabled": false
+    },
+    "customPersona": {
+      "botName": "大肥鱼",
+      "ownerName": "主人"
+    }
+  },
+  "profile": {
+    "llm-deepseek": {
+      "apiKeyEnv": "DEEPSEEK_API_KEY",
+      "baseURL": "https://api.deepseek.com/anthropic",
+      "thinking": "disabled",
+      "reasoningEffort": "off"
+    },
+    "agent-default-model": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash"
+    },
+    "session-log-deepseek": {
+      "enabled": false
+    },
+    "nekowhale-stickers": {
+      "dataDir": "/srv/qqai-dsh/home/.dsh/nekowhale-stickers",
+      "autoSync": "lazy",
+      "promptMode": "off",
+      "pet": false,
+      "petBubbles": false,
+      "petBalance": false,
+      "templates": true,
+      "agentCuration": true,
+      "returnImageToModel": false,
+      "publicBaseUrl": "http://127.0.0.1:3080",
+      "routePath": "/x-nekowhale-stickers"
+    }
+  },
+  "status": {
+    "onebotState": "connected",
+    "botIdentityMatches": true,
+    "service": {
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled",
+      "ActiveEnterTimestamp": "Sat 2026-10-31 13:46:43 CST",
+      "Restart": "on-failure",
+      "NRestarts": "0",
+      "MemoryCurrent": "267059200",
+      "User": "dsh",
+      "Group": "dsh"
+    },
+    "snowluma": {
+      "status": "running",
+      "startedAt": "2026-10-31T01:37:21.173374684Z",
+      "restartCount": 0,
+      "restartPolicy": "unless-stopped",
+      "hookAutoload": "0",
+      "ports": {
+        "3000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "3000"
+          }
+        ],
+        "3001/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "3001"
+          }
+        ],
+        "5099/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "5099"
+          }
+        ],
+        "5900/tcp": null,
+        "6081/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "6081"
+          }
+        ]
+      },
+      "shmBytes": 1073741824,
+      "privileged": false,
+      "capAdd": [
+        "CAP_SYS_PTRACE"
+      ],
+      "securityOpt": [
+        "seccomp=unconfined"
+      ],
+      "logConfig": {
+        "Type": "local",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      },
+      "volumes": [
+        {
+          "name": "qqai-dsh-qq-data",
+          "target": "/app/.local/share"
+        },
+        {
+          "name": "qqai-dsh-snowluma-data",
+          "target": "/app/data"
+        },
+        {
+          "name": "qqai-dsh-qq-config",
+          "target": "/app/.config"
+        }
+      ]
+    }
+  },
+  "backupArchives": [
+    {
+      "name": "qqai-dsh-20261031T013718066498Z.tar",
+      "size": 26071040
+    }
+  ],
+  "notes": [
+    "Sanitized allowlist export; excludes credentials, identifiers, conversation content and private databases.",
+    "Disabled feature defaults are retained configuration, not active behavior.",
+    "Current checks are read-only metadata, not functional acceptance."
+  ]
+}
