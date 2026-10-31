@@ -20,3 +20,5 @@ node_modules/
 __pycache__/
 .DS_Store
 
+# User-supplied local login credentials (including Notepad double extensions).
+/QQAI_HEYBOX_COOKIE*.txt

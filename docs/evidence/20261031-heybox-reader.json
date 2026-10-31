@@ -1,0 +1,161 @@
+{
+  "realReadProbe": {
+    "at": "2026-10-31T08:00:30.209Z",
+    "scope": "real read-only Heybox API; no model or QQ send",
+    "ok": true,
+    "accountStatusOk": true,
+    "accountResultNonempty": true,
+    "feedCount": 10,
+    "actualArticlesRead": 1,
+    "articleBodyLengths": [
+      83
+    ],
+    "stage": "detail"
+  },
+  "independentModelProbe": {
+    "at": "2026-10-31T08:02:27.144Z",
+    "scope": "real DeepSeek article assessment only; not a DSH/native scheduling/QQ receipt test",
+    "ok": true,
+    "model": "deepseek-flash",
+    "thinking": "disabled",
+    "toolsProvided": false,
+    "qqSendRequested": false,
+    "httpStatus": 200,
+    "modelReturned": "deepseek-flash",
+    "usage": {
+      "prompt_tokens": 664,
+      "completion_tokens": 98,
+      "total_tokens": 762,
+      "prompt_tokens_details": {
+        "cached_tokens": 256
+      },
+      "prompt_cache_hit_tokens": 256,
+      "prompt_cache_miss_tokens": 408
+    },
+    "choseToShare": true,
+    "replyChars": 99,
+    "selectedSourceValid": true,
+    "reasoningContentAbsent": true
+  },
+  "initialDeployment": {
+    "operation": "install-readonly-heybox-reader",
+    "ok": true,
+    "serviceRestarted": false,
+    "manualModelOrQqSendRequested": false,
+    "nativeScheduleEdited": false,
+    "enabled": true,
+    "otherConfigUnchanged": true,
+    "moduleLoaded": true,
+    "credentialImported": true,
+    "moduleSha256": "50e6965235f5837de63e998fd018f68cb9ebfc1d9160ca4e36fb41ddd8332155"
+  },
+  "identityFix": {
+    "ok": true,
+    "change": "verify QQ identity through get_login_info, independent of incoming messages",
+    "moduleSha256": "9bc32440d5bb437b025fd53d32acb0dd2d538a83b7cedd636c02a4f3a1d5a1da",
+    "configurationRestoredExactly": true,
+    "servicesRestarted": false,
+    "manualBrowseOrModelOrSend": false,
+    "readerEnabled": true,
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261031-heybox/identity-fix-e13r6bdo"
+  },
+  "statePersistence": {
+    "mode": "0600",
+    "ownedByDedicatedUser": true,
+    "jsonValid": true,
+    "isolatedCopyMatches": true,
+    "readIds": 3,
+    "offeredIds": 0,
+    "queuedArticles": 3,
+    "noLiveDataOverwritten": true
+  },
+  "moduleSha256": "9bc32440d5bb437b025fd53d32acb0dd2d538a83b7cedd636c02a4f3a1d5a1da",
+  "recordedAt": "2026-10-31T16:12:23.831832+08:00",
+  "scope": "read-only Heybox integration; no external platform writes; native sharing pending",
+  "runtime": {
+    "at": "2026-10-31T16:09:09.710003+08:00",
+    "onebotState": "connected",
+    "botIdentityMatches": true,
+    "reader": {
+      "ok": true,
+      "enabled": true,
+      "blocked": "",
+      "lastError": "",
+      "day": "2026-10-31",
+      "roundsToday": 1,
+      "nextBrowseAt": 1793448489166,
+      "lastBrowseAt": 1793434089166,
+      "lastOfferAt": 0,
+      "lastConfirmedAt": 0,
+      "queued": 3,
+      "readCount": 3,
+      "offeredCount": 0,
+      "confirmedCount": 0,
+      "confirmedSharesToday": 0,
+      "confirmedSharesTotal": 0,
+      "inFlight": false,
+      "disposed": false,
+      "identityVerified": true
+    },
+    "nativeSpeakUp": {
+      "enabled": true,
+      "idleMinutes": 40,
+      "minIntervalMinutes": 30,
+      "maxIntervalMinutes": 60,
+      "maxPerDay": 20,
+      "nudge": false,
+      "awakeFrom": 8,
+      "awakeTo": 23
+    },
+    "nativeState": {
+      "count": 0,
+      "nextAt": 1793435005757.4663,
+      "last": 0,
+      "nudgedFor": null
+    },
+    "purposeEnabled": false,
+    "builtinHeyboxEnabled": false,
+    "heyboxAutoBrowse": false,
+    "externalWritePermissions": {
+      "heyboxBrowse": "off",
+      "heyboxLike": "off",
+      "heyboxComment": "off",
+      "heyboxPost": "off"
+    },
+    "model": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash",
+      "reasoningEffort": "off",
+      "vision": "auto"
+    },
+    "module": [
+      {
+        "id": "qqai-heybox-reader",
+        "running": "user",
+        "enabled": true,
+        "hasError": false
+      }
+    ],
+    "qqCounters": {
+      "received": 0,
+      "sent": 0,
+      "errors": 0
+    }
+  },
+  "syntheticRegressions": {
+    "node": "24.22.2",
+    "tests": 22,
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "synthetic boundaries only; does not replace real API/model/QQ acceptance"
+  },
+  "acceptance": {
+    "realReadApi": true,
+    "independentRealModelAssessment": true,
+    "nativeScheduledRead": true,
+    "nativeQqShareObserved": false,
+    "recipientConfirmed": false,
+    "fullProjectAcceptance": false
+  }
+}

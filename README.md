@@ -4,13 +4,15 @@
 
 **当前状态：实施中，尚未部署完成或通过 QQ 验收。** 不继承旧 QQAI 代码、人格、记忆、数据库、Guard、多气泡或主动实现。工作区调研方案仅供参考，其中旧 V0.4、L1/L2 和旧资料迁移全部不执行。
 
-**最新运行状态（2026-10-31 15:33，北京时间）：原生主动配置和新排期已生效，但 QQ 当前停在登录页，OneBot 未连接。** 用户要求停止继续处理自动登录，转而完成主动频率调整。DSH仍运行；不能把当前状态描述为QQ在线。[本次维护证据](docs/evidence/20261031-recovery-proactive.json)。
+**最新运行状态（2026-10-31，北京时间）：用户已重新完成普通 QQ 登录，OneBot 连接及机器人身份核对通过；原生主动配置保持生效。** 无人值守自动登录仍未通过，未恢复网关重启排查。[此前维护证据](docs/evidence/20261031-recovery-proactive.json)。
 
 用户后来明确授权重新开展网关恢复和主动配置维护。已完成登录后的完整三卷备份、隔离恢复及离机校验，并应用ready Compose将 `HOOK_AUTOLOAD=1`：Linux QQ自动启动和自动注入已实证；QQ自身自动登录尚未通过。用户手动登录后，Aurabot曾在同一DSH进程内自动重连，观察窗口内历史和记忆保留且无重复回复；后续自动登录调查已按用户新指示停止。
 
 原生 `speakUp` 当前为：开启，普通主动每日最多20次触发、随机间隔30–60分钟、闲置40分钟、北京时间08:00–23:00、`nudge=false`；purpose关闭。未清零当天计数，原生定时器首次生成16:23:25的排期。此排期不等于真实模型主动回合或QQ送达已通过。
 
 此前实际中文多轮、多气泡、人格、图片与追问、动画GIF、中文表情、Search/Fetch和自然记忆提炼已经验证。[QQ证据](docs/evidence/20261031-qq-chat-media.json)。记忆纠错被用户跳过，新会话召回、主动真实送达及长期运行等仍未完成完整验收。
+
+新增只读小黑盒模块已启用；真实登录态、信息流及文章正文读取、独立 DeepSeek Flash / Thinking Off 文章判断通过。文章作为下一次原生主动回合的可选素材，不另开发信定时器；实际原生回合与 QQ 分享仍待验证。[接入说明](docs/heybox-reader.md)
 
 用户最终确认保留 **Ubuntu 26.04 LTS**（替代最初要求的24.04），已通过腾讯云控制台确认主机指纹，SSH 始终严格校验。实机已安装 Node 24.22.2、DSH 0.2.1-rc.5、Docker 29.1.3、Compose 2.40.3 和中文字体。[新仓库](https://github.com/maxsssssssssss/QQAI_DSH)写权限已验证。用户确认已取得 SnowLuma 权利人对本次自动部署的书面授权；本项目尚未查看授权文本，按用户确认继续官方部署。
 
@@ -25,6 +27,7 @@ DSH 已作为专用用户的 systemd 服务运行，仅监听 `127.0.0.1:3080`�
 - [三插件兼容适配](docs/plugin-compatibility-audit.md)
 - [备份与恢复](docs/backup-restore.md)
 - [运行、隧道与用户醒来后的步骤](docs/operations.md)
+- [小黑盒只读文章与 QQ 分享接入](docs/heybox-reader.md)
 - [测试证据与验收矩阵](docs/acceptance.md)
 - [真实 QQ 验收操作步骤](docs/qq-acceptance-procedure.md)
 - [初始版本锁](versions.lock.json)
