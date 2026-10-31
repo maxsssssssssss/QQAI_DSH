@@ -1,0 +1,7 @@
+{
+  "scope": "server restart and same-session persistence; not long-term memory or QQ",
+  "passed": true,
+  "sessionId": "qqai-synthetic-qqai-safe-9bc8fce1-65bc-4803-b290-d834fb3a30dd",
+  "terminal": "completed",
+  "syntheticReply": "根据本会话之前的记录：\n\n- 合成测试编号：**海盐-741**\n- 宠物颜色：**蓝色**（测试宠物是一条蓝色鲸鱼）\n\n注：以上信息来自本会话中你最初的说明，不是我的推测；由于服务已重启，我无法核对更早的会话外记录。"
+}

@@ -1,0 +1,194 @@
+{
+  "scope": "local DSH runtime and real API; no QQ connection",
+  "at": "2026-10-30T18:19:48.282Z",
+  "unauthenticatedStatus": 401,
+  "nativeOpen": false,
+  "plugins": [
+    {
+      "entryId": "include:directory-picker",
+      "moduleName": "@deepseek-ai/dsh-host-directory-picker-auto",
+      "enabled": false,
+      "fiberPhase": null
+    },
+    {
+      "entryId": "include:terminal-controller",
+      "moduleName": "@deepseek-ai/dsh-api-terminal-controller",
+      "enabled": false,
+      "fiberPhase": null
+    },
+    {
+      "entryId": "include:workspace-files",
+      "moduleName": "@deepseek-ai/dsh-api-workspace-files",
+      "enabled": false,
+      "fiberPhase": null
+    },
+    {
+      "entryId": "include:aurabot",
+      "moduleName": "dsh-aurabot-qq",
+      "enabled": true,
+      "fiberPhase": "active"
+    },
+    {
+      "entryId": "include:nekowhale-stickers",
+      "moduleName": "dsh-nekowhale-stickers",
+      "enabled": true,
+      "fiberPhase": "active"
+    },
+    {
+      "entryId": "include:qqai-whale-source",
+      "moduleName": "dsh-whale-musume-persona",
+      "enabled": true,
+      "fiberPhase": "active"
+    }
+  ],
+  "sessions": [
+    {
+      "preset": "qqai-safe",
+      "sessionId": "qqai-synthetic-qqai-safe-b10b5e40-f3ad-45ea-8584-cf9d976804c8",
+      "catalog": {
+        "sessionId": "qqai-synthetic-qqai-safe-b10b5e40-f3ad-45ea-8584-cf9d976804c8",
+        "tools": [
+          "sticker_search",
+          "sticker_send",
+          "meme_render",
+          "sticker_manage",
+          "web_search",
+          "web_fetch"
+        ],
+        "schemaSha256": "99797b397a06e66da3742f227cd5997bf3f20aa1d5966e51c74150fcd82e8ac1",
+        "personaReferencedByPrompt": false,
+        "personaSha256": "18a67873a8d0f2cb1a5829c567a6d22660dbb6cbbe92dc0c45777be1911698c2",
+        "personaHasWhaleIdentity": true,
+        "personaHasAiIdentity": true,
+        "personaHasDefaultName": true
+      },
+      "runtimeEvents": [
+        {
+          "type": "request-metadata",
+          "turn": 1,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "request-metadata",
+          "turn": 2,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        }
+      ]
+    },
+    {
+      "preset": "aurabot-private",
+      "sessionId": "qqai-synthetic-aurabot-private-718f8323-21b7-4ecc-9349-181e8de04541",
+      "catalog": {
+        "sessionId": "qqai-synthetic-aurabot-private-718f8323-21b7-4ecc-9349-181e8de04541",
+        "tools": [
+          "sticker_search",
+          "sticker_send",
+          "meme_render",
+          "sticker_manage",
+          "web_search",
+          "web_fetch"
+        ],
+        "schemaSha256": "99797b397a06e66da3742f227cd5997bf3f20aa1d5966e51c74150fcd82e8ac1",
+        "personaReferencedByPrompt": true,
+        "personaSha256": "18a67873a8d0f2cb1a5829c567a6d22660dbb6cbbe92dc0c45777be1911698c2",
+        "personaHasWhaleIdentity": true,
+        "personaHasAiIdentity": true,
+        "personaHasDefaultName": true
+      },
+      "runtimeEvents": []
+    },
+    {
+      "preset": "aurabot-private-long",
+      "sessionId": "qqai-synthetic-aurabot-private-long-9efc2f39-321c-4e81-88ef-059be29773f7",
+      "catalog": {
+        "sessionId": "qqai-synthetic-aurabot-private-long-9efc2f39-321c-4e81-88ef-059be29773f7",
+        "tools": [
+          "sticker_search",
+          "sticker_send",
+          "meme_render",
+          "sticker_manage",
+          "web_search",
+          "web_fetch"
+        ],
+        "schemaSha256": "99797b397a06e66da3742f227cd5997bf3f20aa1d5966e51c74150fcd82e8ac1",
+        "personaReferencedByPrompt": true,
+        "personaSha256": "18a67873a8d0f2cb1a5829c567a6d22660dbb6cbbe92dc0c45777be1911698c2",
+        "personaHasWhaleIdentity": true,
+        "personaHasAiIdentity": true,
+        "personaHasDefaultName": true
+      },
+      "runtimeEvents": []
+    },
+    {
+      "preset": "aurabot-social",
+      "sessionId": "qqai-synthetic-aurabot-social-1207bb67-389e-4cc3-b087-83f6522fc6c8",
+      "catalog": {
+        "sessionId": "qqai-synthetic-aurabot-social-1207bb67-389e-4cc3-b087-83f6522fc6c8",
+        "tools": [
+          "sticker_search",
+          "sticker_send",
+          "meme_render",
+          "sticker_manage"
+        ],
+        "schemaSha256": "99ed76e403de88494982779236a034aaa88cf0b612b0bae6ce6504bbb93f8d50",
+        "personaReferencedByPrompt": true,
+        "personaSha256": "18a67873a8d0f2cb1a5829c567a6d22660dbb6cbbe92dc0c45777be1911698c2",
+        "personaHasWhaleIdentity": true,
+        "personaHasAiIdentity": true,
+        "personaHasDefaultName": true
+      },
+      "runtimeEvents": []
+    }
+  ],
+  "realApi": [
+    {
+      "name": "image-pixels",
+      "preset": "qqai-safe",
+      "terminal": "completed",
+      "assistantText": "根据图片，仅凭目视判断：\n\n- **左侧**：红色圆形（实心红圆点）。\n- **右侧**：蓝色正方形（实心蓝方块）。\n- **图形总数**：2 个。\n\n背景为白色，画面中没有其他图形或文字。以上都是直接观察这张预览图得出的，没有借助其他工具或外部信息。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "system/message",
+        "user/message",
+        "request/header",
+        "request/context",
+        "session/title",
+        "session/title-llm-request",
+        "assistant/message",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "image-followup",
+      "preset": "qqai-safe",
+      "terminal": "completed",
+      "assistantText": "右侧是**蓝色正方形**（实心、直角方块），位于图片右半侧、与左侧红圆大致同一水平高度。\n\n（依据仍是刚才那张图；本次未重新调用工具核验。）",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "user/message",
+        "assistant/message",
+        "step/end",
+        "turn/end"
+      ]
+    }
+  ],
+  "sessionLogPolicy": "Additional session-log upload disabled; DSH_TELEMETRY_DISABLED=1; no delivery-accepted events in the two tested turns.",
+  "notVerified": [
+    "Actual QQ message delivery",
+    "Actual QQ animated playback",
+    "Long-term memory correction and new-session recall",
+    "Proactive schedule and no-reply behavior",
+    "Server reboot and long-running stability"
+  ]
+}

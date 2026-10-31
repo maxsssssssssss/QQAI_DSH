@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-31",
+  "scope": "Fresh isolated DSH profile installation from the captured server dependency locks; no service startup or API request",
+  "dshVersion": "0.2.1-rc.5",
+  "pnpmVersion": "11.28.5",
+  "lockedResolutionSkipped": true,
+  "lockSha256": "c9bb6a00074c883805a7fa4fff1a753847ed733e82c50a9d92792f4371462d74",
+  "lockUnchanged": true,
+  "profileManifestMatchesCapturedLock": true,
+  "officialWorkspaceInitialized": {
+    "nodeLinker": "hoisted",
+    "autoInstallPeers": false
+  },
+  "fourSourcePatchesApplied": true,
+  "configureAndDumpConfigSucceeded": true,
+  "nativeCanvasLoadedAndRenderedPng": true,
+  "qqSendingEnabled": false,
+  "dryRun": true,
+  "apiRequestsMade": 0
+}

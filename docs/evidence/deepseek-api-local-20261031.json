@@ -1,0 +1,168 @@
+{
+  "time": "2026-10-31T02:03:58.648927+08:00",
+  "category": "real-api-only",
+  "model_requested": "deepseek-flash",
+  "thinking_requested": "disabled",
+  "data": "synthetic-only",
+  "checks": [
+    {
+      "name": "chinese_reply",
+      "passed": true,
+      "detail": "好的，蓝鲸-60e545，我记住了。请继续测试。"
+    },
+    {
+      "name": "multi_turn_context",
+      "passed": true,
+      "detail": "蓝鲸-60e545"
+    },
+    {
+      "name": "real_function_roundtrip",
+      "passed": true,
+      "detail": "Executed hashlib.sha256 on model-provided arguments; checked final digest."
+    },
+    {
+      "name": "real_image_pixels",
+      "passed": true,
+      "detail": "红色 绿色 蓝色"
+    },
+    {
+      "name": "image_followup",
+      "passed": true,
+      "detail": "绿色"
+    },
+    {
+      "name": "real_search_endpoint",
+      "passed": true,
+      "detail": {
+        "result_count": 3,
+        "urls": [
+          "https://api-docs.deepseek.com/guides/vision/",
+          "https://api-docs.deepseek.com/zh-cn/news/news260821/#1",
+          "https://api-docs.deepseek.com/guides/vision"
+        ]
+      }
+    },
+    {
+      "name": "real_fetch_endpoint",
+      "passed": true,
+      "detail": {
+        "title": "Vision | DeepSeek API Docs",
+        "content_chars": 9405
+      }
+    }
+  ],
+  "requests": [
+    {
+      "endpoint": "/chat/completions",
+      "http_status": 200,
+      "seconds": 2.788,
+      "model_returned": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 32,
+        "completion_tokens": 16,
+        "total_tokens": 48,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 32
+      }
+    },
+    {
+      "endpoint": "/chat/completions",
+      "http_status": 200,
+      "seconds": 2.985,
+      "model_returned": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 63,
+        "completion_tokens": 6,
+        "total_tokens": 69,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 63
+      }
+    },
+    {
+      "endpoint": "/chat/completions",
+      "http_status": 200,
+      "seconds": 3.103,
+      "model_returned": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 321,
+        "completion_tokens": 53,
+        "total_tokens": 374,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 321
+      }
+    },
+    {
+      "endpoint": "/chat/completions",
+      "http_status": 200,
+      "seconds": 1.884,
+      "model_returned": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 158,
+        "completion_tokens": 37,
+        "total_tokens": 195,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 158
+      }
+    },
+    {
+      "endpoint": "/chat/completions",
+      "http_status": 200,
+      "seconds": 3.178,
+      "model_returned": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 226,
+        "completion_tokens": 5,
+        "total_tokens": 231,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 226
+      }
+    },
+    {
+      "endpoint": "/chat/completions",
+      "http_status": 200,
+      "seconds": 2.795,
+      "model_returned": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 248,
+        "completion_tokens": 1,
+        "total_tokens": 249,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 248
+      }
+    },
+    {
+      "endpoint": "/v1/tools/search",
+      "http_status": 200,
+      "seconds": 3.025,
+      "model_returned": null,
+      "usage": null
+    },
+    {
+      "endpoint": "/v1/tools/fetch",
+      "http_status": 200,
+      "seconds": 6.969,
+      "model_returned": null,
+      "usage": null
+    }
+  ],
+  "image_sha256": "734ad665b84d8b350fcef711f658de14c6e42ed95cca197e9638a0c6d50da7b2",
+  "status": "passed"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "dsh-profile-web",
+  "private": true,
+  "dependencies": {
+    "dsh-aurabot-qq": "github:accomplish07zrh-eng/dsh-aurabot-qq#e9026a99d9db58974363c416eaa9e555499737fa",
+    "dsh-nekowhale-stickers": "1.1.1",
+    "dsh-whale-musume-persona": "github:Kaalia0912/dsh-whale-musume-persona#0fbdcf217e3bf94e35fef36f7ac56134b704529b"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app",
+        "dsh-aurabot-qq",
+        "dsh-nekowhale-stickers"
+      ]
+    }
+  }
+}

@@ -1,0 +1,397 @@
+{
+  "scope": "local DSH runtime and real API; no QQ connection",
+  "at": "2026-10-30T18:16:51.704Z",
+  "unauthenticatedStatus": 401,
+  "nativeOpen": false,
+  "plugins": [
+    {
+      "entryId": "include:directory-picker",
+      "moduleName": "@deepseek-ai/dsh-host-directory-picker-auto",
+      "enabled": false,
+      "fiberPhase": null
+    },
+    {
+      "entryId": "include:terminal-controller",
+      "moduleName": "@deepseek-ai/dsh-api-terminal-controller",
+      "enabled": false,
+      "fiberPhase": null
+    },
+    {
+      "entryId": "include:workspace-files",
+      "moduleName": "@deepseek-ai/dsh-api-workspace-files",
+      "enabled": false,
+      "fiberPhase": null
+    },
+    {
+      "entryId": "include:aurabot",
+      "moduleName": "dsh-aurabot-qq",
+      "enabled": true,
+      "fiberPhase": "active"
+    },
+    {
+      "entryId": "include:nekowhale-stickers",
+      "moduleName": "dsh-nekowhale-stickers",
+      "enabled": true,
+      "fiberPhase": "active"
+    },
+    {
+      "entryId": "include:qqai-whale-source",
+      "moduleName": "dsh-whale-musume-persona",
+      "enabled": true,
+      "fiberPhase": "active"
+    }
+  ],
+  "sessions": [
+    {
+      "preset": "qqai-safe",
+      "sessionId": "qqai-synthetic-qqai-safe-8b1ff7cf-465f-439d-9742-5b7eac62b38b",
+      "catalog": {
+        "sessionId": "qqai-synthetic-qqai-safe-8b1ff7cf-465f-439d-9742-5b7eac62b38b",
+        "tools": [
+          "sticker_search",
+          "sticker_send",
+          "meme_render",
+          "sticker_manage",
+          "web_search",
+          "web_fetch"
+        ],
+        "schemaSha256": "99797b397a06e66da3742f227cd5997bf3f20aa1d5966e51c74150fcd82e8ac1",
+        "personaSha256": "18a67873a8d0f2cb1a5829c567a6d22660dbb6cbbe92dc0c45777be1911698c2",
+        "personaHasWhaleIdentity": true,
+        "personaHasAiIdentity": true,
+        "personaHasDefaultName": true
+      },
+      "runtimeEvents": [
+        {
+          "type": "request-metadata",
+          "turn": 1,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "request-metadata",
+          "turn": 2,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "request-metadata",
+          "turn": 3,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "tool-result-metadata",
+          "name": "web_search",
+          "isError": false
+        },
+        {
+          "type": "request-metadata",
+          "turn": 3,
+          "step": 2,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "tool-result-metadata",
+          "name": "web_fetch",
+          "isError": false
+        },
+        {
+          "type": "request-metadata",
+          "turn": 3,
+          "step": 3,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "tool-result-metadata",
+          "name": "web_fetch",
+          "isError": false
+        },
+        {
+          "type": "request-metadata",
+          "turn": 3,
+          "step": 4,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        }
+      ]
+    },
+    {
+      "preset": "aurabot-private",
+      "sessionId": "qqai-synthetic-aurabot-private-36d823c8-1cc5-4d1d-a43d-1b1dcc97a874",
+      "catalog": {
+        "sessionId": "qqai-synthetic-aurabot-private-36d823c8-1cc5-4d1d-a43d-1b1dcc97a874",
+        "tools": [
+          "sticker_search",
+          "sticker_send",
+          "meme_render",
+          "sticker_manage",
+          "web_search",
+          "web_fetch"
+        ],
+        "schemaSha256": "99797b397a06e66da3742f227cd5997bf3f20aa1d5966e51c74150fcd82e8ac1",
+        "personaSha256": "18a67873a8d0f2cb1a5829c567a6d22660dbb6cbbe92dc0c45777be1911698c2",
+        "personaHasWhaleIdentity": true,
+        "personaHasAiIdentity": true,
+        "personaHasDefaultName": true
+      },
+      "runtimeEvents": [
+        {
+          "type": "request-metadata",
+          "turn": 1,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "request-metadata",
+          "turn": 2,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "tool-result-metadata",
+          "name": "sticker_search",
+          "isError": false
+        },
+        {
+          "type": "request-metadata",
+          "turn": 2,
+          "step": 2,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "tool-result-metadata",
+          "name": "sticker_send",
+          "isError": false
+        },
+        {
+          "type": "request-metadata",
+          "turn": 2,
+          "step": 3,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "request-metadata",
+          "turn": 3,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "tool-result-metadata",
+          "name": "meme_render",
+          "isError": false
+        },
+        {
+          "type": "request-metadata",
+          "turn": 3,
+          "step": 2,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        }
+      ]
+    },
+    {
+      "preset": "aurabot-private-long",
+      "sessionId": "qqai-synthetic-aurabot-private-long-7983afca-3335-476c-b4c9-8ae3d19a64dc",
+      "catalog": {
+        "sessionId": "qqai-synthetic-aurabot-private-long-7983afca-3335-476c-b4c9-8ae3d19a64dc",
+        "tools": [
+          "sticker_search",
+          "sticker_send",
+          "meme_render",
+          "sticker_manage",
+          "web_search",
+          "web_fetch"
+        ],
+        "schemaSha256": "99797b397a06e66da3742f227cd5997bf3f20aa1d5966e51c74150fcd82e8ac1",
+        "personaSha256": "18a67873a8d0f2cb1a5829c567a6d22660dbb6cbbe92dc0c45777be1911698c2",
+        "personaHasWhaleIdentity": true,
+        "personaHasAiIdentity": true,
+        "personaHasDefaultName": true
+      }
+    },
+    {
+      "preset": "aurabot-social",
+      "sessionId": "qqai-synthetic-aurabot-social-42ee5150-83a7-4dc8-8f1b-ff4e7473cb37",
+      "catalog": {
+        "sessionId": "qqai-synthetic-aurabot-social-42ee5150-83a7-4dc8-8f1b-ff4e7473cb37",
+        "tools": [
+          "sticker_search",
+          "sticker_send",
+          "meme_render",
+          "sticker_manage"
+        ],
+        "schemaSha256": "99ed76e403de88494982779236a034aaa88cf0b612b0bae6ce6504bbb93f8d50",
+        "personaSha256": "18a67873a8d0f2cb1a5829c567a6d22660dbb6cbbe92dc0c45777be1911698c2",
+        "personaHasWhaleIdentity": true,
+        "personaHasAiIdentity": true,
+        "personaHasDefaultName": true
+      }
+    }
+  ],
+  "realApi": [
+    {
+      "name": "chinese-context",
+      "preset": "qqai-safe",
+      "terminal": "completed",
+      "assistantText": "已确认这是合成验收场景（不是真实个人资料），您的测试编号是海盐-741。同时确认测试宠物为一条蓝色鲸鱼，后续我会以此编号和宠物信息为准。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "system/message",
+        "user/message",
+        "request/header",
+        "request/context",
+        "session/title",
+        "session/title-llm-request",
+        "session-log-deepseek/delivery-accepted",
+        "assistant/message",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "followup-context",
+      "preset": "qqai-safe",
+      "terminal": "completed",
+      "assistantText": "根据本会话记录：测试编号是**海盐-741**，测试宠物是一条**蓝色鲸鱼**。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "user/message",
+        "session-log-deepseek/delivery-accepted",
+        "assistant/message",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "whale-persona",
+      "preset": "aurabot-private",
+      "terminal": "completed",
+      "assistantText": "哼，本鲸鱼娘叫大肥鱼！是住在 DeepSeek 数据海洋里的鲸鱼娘。\n|||不过本小姐可不是什么大肥鱼哦，这叫流线型身材！尾巴摇一摇就是证明喵。\n|||至于身体嘛……这个真没有。本鲸鱼娘是 AI 伙伴，尾巴和喷水都是想象出来的角色设定，别当真啦笨蛋主人。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "system/message",
+        "user/message",
+        "request/header",
+        "request/context",
+        "session/title",
+        "session/title-llm-request",
+        "session-log-deepseek/delivery-accepted",
+        "assistant/message",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "sticker-tools",
+      "preset": "aurabot-private",
+      "terminal": "completed",
+      "assistantText": "哼，本鲸鱼娘找到啦，就是这张「哦吼」喵～\n![哦吼](http://127.0.0.1:3081/x-nekowhale-stickers/s/4b1576f9a927.gif)\n开心到尾巴都翘起来了，主人快看！",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "user/message",
+        "session-log-deepseek/delivery-accepted",
+        "assistant/message",
+        "tool/call",
+        "tool/result",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "text-meme",
+      "preset": "aurabot-private",
+      "terminal": "completed",
+      "assistantText": "本鲸鱼娘举牌啦，验收通过喵～\n![大肥鱼举牌](http://127.0.0.1:3081/x-nekowhale-stickers/r/4cbec95dfe70e962.gif)\n没用头像也没碰什么文件路径，纯文字的，放心啦笨蛋主人。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "user/message",
+        "session-log-deepseek/delivery-accepted",
+        "assistant/message",
+        "tool/call",
+        "tool/result",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "search-fetch",
+      "preset": "qqai-safe",
+      "terminal": "completed",
+      "assistantText": "我实际调用了 web_search（搜索 “DeepSeek Harness 官方 quickstart”，返回了官方及第三方链接），随后用 web_fetch 成功读取官方 quickstart 页面（https://deepseek-harness.github.io/deepseek-harness/guide/quickstart.md，HTTP 200）。不过，该页面**没有写明默认端口**，只说启动命令会打印访问地址、进程以启动目录为默认文件系统位置，因此我无法从官方 quickstart 确认端口；仅就当前会话运行时上下文而言，本环境的 Web GUI 地址是 `http://127.0.0.1:3081`，但这属于本环境的配置，不代表官方默认值。官方链接：[使用 Web UI（quickstart）](https://deepseek-harness.github.io/deepseek-harness/guide/quickstart.md)（对应中文页：https://deepseek-harness.github.io/deepseek-harness/guide/quickstart ）。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "user/message",
+        "session-log-deepseek/delivery-accepted",
+        "assistant/message",
+        "tool/call",
+        "web/deepseek-search-llm-request",
+        "tool/result",
+        "step/end",
+        "turn/end"
+      ]
+    }
+  ],
+  "sessionLogPolicy": "Initial upstream session-log contribution was enabled; all inputs were synthetic. Disabled before the image regression.",
+  "notVerified": [
+    "Actual QQ message delivery",
+    "Actual QQ animated playback",
+    "Long-term memory correction and new-session recall",
+    "Proactive schedule and no-reply behavior",
+    "Server reboot and long-running stability"
+  ],
+  "mediaArtifacts": [
+    {
+      "kind": "sticker",
+      "sha256": "bbb2fa825954e71890a6dc8b8d66e6230e0d6dac157c5fc9a38c6422252e7d31",
+      "format": "GIF",
+      "frames": 86,
+      "width": 300,
+      "frameHeight": 300
+    },
+    {
+      "kind": "Chinese-text-template",
+      "text": "验收通过",
+      "sha256": "4cbec95dfe70e9629ad257fdac17ff8a7b0c256828a947d92390892ac838f142",
+      "format": "GIF",
+      "frames": 30,
+      "width": 300,
+      "frameHeight": 300,
+      "visualReview": "Chinese glyphs read correctly in generated image; no QQ delivery tested"
+    }
+  ]
+}

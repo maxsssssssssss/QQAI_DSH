@@ -1,0 +1,42 @@
+[Unit]
+Description=QQAI_DSH companion runtime (private Web management)
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=dsh
+Group=dsh
+WorkingDirectory=/srv/qqai-dsh/workspace
+LoadCredential=deepseek-api-key:/etc/qqai-dsh/deepseek-api-key
+ExecStartPre=/opt/qqai-dsh/node-v24.22.2-linux-x64/bin/node /opt/qqai-dsh/source/scripts/patch-plugin-media.mjs --check /srv/qqai-dsh/home/.dsh/profiles/web/node_modules/dsh-aurabot-qq /srv/qqai-dsh/home/.dsh/profiles/web/node_modules/dsh-nekowhale-stickers
+ExecStart=/usr/bin/python3 /opt/qqai-dsh/source/deployment/run-dsh.py
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=45
+UMask=0077
+LimitCORE=0
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/qqai-dsh
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+InaccessiblePaths=-/run/docker.sock -/var/run/docker.sock
+
+[Install]
+WantedBy=multi-user.target
+

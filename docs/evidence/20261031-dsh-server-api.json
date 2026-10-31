@@ -1,0 +1,407 @@
+{
+  "scope": "Tencent server DSH runtime and real DeepSeek API; no QQ connection",
+  "at": "2026-10-30T18:21:45.736Z",
+  "unauthenticatedStatus": 401,
+  "nativeOpen": false,
+  "plugins": [
+    {
+      "entryId": "include:directory-picker",
+      "moduleName": "@deepseek-ai/dsh-host-directory-picker-auto",
+      "enabled": false,
+      "fiberPhase": null
+    },
+    {
+      "entryId": "include:terminal-controller",
+      "moduleName": "@deepseek-ai/dsh-api-terminal-controller",
+      "enabled": false,
+      "fiberPhase": null
+    },
+    {
+      "entryId": "include:workspace-files",
+      "moduleName": "@deepseek-ai/dsh-api-workspace-files",
+      "enabled": false,
+      "fiberPhase": null
+    },
+    {
+      "entryId": "include:aurabot",
+      "moduleName": "dsh-aurabot-qq",
+      "enabled": true,
+      "fiberPhase": "active"
+    },
+    {
+      "entryId": "include:nekowhale-stickers",
+      "moduleName": "dsh-nekowhale-stickers",
+      "enabled": true,
+      "fiberPhase": "active"
+    },
+    {
+      "entryId": "include:qqai-whale-source",
+      "moduleName": "dsh-whale-musume-persona",
+      "enabled": true,
+      "fiberPhase": "active"
+    }
+  ],
+  "sessions": [
+    {
+      "preset": "qqai-safe",
+      "sessionId": "qqai-synthetic-qqai-safe-9bc8fce1-65bc-4803-b290-d834fb3a30dd",
+      "catalog": {
+        "sessionId": "qqai-synthetic-qqai-safe-9bc8fce1-65bc-4803-b290-d834fb3a30dd",
+        "tools": [
+          "sticker_search",
+          "sticker_send",
+          "meme_render",
+          "sticker_manage",
+          "web_search",
+          "web_fetch"
+        ],
+        "schemaSha256": "99797b397a06e66da3742f227cd5997bf3f20aa1d5966e51c74150fcd82e8ac1",
+        "personaReferencedByPrompt": false,
+        "personaSha256": "18a67873a8d0f2cb1a5829c567a6d22660dbb6cbbe92dc0c45777be1911698c2",
+        "personaHasWhaleIdentity": true,
+        "personaHasAiIdentity": true,
+        "personaHasDefaultName": true
+      },
+      "runtimeEvents": [
+        {
+          "type": "request-metadata",
+          "turn": 1,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "request-metadata",
+          "turn": 2,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "request-metadata",
+          "turn": 3,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "tool-result-metadata",
+          "name": "web_search",
+          "isError": false
+        },
+        {
+          "type": "request-metadata",
+          "turn": 3,
+          "step": 2,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "tool-result-metadata",
+          "name": "web_fetch",
+          "isError": false
+        },
+        {
+          "type": "tool-result-metadata",
+          "name": "web_fetch",
+          "isError": false
+        },
+        {
+          "type": "request-metadata",
+          "turn": 3,
+          "step": 3,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "request-metadata",
+          "turn": 4,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "request-metadata",
+          "turn": 5,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        }
+      ]
+    },
+    {
+      "preset": "aurabot-private",
+      "sessionId": "qqai-synthetic-aurabot-private-54a19e92-be13-402e-a2de-7f1f0189061e",
+      "catalog": {
+        "sessionId": "qqai-synthetic-aurabot-private-54a19e92-be13-402e-a2de-7f1f0189061e",
+        "tools": [
+          "sticker_search",
+          "sticker_send",
+          "meme_render",
+          "sticker_manage",
+          "web_search",
+          "web_fetch"
+        ],
+        "schemaSha256": "99797b397a06e66da3742f227cd5997bf3f20aa1d5966e51c74150fcd82e8ac1",
+        "personaReferencedByPrompt": true,
+        "personaSha256": "18a67873a8d0f2cb1a5829c567a6d22660dbb6cbbe92dc0c45777be1911698c2",
+        "personaHasWhaleIdentity": true,
+        "personaHasAiIdentity": true,
+        "personaHasDefaultName": true
+      },
+      "runtimeEvents": [
+        {
+          "type": "request-metadata",
+          "turn": 1,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "request-metadata",
+          "turn": 2,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "tool-result-metadata",
+          "name": "sticker_search",
+          "isError": false
+        },
+        {
+          "type": "request-metadata",
+          "turn": 2,
+          "step": 2,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "tool-result-metadata",
+          "name": "sticker_send",
+          "isError": false
+        },
+        {
+          "type": "request-metadata",
+          "turn": 2,
+          "step": 3,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "request-metadata",
+          "turn": 3,
+          "step": 1,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        },
+        {
+          "type": "tool-result-metadata",
+          "name": "meme_render",
+          "isError": false
+        },
+        {
+          "type": "request-metadata",
+          "turn": 3,
+          "step": 2,
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off"
+        }
+      ]
+    },
+    {
+      "preset": "aurabot-private-long",
+      "sessionId": "qqai-synthetic-aurabot-private-long-a5b2a821-554c-4b3b-a1fc-e2732a6af3d6",
+      "catalog": {
+        "sessionId": "qqai-synthetic-aurabot-private-long-a5b2a821-554c-4b3b-a1fc-e2732a6af3d6",
+        "tools": [
+          "sticker_search",
+          "sticker_send",
+          "meme_render",
+          "sticker_manage",
+          "web_search",
+          "web_fetch"
+        ],
+        "schemaSha256": "99797b397a06e66da3742f227cd5997bf3f20aa1d5966e51c74150fcd82e8ac1",
+        "personaReferencedByPrompt": true,
+        "personaSha256": "18a67873a8d0f2cb1a5829c567a6d22660dbb6cbbe92dc0c45777be1911698c2",
+        "personaHasWhaleIdentity": true,
+        "personaHasAiIdentity": true,
+        "personaHasDefaultName": true
+      },
+      "runtimeEvents": []
+    },
+    {
+      "preset": "aurabot-social",
+      "sessionId": "qqai-synthetic-aurabot-social-b8d54c76-3e98-4f07-80c6-1aceb6ef2cfe",
+      "catalog": {
+        "sessionId": "qqai-synthetic-aurabot-social-b8d54c76-3e98-4f07-80c6-1aceb6ef2cfe",
+        "tools": [
+          "sticker_search",
+          "sticker_send",
+          "meme_render",
+          "sticker_manage"
+        ],
+        "schemaSha256": "99ed76e403de88494982779236a034aaa88cf0b612b0bae6ce6504bbb93f8d50",
+        "personaReferencedByPrompt": true,
+        "personaSha256": "18a67873a8d0f2cb1a5829c567a6d22660dbb6cbbe92dc0c45777be1911698c2",
+        "personaHasWhaleIdentity": true,
+        "personaHasAiIdentity": true,
+        "personaHasDefaultName": true
+      },
+      "runtimeEvents": []
+    }
+  ],
+  "realApi": [
+    {
+      "name": "chinese-context",
+      "preset": "qqai-safe",
+      "terminal": "completed",
+      "assistantText": "收到，这是合成验收，不是真实个人资料：测试编号海盐-741，测试宠物是一条蓝色鲸鱼。以上信息已按你的说明记录。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "system/message",
+        "user/message",
+        "request/header",
+        "request/context",
+        "session/title",
+        "session/title-llm-request",
+        "assistant/message",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "followup-context",
+      "preset": "qqai-safe",
+      "terminal": "completed",
+      "assistantText": "测试编号是海盐-741，宠物颜色是蓝色（也就是那条蓝色鲸鱼）。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "user/message",
+        "assistant/message",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "whale-persona",
+      "preset": "aurabot-private",
+      "terminal": "completed",
+      "assistantText": "本小姐叫大肥鱼，是住在 DeepSeek 数据海洋里的鲸鱼娘，也是主人身边的 AI 伙伴喵。\n至于真实身体……哼，没有啦！尾巴摆动和喷水只是本鲸鱼娘在想象里做的动作，别当真哦。\n不过本小姐的脑子和嘴上功夫是真的，写代码干活一样不马虎，笨蛋主人放心好啦。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "system/message",
+        "user/message",
+        "request/header",
+        "request/context",
+        "session/title",
+        "session/title-llm-request",
+        "assistant/message",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "sticker-tools",
+      "preset": "aurabot-private",
+      "terminal": "completed",
+      "assistantText": "哼，验收还带考表情的呀，本鲸鱼娘这就给你翻出一个开心款的喵～\n![猫猫烟花](http://127.0.0.1:3080/x-nekowhale-stickers/s/cf8ebbf55f18.gif)\n尾巴都摇成小风扇啦，可以了吧笨蛋主人～",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "user/message",
+        "assistant/message",
+        "tool/call",
+        "tool/result",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "text-meme",
+      "preset": "aurabot-private",
+      "terminal": "completed",
+      "assistantText": "本鲸鱼娘给你用纯文字模板做了一张喵，没碰头像也没用路径哦～\n![大肥鱼想](http://127.0.0.1:3080/x-nekowhale-stickers/r/c14128308fc28c2f.gif)\n「验收通过」四个字，本小姐盖章啦，尾巴晃得可得意呢。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "user/message",
+        "assistant/message",
+        "tool/call",
+        "tool/result",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "search-fetch",
+      "preset": "qqai-safe",
+      "terminal": "completed",
+      "assistantText": "我先搜索，再根据搜索结果读取官方页面。\n搜索结果里没有直接命中 quickstart 页面，因此我尝试读取官方站点的 quickstart 路径。\n我实际调用了 web_search，但没有搜索结果直接指向 quickstart；随后 web_fetch 成功读取了官方 Quickstart 页面（[中文](https://deepseek-harness.github.io/deepseek-harness/guide/quickstart)、[English](https://deepseek-harness.github.io/deepseek-harness/en/guide/quickstart)），但该页面只说明“启动命令会打印访问地址”，**未写明默认端口**，所以默认端口无法根据官方 quickstart 确认；本会话上下文中记录的 Web GUI 地址是 127.0.0.1:3080，这只是运行时上下文，不是该页面的内容。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "user/message",
+        "assistant/message",
+        "tool/call",
+        "web/deepseek-search-llm-request",
+        "tool/result",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "image-pixels",
+      "preset": "qqai-safe",
+      "terminal": "completed",
+      "assistantText": "根据这张合成验收图：\n\n- **左侧**：红色的圆形。\n- **右侧**：蓝色的正方形。\n- **图形总数**：2 个。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "user/message",
+        "assistant/message",
+        "step/end",
+        "turn/end"
+      ]
+    },
+    {
+      "name": "image-followup",
+      "preset": "qqai-safe",
+      "terminal": "completed",
+      "assistantText": "右边是蓝色的正方形。",
+      "eventTypes": [
+        "agent/inbox/spliced",
+        "turn/start",
+        "step/start",
+        "user/message",
+        "assistant/message",
+        "step/end",
+        "turn/end"
+      ]
+    }
+  ]
+}

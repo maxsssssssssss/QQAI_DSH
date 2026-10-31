@@ -1,0 +1,60 @@
+name: qqai-dsh
+
+services:
+  snowluma:
+    # Official v2.2.1 linux/amd64 manifest, registry verified 2026-10-31.
+    # Never replace with latest or rebuild/repackage proprietary components.
+    image: motricseven7/snowluma@sha256:74d6874a4240636dca700734f31fbce7d0735cbce6bb43780dd8e3788eddccc9
+    platform: linux/amd64
+    container_name: qqai-dsh-snowluma
+    restart: unless-stopped
+    shm_size: 1gb
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 1048576
+    # Required by official QQ injection runtime; no privileged or Docker socket.
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp=unconfined
+    # Root-only runtime file with a randomly generated bootstrap password.
+    env_file:
+      - /etc/qqai-dsh/snowluma.env
+    environment:
+      TZ: Asia/Shanghai
+      SNOWLUMA_ONEBOT_HOST: 0.0.0.0
+      SNOWLUMA_WEBUI_HOST: 0.0.0.0
+      SNOWLUMA_WEBUI_PORT: "5099"
+      SNOWLUMA_UID: "1000"
+      SNOWLUMA_GID: "1000"
+      SNOWLUMA_LOG_LEVEL: info
+      SNOWLUMA_SCREEN: 1920x1080x24
+      # Wait for operator consent and QQ login before enabling injection.
+      SNOWLUMA_HOOK_AUTOLOAD: "0"
+      SNOWLUMA_EXTRA_QQ_HOMES: ""
+      SNOWLUMA_QQ_FLAGS: --disable-gpu --disable-software-rasterizer --disable-gpu-compositing
+      # No VNC_PASSWD: upstream generates and persists a random private password.
+      # No ACCEPT_EULA/ACCEPT_PRIVACY: operator accepts in official WebUI.
+    ports:
+      - "127.0.0.1:6081:6081"
+      - "127.0.0.1:5099:5099"
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:3001:3001"
+    volumes:
+      - gateway-data:/app/data
+      - qq-client-config:/app/.config
+      - qq-client-data:/app/.local/share
+    logging:
+      driver: local
+      options:
+        max-size: 10m
+        max-file: "3"
+
+volumes:
+  gateway-data:
+    name: qqai-dsh-snowluma-data
+  qq-client-config:
+    name: qqai-dsh-qq-config
+  qq-client-data:
+    name: qqai-dsh-qq-data

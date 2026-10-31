@@ -1,0 +1,249 @@
+# QQAI_DSH overlay for @deepseek-ai/dsh 0.2.1-rc.5.
+# Apply after all upstream bundle patches; use a fresh DSH_HOME.
+# This file contains no credentials. DEEPSEEK_API_KEY is a credential reference.
+# Aurabot keeps its own config.json: see docs/dsh-runtime-audit.md.
+# Missing Aurabot rows are warnings before that bundle is installed. They must
+# all resolve in the final composed tree before QQ sending is enabled.
+
+- id: llm-deepseek
+  config:
+    apiKeyEnv: DEEPSEEK_API_KEY
+    baseURL: https://api.deepseek.com/anthropic
+    thinking: disabled
+    reasoningEffort: 'off'
+
+- id: agent-default-model
+  config:
+    provider: deepseek-official
+    model: deepseek-flash
+
+# Keep model selection on the API-key route used by this deployment.
+- id: llm-deepseek-account
+  disabled: true
+
+# Ordinary inference history is still sent to the model. Disable the separate
+# canonical session-log metadata upload, which is enabled upstream by default.
+- id: session-log-deepseek
+  config:
+    enabled: false
+
+# Every shipped preset includes command execution, filesystem access, or a
+# route to those capabilities. Retain only the explicitly composed QQAI preset.
+- id: preset-standard
+  disabled: true
+- id: preset-minimal
+  disabled: true
+- id: preset-cordis
+  disabled: true
+- id: preset-ptc
+  disabled: true
+- id: agent-preset-registry
+  config:
+    default: qqai-safe
+
+# Web normally disables these host tool rows. Restate the boundary so adding
+# bundles cannot silently reactivate host-wide model tools.
+- id: tool-plugin-manager
+  disabled: true
+- id: tool-bash
+  disabled: true
+- id: tool-pwsh
+  disabled: true
+- id: tool-jobs
+  disabled: true
+- id: tool-fs
+  disabled: true
+- id: tool-fs-search
+  disabled: true
+- id: tool-working-directory
+  disabled: true
+- id: skill-filesystem
+  disabled: true
+- id: tool-skill
+  disabled: true
+- id: tool-subagent
+  disabled: true
+- id: tool-subagent-fork
+  disabled: true
+- id: tool-subagent-control
+  disabled: true
+- id: tool-subagent-list-agents
+  disabled: true
+- id: workflow-ptc
+  disabled: true
+- id: tool-workflow
+  disabled: true
+
+# Remove the Web terminal, local file browser, local-path references, and
+# host application launcher. Attachment upload / image processing and plugin
+# persistence remain available internally; this is not a filesystem sandbox
+# for trusted in-process plugin code.
+- id: terminal-controller
+  disabled: true
+- id: ui-sidebar-terminal
+  disabled: true
+- id: workspace-files
+  disabled: true
+- id: ui-sidebar-files
+  disabled: true
+- id: ui-sidebar-documentpreview
+  disabled: true
+- id: ui-deliverables
+  disabled: true
+- id: directory-picker
+  disabled: true
+- id: file-reference-local
+  disabled: true
+- id: open-in-app
+  disabled: true
+- id: ui-open-in-app
+  disabled: true
+- id: ui-settings-shell
+  disabled: true
+- id: session-controller
+  config:
+    nativeOpen: false
+
+# A complete config replacement is intentional: Cordis patches do not merge
+# config.plugins. Do not change these rows into partial nested overrides.
+- insert:
+    - id: preset-qqai-safe
+      name: '@deepseek-ai/dsh-agent-preset'
+      config:
+        id: qqai-safe
+        name: QQAI · 安全管理测试
+        description: 模型、图片和搜索测试；无命令执行、宿主文件或插件管理工具
+        order: 1
+        plugins:
+          - id: persona
+            name: '@deepseek-ai/dsh-persona'
+            config:
+              prefix: 你是 QQAI_DSH 的管理测试助手。用中文准确回答，并如实区分工具结果和推测。
+              complete: true
+          - id: time-context
+            name: '@deepseek-ai/dsh-time-context'
+          - id: compaction
+            name: cordis:group
+            group: true
+            isolate:
+              compaction: true
+              toolResultPruner: true
+            config:
+              - id: compaction-basic
+                name: '@deepseek-ai/dsh-compaction-basic'
+              - id: command-compact
+                name: '@deepseek-ai/dsh-command-compact'
+              - id: tool-result-pruner
+                name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+                config:
+                  thresholdChars: 8192
+                  headChars: 4096
+                  tailChars: 1024
+          - id: tool-web
+            name: '@deepseek-ai/dsh-tool-web'
+            config:
+              fetch: true
+              searchTimeoutMs: 60000
+
+- id: preset-aurabot-private
+  config:
+    id: aurabot-private
+    name: Aurabot · 主人私聊
+    description: 鲸鱼娘人格、QQ、记忆、图片和搜索；无宿主命令与文件工具
+    order: 60
+    plugins:
+      - id: persona
+        name: '@deepseek-ai/dsh-persona'
+        config:
+          prefix: "{{aurabot_persona}}\n\n{{aurabot_rules_private}}"
+          complete: true
+      - id: time-context
+        name: '@deepseek-ai/dsh-time-context'
+      - id: compaction
+        name: cordis:group
+        group: true
+        isolate:
+          compaction: true
+          toolResultPruner: true
+        config:
+          - id: compaction-basic
+            name: '@deepseek-ai/dsh-compaction-basic'
+          - id: command-compact
+            name: '@deepseek-ai/dsh-command-compact'
+          - id: tool-result-pruner
+            name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+            config:
+              thresholdChars: 8192
+              headChars: 4096
+              tailChars: 1024
+      - id: tool-web
+        name: '@deepseek-ai/dsh-tool-web'
+        config:
+          fetch: true
+          searchTimeoutMs: 60000
+
+# Defense in depth if longTasks is accidentally enabled in the Aurabot UI.
+# Native Aurabot proactive chat remains responsible for proactive scheduling.
+- id: preset-aurabot-private-long
+  config:
+    id: aurabot-private-long
+    name: Aurabot · 主人私聊（受限长会话）
+    description: 与普通私聊相同的工具边界；无 jobs 或额外定时工具
+    order: 62
+    plugins:
+      - id: persona
+        name: '@deepseek-ai/dsh-persona'
+        config:
+          prefix: "{{aurabot_persona}}\n\n{{aurabot_rules_private}}"
+          complete: true
+      - id: time-context
+        name: '@deepseek-ai/dsh-time-context'
+      - id: compaction
+        name: cordis:group
+        group: true
+        isolate:
+          compaction: true
+          toolResultPruner: true
+        config:
+          - id: compaction-basic
+            name: '@deepseek-ai/dsh-compaction-basic'
+          - id: command-compact
+            name: '@deepseek-ai/dsh-command-compact'
+          - id: tool-result-pruner
+            name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+            config:
+              thresholdChars: 8192
+              headChars: 4096
+              tailChars: 1024
+      - id: tool-web
+        name: '@deepseek-ai/dsh-tool-web'
+        config:
+          fetch: true
+          searchTimeoutMs: 60000
+
+# The social preset is not enabled for sending in the first deployment;
+# keep its composition restricted even while the QQ allowlist is empty.
+- id: preset-aurabot-social
+  config:
+    id: aurabot-social
+    name: Aurabot · 群聊（未开放）
+    description: QQ 社交工具；无宿主命令、文件或网络工具
+    order: 61
+    plugins:
+      - id: persona
+        name: '@deepseek-ai/dsh-persona'
+        config:
+          prefix: "{{aurabot_persona}}\n\n{{aurabot_rules_social}}"
+          complete: true
+      - id: time-context
+        name: '@deepseek-ai/dsh-time-context'
+      - id: compaction
+        name: cordis:group
+        group: true
+        isolate:
+          compaction: true
+        config:
+          - id: compaction-basic
+            name: '@deepseek-ai/dsh-compaction-basic'
+          - id: command-compact
+            name: '@deepseek-ai/dsh-command-compact'

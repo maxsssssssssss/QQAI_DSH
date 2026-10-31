@@ -1,0 +1,19 @@
+{
+  "service": {
+    "ActiveState": "active",
+    "SubState": "running",
+    "MainPID": "34448",
+    "NRestarts": "0",
+    "MemoryCurrent": "225189888",
+    "MemoryPeak": "384962560",
+    "User": "dsh",
+    "Group": "dsh"
+  },
+  "listeners": [
+    "127.0.0.1:3080"
+  ],
+  "all_application_ports_loopback": true,
+  "unauthenticated_rpc_http_status": 401,
+  "healthy": true,
+  "scope": "process and authentication readiness only; not model or QQ acceptance"
+}

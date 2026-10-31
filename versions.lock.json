@@ -1,0 +1,54 @@
+{
+  "recorded_date": "2026-10-31",
+  "status": "server-dsh-real-api-verified-gateway-preparing-qq-unverified",
+  "node": {
+    "version": "24.22.2",
+    "linux_x64_sha256": "48cc0e21e048790e54c0cf5749c2725005313d652651c40b7a21feb9697aaf75",
+    "source": "https://nodejs.org/dist/v24.22.2/"
+  },
+  "dsh": {
+    "package": "@deepseek-ai/dsh",
+    "version": "0.2.1-rc.5",
+    "integrity": "sha512-WkyJZv4zl9sCAxSzRctGm58m0rilGqwR6pniBiLOz5CPDfHfDuAUicg0AAazXI7oj/Cph6/cjNTncA/rpLTXpw=="
+  },
+  "plugins": {
+    "aurabot": {
+      "version": "1.1.24",
+      "repository": "accomplish07zrh-eng/dsh-aurabot-qq",
+      "commit": "e9026a99d9db58974363c416eaa9e555499737fa"
+    },
+    "whale_persona": {
+      "version": "0.1.0",
+      "repository": "Kaalia0912/dsh-whale-musume-persona",
+      "commit": "0fbdcf217e3bf94e35fef36f7ac56134b704529b"
+    },
+    "nekowhale": {
+      "version": "1.1.1",
+      "repository": "Loping151/dsh-nekowhale-stickers",
+      "commit": "b7b58c0ff347d639fabe87d90d6716c4b3cad185"
+    }
+  },
+  "snowluma": {
+    "version": "2.2.1",
+    "commit": "8ffd314260e9e2b6967eeca494d87aa5be046c34",
+    "image_digest": "sha256:74d6874a4240636dca700734f31fbce7d0735cbce6bb43780dd8e3788eddccc9",
+    "license_status": "user-confirms-rightsholder-written-authorization-for-this-deployment",
+    "image": "motricseven7/snowluma",
+    "image_index_digest": "sha256:29536cd34e9c9c3f8a942be4e5cd6a17d366acd9b2096aa56b5863d024a80d23",
+    "image_config_digest": "sha256:f819e96808d03205ba2a6a152903de9e3b0aa01787ea6d1da5091b4e4e333fc1"
+  },
+  "server": {
+    "os": "Ubuntu 26.04 LTS",
+    "architecture": "x86_64",
+    "user_approved_deviation_from_24_04": true,
+    "docker": "29.1.3",
+    "compose": "2.40.3",
+    "pnpm": "11.28.5"
+  },
+  "dependency_locks": {
+    "deployment/locks/package-lock.json": "d5bd7e9591b7231073a8da50c00ff35d20edb05f3079553c491d4be1e83ae7ac",
+    "deployment/locks/package.json": "e4a1e45d54a9c48c525889fe8975d86c5e2941a7a9a12c131fa63c4ee3759fc5",
+    "deployment/locks/pnpm-lock.yaml": "c9bb6a00074c883805a7fa4fff1a753847ed733e82c50a9d92792f4371462d74",
+    "deployment/locks/profile-package.json": "c6131b249dac29cf6df68e373045c67d62d000f059d63958eb34b9ba3274d946"
+  }
+}
