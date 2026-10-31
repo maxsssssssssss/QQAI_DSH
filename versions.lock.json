@@ -209,6 +209,20 @@
       "pendingQuestionSurvivesDshRestart": false,
       "actualQqUnrepliedWindowAcceptanceComplete": false,
       "evidence": "docs/evidence/20261031-memory-options.json"
+    },
+    "active_persona": {
+      "name": "小鲸",
+      "owner_name": "主人",
+      "source": "personas/xiaojing.md",
+      "source_file_sha256": "814fb3485f8c9f493331b3b61ae3bc90a813ae45f4325dc532c3afbb3f52ca13",
+      "effective_text_sha256": "f23e657fd0ed0bf11fbbb2e999c8c49a9441f6487dffbe517b77875e8de510f2",
+      "adapter_version": "0.1.1",
+      "adapter_sha256": "18aaf28196b7aa2726a78f675ce8094f57db2555613959281d920a6da8039c6d",
+      "upstream_plugin_source_sha256": "9969097250f89301d23dffabb3b3dd2a1614cf5e5e0500a389c10c11fa383d7b",
+      "upstream_hash_validation_retained": true,
+      "real_model_verified": true,
+      "natural_qq_new_persona_acceptance_complete": false,
+      "evidence": "docs/evidence/20261031-persona-xiaojing.json"
     }
   }
 }

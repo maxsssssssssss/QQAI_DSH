@@ -14,9 +14,13 @@ const inside = (root, path) => {
 }
 
 /** Read the pinned installed plugin, rather than copying an old project persona. */
-export function whalePersona(raw, { botName = '大肥鱼', ownerName = '主人' } = {}) {
+export function whalePersona(raw, { botName = '大肥鱼', ownerName = '主人', personaText = '' } = {}) {
   const normalized = String(raw).trimEnd() + '\n'
   if (digest(normalized) !== PERSONA_SHA256) throw new Error('Whale persona source changed; review and pin it before loading')
+  // An explicitly supplied project persona replaces the complete role text.
+  // Keep the installed plugin pin check even when its default text is replaced.
+  if (typeof personaText !== 'string' || personaText.length > 20000) throw new Error('Invalid custom whale persona')
+  if (personaText.trim()) return personaText.trim()
   const lines = normalized.split('\n')
   const start = lines.indexOf('    persona: |-')
   if (start < 0) throw new Error('Pinned Whale persona field is missing')
@@ -135,9 +139,9 @@ export function mediaHooks({ getPort, getKit, getDataDir, getOwner, warn = () =>
 export default {
   id: 'qqai-compat',
   name: 'QQAI 三插件兼容适配',
-  version: '0.1.0',
+  version: '0.1.1',
   description: '鲸鱼娘人格来源接入与 Nekowhale 受控 GIF 传递；不改变原生聊天、记忆或调度',
-  defaults: { personaSourcePath: '', stickersDataDir: '', botName: '大肥鱼', ownerName: '主人' },
+  defaults: { personaSourcePath: '', stickersDataDir: '', botName: '大肥鱼', ownerName: '主人', personaText: '' },
   setup(api) {
     const settings = api.settings()
     if (!isAbsolute(settings.personaSourcePath) || !isAbsolute(settings.stickersDataDir)) {
@@ -155,6 +159,9 @@ export default {
       warn: (message) => api.log.warn(message),
     })
     api.on('persona', () => persona)
+    api.route('/persona-state', () => ({ ok: true, personaSha256: digest(persona),
+      personaCharacters: persona.length, customPersona: Boolean(settings.personaText?.trim()),
+      personaSourceSha256: PERSONA_SHA256 }))
     api.on('rules', (text) => String(text) + '\n【表情与工具】\n'
       + '- 表情用 sticker_search 检索、sticker_send 选择；用 meme_render 的 template/text 制作文字表情，sticker_manage 管理库。'
       + '图片是 QQ 不渲染 Markdown 规则的例外：把工具返回的 Markdown 图片行原样放进回复。不要自造文件路径或图片链接。'

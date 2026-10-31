@@ -148,3 +148,12 @@
 - 使用固定旧hash和精确差异约束的热更新脚本，6文件私有备份及隔离恢复逐字节/JSON校验通过；备份 `/var/lib/qqai-dsh/maintenance/20261031-heybox-limit/limit-4upwq966/`。原子替换代码后Aurabot自行热加载，未重启DSH或QQ。
 - 实际状态接口 `articlesPerRound=5`，模块启用且无错误，QQ连接及机器人身份匹配；DSH invocation与QQ容器启动时间保持。配置、reader状态、speakup排期计数、memories及sessions全部逐字节不变。
 - 23项合成回归通过：含6选5、5篇持久化重载和不重复提供。没有人为提前原阅读排期（约20:08）、触发额外模型或QQ测试消息；本次是数量配置部署验证，不新增“真实5篇阅读/分享”验收结论。见 `docs/evidence/20261031-heybox-limit.json`。
+
+
+## 2026-10-31 18:33：用户全文人格替换为“小鲸”
+
+- 用户提供完整人格并要求替换生效。原文保存于 `personas/xiaojing.md`，保留其全部措辞，包括开头“鲸鱼娘·大肥鱼”和当前身份“小鲸”；部署仅去除文件首尾空白。未自行删改编码助手、工作准则或角色风格。
+- 兼容模块0.1.1增加完整人格覆盖字段 `ext.qqai-compat.personaText`，并将该模块botName设为“小鲸”；ownerName保持“主人”。仍检查已安装鲸鱼娘插件源hash，未知上游版本拒绝加载；媒体、安全、工具及其他规则未变。未修改QQ账号昵称或开放新权限。
+- 部署脚本 `deployment/set-whale-persona.py` 先对6个文件备份并验证隔离副本，再通过原生保存接口更新两个人格字段，原子更新适配模块并热加载。备份 `/var/lib/qqai-dsh/maintenance/20261031-persona/persona-bn_xbes5/`，包含旧模块、配置、memories、sessions、speakup、reader状态；不替代完整备份。除指定字段外配置不变，4个运行状态文件部署前后逐字节一致，DSH invocation和QQ容器启动时间未变，QQ在线且身份匹配。
+- 生效人格SHA256为 `f23e657fd0ed0bf11fbbb2e999c8c49a9441f6487dffbe517b77875e8de510f2`。Aurabot动态变量每轮使用同一persona filter，因此已有会话下轮即可取新文本，无需新建会话或清历史。
+- 13项本地回归无跳过通过；临时探针读取实际人格filter结果，与用户文本比对，再使用该文本调用一次真实DeepSeek Flash/off。546输入+71输出tokens，正确使用“小鲸”“主人”和“本小姐”。探针已卸载，配置/记忆不变，无QQ测试消息或会话写入。探针记录 `/var/lib/qqai-dsh/maintenance/20261031-persona/probe-esvi7j1d/`；本次未声称自然QQ收件/主观口吻已验收。

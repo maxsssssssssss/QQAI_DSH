@@ -1,0 +1,93 @@
+{
+  "at": "2026-10-31T18:33:27.398604+08:00",
+  "scope": "User-supplied complete QQ persona replacement; existing owner conversation preserved",
+  "deployment": {
+    "ok": true,
+    "operation": "replace-whale-persona-xiaojing",
+    "serviceRestartRequested": false,
+    "gatewayRestartRequested": false,
+    "manualQqSendRequested": false,
+    "memoryOrHistoryWriteRequested": false,
+    "at": "2026-10-31T18:33:27.398604+08:00",
+    "botName": "小鲸",
+    "ownerName": "主人",
+    "personaSha256": "f23e657fd0ed0bf11fbbb2e999c8c49a9441f6487dffbe517b77875e8de510f2",
+    "moduleSha256": "18aaf28196b7aa2726a78f675ce8094f57db2555613959281d920a6da8039c6d",
+    "effectivePersonaMatchesFile": true,
+    "moduleLoaded": true,
+    "unrelatedConfigUnchanged": true,
+    "serviceInvocationUnchanged": true,
+    "gatewayStartUnchanged": true,
+    "qqConnected": true,
+    "botIdentityMatches": true,
+    "backupRestoreVerified": true,
+    "backupFiles": 6,
+    "privateStateBytePreserved": {
+      "memories.before.json": true,
+      "sessions.before.json": true,
+      "speakup.before.json": true,
+      "reader.before.json": true
+    },
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261031-persona/persona-bn_xbes5"
+  },
+  "realModelProbe": {
+    "ok": true,
+    "qqMessageRequested": false,
+    "productionMemoryWritten": false,
+    "realModelProbe": {
+      "ok": true,
+      "pending": false,
+      "actualRequests": [
+        {
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off",
+          "maxTokens": 320,
+          "outputCharacters": 110,
+          "usage": {
+            "inputTokens": 546,
+            "outputTokens": 71
+          }
+        }
+      ],
+      "qqSendRequested": false,
+      "productionHistoryOrMemoryWritten": false,
+      "startedAt": "2026-10-31T10:33:51.771Z",
+      "personaSha256": "f23e657fd0ed0bf11fbbb2e999c8c49a9441f6487dffbe517b77875e8de510f2",
+      "livePersonaHookMatched": true,
+      "responseChecks": {
+        "hasXiaojingName": true,
+        "usesOwnerAddress": true,
+        "usesFirstPerson": true,
+        "outputCharacters": 110
+      },
+      "finishedAt": "2026-10-31T10:33:52.792Z"
+    },
+    "temporaryModuleUnloaded": true,
+    "configByteIdenticalDuringProbe": true,
+    "productionMemoryByteIdenticalDuringProbe": true,
+    "serviceProcessUnchanged": true,
+    "recallConfigured": true,
+    "facesEnabled": true,
+    "nudgeEnabled": true,
+    "qqOnline": true,
+    "probeSourceSha256": "b78b31b5a13ce49a52b067027e29db60b93a28497b96a4a4f22939b2bd14fa1e",
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261031-persona/probe-esvi7j1d"
+  },
+  "automatedRegression": {
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0,
+    "includes": [
+      "full persona override and unchanged fallback",
+      "pinned source remains required",
+      "media and native chat compatibility"
+    ]
+  },
+  "acceptance": {
+    "effectiveLivePersonaMatchesUserText": true,
+    "realDeepSeekNameAndStyleProbe": true,
+    "newNaturalQqTurnObserved": false,
+    "qqTestMessageSent": false
+  }
+}

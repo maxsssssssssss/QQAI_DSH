@@ -155,3 +155,12 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 未来回滚代码时需同时恢复manifest中旧的 `src/chat/hub.js`、`src/features/memory.js` 和旧启动补丁定义，否则systemd启动前hash检查会拒绝启动；先停DSH，再按manifest恢复这些代码的内容/属主/权限。配置只恢复 `memory.recallCount`、`stickers.faces`、`speakUp.nudge` 三个字段，保留后来其他设置；不要整库恢复旧memories/chatlog/speakup/reminders。若只关闭小黄脸或追问，可在原生面板分别关闭faces/nudge，无需恢复代码。
 
 验证分层：40项合成回归通过；5次真实DSH Flash/off请求（合计2598输入/输出tokens）在隔离合成库中完成长消息尾部提炼和第7条记忆回答，临时模块已卸载，生产记忆逐字节未变。QQ连接和身份、真实表情目录已核对；没有额外发送QQ测试消息，没有把单元测试视为实际小黄脸收件或真实未回复窗口验收。[脱敏证据](evidence/20261031-memory-options.json)
+
+
+## 当前自定义人格（2026-10-31 18:33）
+
+当前完整人格原文为 `personas/xiaojing.md`，运行副本保存在私有 `ext.qqai-compat.personaText`，名字字段 `ext.qqai-compat.botName=小鲸`。兼容模块会完整覆盖原生人格卡正文，因此仅在原生面板编辑旧dafeiyu卡不会改变当前生效文本。修改应同步原文与这个运行字段，然后重载 `qqai-compat`；DSH/QQ无需重启，历史与记忆保留。上游鲸鱼娘包仍锁定原版本并校验源hash。
+
+生效检查可读取受保护的本机 `/aurabot/api/ext/qqai-compat/persona-state`，只返回文本hash与长度等元数据；真实模型验证见 `docs/evidence/20261031-persona-xiaojing.json`。当前源文件含末尾换行，其文件hash与去首尾空白后的运行文本hash不同，这是预期格式差异。
+
+本次备份目录 `/var/lib/qqai-dsh/maintenance/20261031-persona/persona-bn_xbes5/`。恢复只从备份配置提取旧 `ext.qqai-compat.botName` 与 `personaText`（不存在则空字符串），通过原生保存接口写回，并按原属主权限恢复 `adapter.before.mjs`、重载该模块。不能将整份旧配置、记忆、sessions或speakup覆盖回生产。部署脚本失败时执行同样的定向回滚。角色里提到编码能力不授予Shell/宿主文件权限，现有工具边界保持。

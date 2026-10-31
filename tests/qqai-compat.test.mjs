@@ -104,4 +104,17 @@ test('persona comes from the pinned installed source and rejects version drift',
   assert.ok(!out.includes('（萝莉）'))
   assert.ok(!out.includes('思考过程（推理、思维链'))
   assert.throws(() => whalePersona(raw + 'changed'), /source changed/)
+  assert.equal(whalePersona(raw, { personaText: '' }), out)
+  assert.equal(whalePersona(raw, { personaText: ' \n\t ' }), out)
+
+  const custom = (await readFile(new URL('../personas/xiaojing.md', import.meta.url), 'utf8')).trim()
+  assert.ok(custom.includes('你的名字是小鲸'))
+  assert.equal(whalePersona(raw, { personaText: custom, botName: '旧名字', ownerName: '旧称呼' }), custom,
+    'custom role must replace the whole default without appending stale identity or rewriting user wording')
+  assert.equal(whalePersona(raw, { personaText: '\n' + custom + '\n' }), custom)
+  assert.throws(() => whalePersona(raw + 'changed', { personaText: custom }), /source changed/,
+    'custom persona must not bypass the pinned installed-plugin check')
+  for (const personaText of [null, 12, false, {}, [], 'x'.repeat(20001)]) {
+    assert.throws(() => whalePersona(raw, { personaText }), /Invalid custom whale persona/)
+  }
 })
