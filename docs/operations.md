@@ -20,7 +20,7 @@
 | 网关容器 | qqai-dsh-snowluma |
 | 备份 | /var/backups/qqai-dsh，root私有 |
 
-systemd 使用 LoadCredential 把 Key 传入运行进程。配置、启动参数、Git和公开证据不含Key。`bootstrap-host.sh` 安装依赖；`install-dsh-profile.sh` 为新部署初始化profile；两者不是在线更新命令。尤其不要在运行中的陪伴系统上重跑初始化器，因为它会重新关闭发送、重置初始选项。升级应先备份、停服务、审核版本及四处hash补丁，再安装锁定依赖并恢复同项目私有配置。
+systemd 使用 LoadCredential 把 Key 传入运行进程。配置、启动参数、Git和公开证据不含Key。`bootstrap-host.sh` 安装依赖；`install-dsh-profile.sh` 为新部署初始化profile；两者不是在线更新命令。尤其不要在运行中的陪伴系统上重跑初始化器，因为它会重新关闭发送、重置初始选项。升级应先备份、停服务、审核版本及六个文件的hash补丁，再安装锁定依赖并恢复同项目私有配置。当前文件清单、最终hash和Hub已审核中间版本迁移规则见[兼容性记录](plugin-compatibility-audit.md)；须同时保留安装器及其依赖 `scripts/qq-delivery-patch-spec.mjs`。
 
 ## 管理与健康检查
 
@@ -55,7 +55,9 @@ ssh -F "$env:USERPROFILE/.ssh/config" `
 
 本机3080用于DSH，5099用于Snow WebUI，6081用于noVNC。DSH仍需当前进程的管理token，Snow/VNC仍需受保护的随机密码。需要接入时由运维准备本机入口与私有凭据文件，不能为省去登录步骤开放公网或关闭认证。
 
-## 用户醒来后的接入步骤
+## QQ接入与后续验收
+
+截至2026-10-31 13:37（Asia/Shanghai），用户已完成官方协议确认和QQ登录；主人私聊的中文多气泡、上下文与人格、动画GIF顺序、入站PNG识别与追问、中文文字表情、搜索和Fetch均已有真实QQ证据。12次已观察模型请求均为Flash / Thinking Off。长期记忆、主动及未回复行为、网关重启恢复、登录后备份恢复和持续运行仍待验收。[聊天与媒体证据](evidence/20261031-qq-chat-media.json)
 
 1. 用户已经确认取得SnowLuma权利人对本次自动部署的书面授权；官方WebUI内EULA与隐私协议的个人阅读/接受状态单独处理，不伪造该记录。
 2. 用户在noVNC完成机器人QQ扫码及任何设备验证。不得代替验证或重复绕过平台限制。
@@ -65,7 +67,7 @@ ssh -F "$env:USERPROFILE/.ssh/config" `
 6. 确认原生主动聊天频率、安静时段及未回复行为后启用speakup；purpose保持关闭。以真实调度验证，不能只手工触发一次代替。
 7. 登录后再分别重启DSH和网关，验证QQ重连、无重复发送与登录态恢复；更新备份并做隔离恢复演练。确认观察窗口中的资源与错误情况后，再记录长期运行结果。
 
-当前所有自动化/真实API测试使用合成数据。运行目录可能保留名为qqai-synthetic的验收会话；这些是本项目新测试记录，不是旧项目迁移数据。它们不替代Aurabot长期记忆与真实QQ验收。
+独立自动化/真实API测试使用合成数据。运行目录可能保留名为qqai-synthetic的验收会话；这些是本项目新测试记录，不是旧项目迁移数据。真实QQ测试另有接收端确认及筛选后的运行元数据，公开证据不含私人聊天正文或账号标识；上述合成会话仍不替代Aurabot长期记忆验收。
 
 ## 费用与版本
 

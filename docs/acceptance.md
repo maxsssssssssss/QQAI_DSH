@@ -7,15 +7,15 @@
 | SSH / Ubuntu / Docker | 完成；用户最终授权使用26.04 | 严格主机校验；Node24.22.2、Docker29.1.3、Compose2.40.3 |
 | DSH Web 持续运行 | systemd已运行；长期观察未完成 | loopback3080、专用用户dsh、重启与真实API成功 |
 | 三插件安装、装载 | 服务器同时active；QQ生效待测 | 固定版本、依赖锁、实际Agent工具目录 |
-| SnowLuma网关 | 官方v2.2.1运行；WebUI/noVNC可用；QQ未登录 | 原始镜像digest和内部runtime版本核验，所有映射loopback |
+| SnowLuma网关 | 用户完成确认和扫码；QQ在线且Aurabot身份匹配 | 官方进程online，HTTP/WS适配器ok，机主私聊限定 |
 | DeepSeek 中文、多轮、工具 | API与服务器DSH层通过；QQ待测 | server-api证据、真实工具结果、Thinking Off |
-| QQ 中文与多气泡 | 未测试 | 机主私聊实际接收与顺序 |
-| 鲸鱼娘人格 | 服务器QQ preset人格源和真实回复通过；QQ待测 | 安装包hash、persona注入与实际“大肥鱼”回复 |
+| QQ 中文与多气泡 | 真实首条和多轮通过 | 1入站/3发送回执；用户确认3气泡，无原始分隔符，后续上下文正常 |
+| 鲸鱼娘人格 | 实际主人QQ会话通过 | 真实会话人格hash/鲸鱼娘与AI身份，大肥鱼名称；用户确认回复身份正确 |
 | 记忆、纠错、新会话召回 | 未测试 | 合成事实，跨会话与重启回忆 |
 | 主动与未回复行为 | 未测试 | 真实调度、暂停、未回复分支 |
-| 图片与追问 | API与服务器DSH层通过；QQ待测 | 合成PNG左红圆/右蓝正方形及追问 |
-| Nekowhale 图/GIF/中文模板 | DSH实际工具生成通过；QQ图片/GIF未测 | 真实sticker_search/send/meme_render成功，GIF字节与中文字体 |
-| Search / Fetch | API与服务器DSH工具通过；QQ待测 | 实际工具成功返回，模型不虚构来源结论 |
+| 图片与追问 | 实际QQ通过，用户确认 | 实际QQ上传无文字标签PNG，颜色/形状/数量与后续边数问答 |
+| Nekowhale 图/GIF/中文模板 | 实际QQ通过，用户确认 | sticker_search/send/meme_render成功；QQ动画、文字→图→文字顺序及中文字正常 |
+| Search / Fetch | 实际QQ通过 | web_search/web_fetch实际成功；用户确认收到带来源回答 |
 | 重启、持久化、长期运行 | DSH重启同会话召回通过；网关和长期观察待测 | 同一合成会话重启后真实模型回忆成功 |
 | 备份恢复 | 真实一致性备份、隔离恢复、离机副本校验通过 | 包含三网关卷；未登录QQ，不能证明QQ登录态恢复 |
 | 主观风格 | 待用户评价 | 不以 HTTP 成功代替自然度 |

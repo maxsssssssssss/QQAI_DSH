@@ -1,0 +1,75 @@
+{
+  "at": "2026-10-31T13:37:54.139828+08:00",
+  "scope": "actual owner QQ messages and user-observed reception, supported by private server metadata; no chat bodies or account identifiers",
+  "gateway": {
+    "officialConsentUserCompleted": true,
+    "qqLoginUserCompleted": true,
+    "onebotConnected": true,
+    "botIdentityVerified": true,
+    "ownerOnly": true,
+    "groupsAllowed": false
+  },
+  "actualModelRequestsObserved": 12,
+  "allRequestsDeepSeekFlashThinkingOff": true,
+  "actualOwnerSessionTools": [
+    "meme_render",
+    "qq_chat_history",
+    "qq_send_message",
+    "recall_memory",
+    "remember",
+    "sticker_manage",
+    "sticker_search",
+    "sticker_send",
+    "web_fetch",
+    "web_search"
+  ],
+  "persona": {
+    "allObservedWhaleIdentity": true,
+    "allObservedAiIdentity": true,
+    "allObservedDefaultName": true
+  },
+  "toolResults": [
+    {
+      "name": "sticker_search",
+      "isError": false
+    },
+    {
+      "name": "sticker_send",
+      "isError": false
+    },
+    {
+      "name": "meme_render",
+      "isError": false
+    },
+    {
+      "name": "web_search",
+      "isError": false
+    },
+    {
+      "name": "web_fetch",
+      "isError": false
+    }
+  ],
+  "userObserved": {
+    "chineseFirstReply": true,
+    "firstReplyBubbleCount": 3,
+    "rawBubbleDelimiterShown": false,
+    "multiTurnAndPersona": true,
+    "animatedGifReceived": true,
+    "textGifTextOrder": true,
+    "imageRecognitionAndFollowup": true,
+    "chineseTextMemeReceivedAndLegible": true,
+    "searchAnswerWithSources": true
+  },
+  "notYetAccepted": [
+    "natural-long-term-memory",
+    "memory-correction",
+    "new-session-memory-recall",
+    "scheduled-proactive",
+    "unanswered-behavior",
+    "gateway-restart-login-recovery",
+    "post-login-backup-recovery",
+    "sustained-use",
+    "final-subjective-evaluation"
+  ]
+}

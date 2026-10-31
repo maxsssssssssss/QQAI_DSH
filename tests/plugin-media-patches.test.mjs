@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFile, mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
-import { PATCHES, patchedSource, patchPackages } from '../scripts/patch-plugin-media.mjs'
+import { PATCHES, GIF_MEDIA_PATCH, patchedSource, patchPackages } from '../scripts/patch-plugin-media.mjs'
 
 const sourceRoots = [process.env.AURABOT_SOURCE_ROOT, process.env.NEKOWHALE_PACKAGE_ROOT]
 const gif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64')
@@ -66,6 +66,26 @@ test('installer refuses drift, verifies both packages, and is idempotent', async
   assert.deepEqual((await patchPackages(roots)).map((x) => x.status), PATCHES.map(() => 'patched'))
   assert.deepEqual((await patchPackages(roots)).map((x) => x.status), PATCHES.map(() => 'already-patched'))
   assert.deepEqual((await patchPackages(roots, { check: true })).map((x) => x.status), PATCHES.map(() => 'verified'))
+  // The running deployment already has the reviewed GIF-only patch. Its upgrade
+  // must converge on the same final file as a brand-new upstream installation.
+  const intermediate = patchedSource(originals[0], GIF_MEDIA_PATCH)
+  await writeFile(join(roots[0], PATCHES[0].file), intermediate)
+  await assert.rejects(patchPackages(roots, { check: true }), /required media patch is missing/)
+  assert.deepEqual((await patchPackages(roots)).map((x) => x.status), PATCHES.map((_, i) => i === 0 ? 'patched' : 'already-patched'))
+  assert.equal(await readFile(join(roots[0], PATCHES[0].file), 'utf8'), patchedSource(originals[0], PATCHES[0]))
+  assert.deepEqual((await patchPackages(roots, { check: true })).map((x) => x.status), PATCHES.map(() => 'verified'))
+})
+
+test('the composed hub accepts only reviewed original/intermediate/final hashes and writes one result per file', async (t) => {
+  const original = await source(t, 0)
+  if (!original) return
+  assert.equal(PATCHES.length, 6)
+  assert.equal(new Set(PATCHES.map((p) => `${p.rootIndex}:${p.file}`)).size, PATCHES.length)
+  const intermediate = patchedSource(original, GIF_MEDIA_PATCH)
+  const final = patchedSource(original, PATCHES[0])
+  assert.equal(patchedSource(intermediate, PATCHES[0]), final)
+  assert.equal(patchedSource(final, PATCHES[0]), final)
+  assert.throws(() => patchedSource(intermediate.replace('return { missedAt }', 'return { missedAt, ok: true }'), PATCHES[0]), /unreviewed source hash/)
 })
 
 test('background memory/mood helper passes configured Thinking Off to the provider', async (t) => {

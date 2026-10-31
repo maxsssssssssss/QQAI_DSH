@@ -1,6 +1,6 @@
 {
   "recorded_date": "2026-10-31",
-  "status": "server-services-running-real-dsh-api-and-isolated-restore-verified-awaiting-user-qq-login",
+  "status": "qq-connected-owner-only-real-acceptance-in-progress",
   "node": {
     "version": "24.22.2",
     "linux_x64_sha256": "48cc0e21e048790e54c0cf5749c2725005313d652651c40b7a21feb9697aaf75",
@@ -54,5 +54,49 @@
     "deployment/locks/package.json": "e4a1e45d54a9c48c525889fe8975d86c5e2941a7a9a12c131fa63c4ee3759fc5",
     "deployment/locks/pnpm-lock.yaml": "c9bb6a00074c883805a7fa4fff1a753847ed733e82c50a9d92792f4371462d74",
     "deployment/locks/profile-package.json": "c6131b249dac29cf6df68e373045c67d62d000f059d63958eb34b9ba3274d946"
-  }
+  },
+  "compatibility_patches": [
+    {
+      "package": "dsh-aurabot-qq",
+      "version": "1.1.24",
+      "file": "src/chat/hub.js",
+      "before": "63d8df994316a6286428ad53cfc530015c340c57cfb9c556fc08c2576a714caf",
+      "after": "3c249d4683389f4d6dfafc54ec492d247e7188f573eba6468de02b9ba06750f9"
+    },
+    {
+      "package": "dsh-nekowhale-stickers",
+      "version": "1.1.1",
+      "file": "lib/core/image-input.js",
+      "before": "fccad94722d5e2e10904633a752f7b7418a0184f64d6b1fc22678775d5e235d8",
+      "after": "ffa783ad1d41c602678d4bfb4468133c4a952dff5cd21a21ae6556c32c4fa25d"
+    },
+    {
+      "package": "dsh-aurabot-qq",
+      "version": "1.1.24",
+      "file": "src/features/companion.js",
+      "before": "6f515141959f0aae8697df8601e35c8fcf32e94be6dece64d487ad526c169400",
+      "after": "1aa6989025cca29b2050d06dcdfb34057141783c3f7bb946888528d1a952b5ea"
+    },
+    {
+      "package": "dsh-aurabot-qq",
+      "version": "1.1.24",
+      "file": "src/core/llm.js",
+      "before": "6f9b89396e08a23d2adfa65e2de50349cbb5ac12f5b67fae1e291e32cbbf66a6",
+      "after": "5a34b943fc03bf0162fc3c2f795a150d10c2bf2597dea3253c266717bf10724e"
+    },
+    {
+      "package": "dsh-aurabot-qq",
+      "version": "1.1.24",
+      "file": "src/features/memory.js",
+      "before": "a024527ee4ac97ef1fbb5b978f421d1e2f4a14f33076347a538b3aa569a515d1",
+      "after": "cdca6f6956d191426d175254a859142cee5855f60debf4415eea6cc98cddcf52"
+    },
+    {
+      "package": "dsh-aurabot-qq",
+      "version": "1.1.24",
+      "file": "src/modules/qq-tools/index.js",
+      "before": "bfcae29f15c0737cb3be7664fa95fc4132108fbc486bf126302b09a19dd38bf0",
+      "after": "59a57d510fcb26f3a1a9a70c03c83adf5bf332181c6deaedce29a4441ca79502"
+    }
+  ]
 }

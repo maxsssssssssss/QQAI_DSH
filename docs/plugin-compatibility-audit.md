@@ -1,6 +1,6 @@
 # 三插件兼容性核查与已实现适配
 
-核查日期：2026-10-31（Asia/Shanghai）。这是当前上游源码、发行包及本地接口验证记录；本文件不声称完成真实 DeepSeek 或真实 QQ 验收。不引用旧项目人格、记忆、Guard、发送或主动聊天实现。
+核查日期：2026-10-31（Asia/Shanghai）。本文件记录固定上游源码、兼容修复、自动化接口测试、真实 DeepSeek 测试及已经完成的部分 QQ 验证。整体验收仍在进行；通过范围与待测事项在文末分别列出。不引用旧项目人格、记忆、Guard、发送或主动聊天实现。
 
 ## 固定来源
 
@@ -34,7 +34,7 @@ Aurabot 根据权限创建 `aurabot-private`、`aurabot-private-long` 或 `aurab
 
 已明确的小幅本地调整：删除年龄标签“萝莉”、删除强制显露思考过程的句子；替换旧模板中的 model/cwd 占位符；添加可配置姓名、知道自己是 AI、不将虚拟角色动作或未执行工具描述为现实事实。主体鲸鱼娘语气、米饭、尾巴、傲娇与认真工作设定仍取自指定插件，不引入旧人格全文。
 
-`rules` 事件补入 Nekowhale 四工具的使用说明和图片 Markdown 例外。这样即使 DSH `persona.complete: true` 抑制其他静态提示段，实际 Aurabot 规则仍能解释图片工具协议。工具是否真正可见，仍需最终 DSH Agent 与真实模型请求核验。
+`rules` 事件补入 Nekowhale 四工具的使用说明和图片 Markdown 例外。这样即使 DSH `persona.complete: true` 抑制其他静态提示段，实际 Aurabot 规则仍能解释图片工具协议。本轮实际 QQ 会话已核对运行时工具目录，并观察到真实模型成功调用 `sticker_search`、`sticker_send`；用户确认了“大肥鱼”身份和动画 GIF 的实际显示。
 
 来源：[Aurabot presets](https://github.com/accomplish07zrh-eng/dsh-aurabot-qq/blob/e9026a99d9db58974363c416eaa9e555499737fa/cordis.patch.yml)、[人格 patch](https://github.com/Kaalia0912/dsh-whale-musume-persona/blob/0fbdcf217e3bf94e35fef36f7ac56134b704529b/cordis.patch.yml)、[人格变量装载](https://github.com/accomplish07zrh-eng/dsh-aurabot-qq/blob/e9026a99d9db58974363c416eaa9e555499737fa/src/host.js)、[用户模块 API](https://github.com/accomplish07zrh-eng/dsh-aurabot-qq/blob/e9026a99d9db58974363c416eaa9e555499737fa/src/modules/API.md)。
 
@@ -50,7 +50,7 @@ Nekowhale `sticker_send` / `meme_render` 返回 `http://127.0.0.1:<DSH端口>/x-
 4. 转成 `base64://` 后仍由原生 `sendImage` 发送；实际 GIF 字节保持不变。没有把宿主路径发给容器，没有全局放宽 SSRF。
 5. `send` 钩子只接受已由本模块登记的一次性 GIF payload，接收者限定当前 owner 私聊。其他本地路径、模型自造 base64、其他公网/内网图片路径均拒绝。媒体失败不输出私人路径或图片内容。
 
-暂不默认强加 `sub_type: 1`：实际 SnowLuma GIF 显示需验证；如果网关需要该字段，再以真实结果作针对性调整。
+未强加 `sub_type: 1`。本轮用户已确认通过 SnowLuma 实际收到并播放 GIF，且顺序为文字 → 动画 GIF → 文字；当前链路不需要额外修改该字段。随后分别验证了用户入站 PNG 的识别与边数追问，以及中文文字表情的实际接收和可读性；这些通过结论分别来自真实 QQ 测试。[聊天与媒体证据](evidence/20261031-qq-chat-media.json)
 
 来源：[Nekowhale工具与链接](https://github.com/Loping151/dsh-nekowhale-stickers/blob/b7b58c0ff347d639fabe87d90d6716c4b3cad185/src/index.ts)、[受控缓存服务](https://github.com/Loping151/dsh-nekowhale-stickers/blob/b7b58c0ff347d639fabe87d90d6716c4b3cad185/src/core/kit.ts)、[Aurabot发送](https://github.com/accomplish07zrh-eng/dsh-aurabot-qq/blob/e9026a99d9db58974363c416eaa9e555499737fa/src/chat/hub.js)、[Aurabot网络读取](https://github.com/accomplish07zrh-eng/dsh-aurabot-qq/blob/e9026a99d9db58974363c416eaa9e555499737fa/src/core/net.js)。
 
@@ -60,20 +60,36 @@ Aurabot `fetchImage` 对本地路径默认允许读取。模型输出 `![x](/任
 
 此外 Aurabot 用户模块是异步装载的，模块钩子异常会被上游吞掉，热重载或被禁用时钩子也会消失。这使单纯的用户模块不足以持续保证文件访问边界。
 
-因此另实现 `scripts/patch-plugin-media.mjs`，只对已核验源文件打固定补丁，不重写消息发送器。另两处单行改动修正主动提示与后台模型配置：
+因此实现 `scripts/patch-plugin-media.mjs`，只对已核验源文件打固定补丁，保留原生消息发送流程。本轮另外修复投递结果误报及记忆流水提前消费问题，当前统一校验以下六个文件：
 
 | 固定补丁 | 原始 SHA-256（单个末尾换行归一化） | 修改后 SHA-256 |
 |---|---|---|
-| Aurabot `src/chat/hub.js`：sendImage 只接受 base64 GIF，不解析任何路径/URL | `63d8df994316a6286428ad53cfc530015c340c57cfb9c556fc08c2576a714caf` | `13792168e58b88e2acfa6e94520b06c526037ac42a42d7a95aadba6bc7d8392c` |
+| Aurabot `src/chat/hub.js`：仅接受 base64 GIF，并按有效回执汇总文字/GIF投递结果 | `63d8df994316a6286428ad53cfc530015c340c57cfb9c556fc08c2576a714caf` | `3c249d4683389f4d6dfafc54ec492d247e7188f573eba6468de02b9ba06750f9` |
 | Nekowhale npm `lib/core/image-input.js`：禁用头像文件/URL输入，保留文字模板 | `fccad94722d5e2e10904633a752f7b7418a0184f64d6b1fc22678775d5e235d8` | `ffa783ad1d41c602678d4bfb4468133c4a952dff5cd21a21ae6556c32c4fa25d` |
 | Aurabot `src/features/companion.js`：只将编造经历的角度改为明确的联想/虚拟设想 | `6f515141959f0aae8697df8601e35c8fcf32e94be6dece64d487ad526c169400` | `1aa6989025cca29b2050d06dcdfb34057141783c3f7bb946888528d1a952b5ea` |
 | Aurabot `src/core/llm.js`：后台 askModel 尊重 cfg.model.reasoningEffort，未配置时为 off | `6f9b89396e08a23d2adfa65e2de50349cbb5ac12f5b67fae1e291e32cbbf66a6` | `5a34b943fc03bf0162fc3c2f795a150d10c2bf2597dea3253c266717bf10724e` |
+| Aurabot `src/features/memory.js`：失败或不足的提炼批次保留流水与游标，完整处理分段 | `a024527ee4ac97ef1fbb5b978f421d1e2f4a14f33076347a538b3aa569a515d1` | `cdca6f6956d191426d175254a859142cee5855f60debf4415eea6cc98cddcf52` |
+| Aurabot `src/modules/qq-tools/index.js`：未全部确认投递时返回失败，不宣称已发出 | `bfcae29f15c0737cb3be7664fa95fc4132108fbc486bf126302b09a19dd38bf0` | `59a57d510fcb26f3a1a9a70c03c83adf5bf332181c6deaedce29a4441ca79502` |
 
-脚本先验证两个包名、版本、源文件完整 hash 和唯一替换点，再写入。已打补丁时可重复执行；未知源码/版本一律失败。`--check` 只校验补丁存在，缺失即失败，应作为服务启动前置检查。升级必须重新评审并更新固定版本，不能自动绕过 hash 不匹配。
+脚本先验证两个包名、版本、六个源文件完整 hash 和唯一替换点，再写入；每个目标文件只生成一个最终输出。Hub 的升级链为原版 `63d8…` → 首次 GIF 补丁 `13792168e58b88e2acfa6e94520b06c526037ac42a42d7a95aadba6bc7d8392c` → 当前 `3c249…`，允许原版全新安装及已部署 GIF 版本迁移。最终版本重复执行不变；其余源码或版本一律失败。`--check` 要求六个文件均处于最终 hash，已审核的中间版本也不能通过启动检查。升级必须重新评审并更新固定版本，不能绕过 hash 不匹配。投递补丁规格位于 `scripts/qq-delivery-patch-spec.mjs`，部署和恢复时须与安装器一同保留。
 
 头像模板不是本次文字表情验收的前提；若以后开放，必须以已授权 QQ 附件 ID 解析到受控内容，不能恢复任意宿主路径参数。自动化检查已证明这两条入口在模块缺席时仍不会读取模型指定的文件或 URL。
 
 来源：[Nekowhale image-input](https://github.com/Loping151/dsh-nekowhale-stickers/blob/b7b58c0ff347d639fabe87d90d6716c4b3cad185/src/core/image-input.ts)、[Aurabot模块异常及装载](https://github.com/accomplish07zrh-eng/dsh-aurabot-qq/blob/e9026a99d9db58974363c416eaa9e555499737fa/src/core/modules.js)。
+
+### 4. 投递失败不能向模型报告“发出去了”
+
+固定上游 `sendSegments` 在响应缺少有效 `message_id` 时仍可能增加发送计数；`deliver` 忽略文字/图片发送返回的 `null`，继续把完整回复记为已发送；`qq_send_message` 又对这些返回值默认报告成功。因此工具成功标记和 bot 流水都不能单独证明实际送达。
+
+修复保持原解析、气泡顺序及等待时间：文字/GIF 必须取得有效消息 ID 才计入已确认条数，汇总 `ok/delivered/failed/unverified`；全部失败不写出站活动，部分失败仅记录已确认的内容。当前未启用的语音、原生表情等发送实现未改，无法核实回执的类型标记为未验证。`qq_send_message` 只在全部确认时说明网关已接受消息，其余情况返回 `ok:false`，并提示不要自动重发，以免产生重复消息。网关接受仍不代表用户已经看到，动画、中文字形和气泡体验继续由接收端确认。
+
+当前 `allow.private/groups` 均为空，工具目标仅允许唯一主人；兼容模块的发送钩子再次检查主人私聊。回归覆盖缺失回执、传输失败、dryRun、部分/全部失败、顺序和延迟、白名单拒绝及完整 hash 锁定。[固定 QQ 工具源码](https://github.com/accomplish07zrh-eng/dsh-aurabot-qq/blob/e9026a99d9db58974363c416eaa9e555499737fa/src/modules/qq-tools/index.js)
+
+### 5. 记忆提炼失败或聊天不足时不能丢弃待处理流水
+
+固定上游在提炼失败或不足三条非 bot 消息时仍推进全局游标，历史日还会删除流水；只处理末尾三个分段也会漏掉超过 240 行的旧内容。修复按聊天跨日期累积未处理行，仅推进成功批次的日期/聊天游标；失败、非法模型结果或不足的批次保留原始流水等待重试。真实合法 `[]` 才算成功的空结果，所有分段都须处理，提炼期间新到达的行不随旧快照删除。关闭记忆或每日整理时，14 天兜底清理也只删除已消费完的日流水。
+
+这是基于 Aurabot 原生提炼器的可重试修复，未引入旧记忆层。多段处理前段成功、后段失败时，重试可能再次提炼前段，继续依赖上游相似度去重；不宣称严格只提炼一次。原生长期记忆遗忘策略保持不变。11 项故障注入回归验证保留、重试、跨日不足累积、并发到达和完整分段处理；真实 DeepSeek 自动提炼、纠错和新会话召回仍在验收。[详细步骤与边界](qq-acceptance-procedure.md)、[固定记忆源码](https://github.com/accomplish07zrh-eng/dsh-aurabot-qq/blob/e9026a99d9db58974363c416eaa9e555499737fa/src/features/memory.js)
 
 ## 安装接线
 
@@ -105,7 +121,7 @@ node scripts/patch-plugin-media.mjs --check AURABOT_PACKAGE_DIR NEKOWHALE_PACKAG
 
 新环境初始化已实现为 `scripts/configure-dsh-profile.mjs DSH_HOME WORKSPACE PORT`。可选 QQ 号由 `OWNER_QQ` / `BOT_QQ` 环境变量提供；脚本不读取 API Key。它从已安装 Aurabot 的完整 DEFAULTS 创建受限配置，复制兼容模块，保留同项目已有 QQ 号/OneBot token，重设总发送与主动开关为关闭。它是部署/维护时的初始化操作，会重置配置偏好；不要把它作为每次服务启动命令。
 
-后台检查发现 `askModel` 原先在调用方不传 reasoningEffort 时硬编码 low，未读取 cfg；其模型能力归一化在某些元数据下可能再降为 off，不能依赖这一间接行为。已在统一入口改为读取 cfg 的 off。当前固定 memory/companion 源码无额外显式 low 调用。per-chat 设置不接受 off 时会清空并由 hub 回退全局 off；真实 DeepSeek 测试仍须核对最终请求。
+后台检查发现 `askModel` 原先在调用方不传 reasoningEffort 时硬编码 low，未读取 cfg；其模型能力归一化在某些元数据下可能再降为 off，不能依赖这一间接行为。已在统一入口改为读取 cfg 的 off。当前固定 memory/companion 源码无额外显式 low 调用。per-chat 设置不接受 off 时会清空并由 hub 回退全局 off。本轮真实 QQ 聊天请求元数据已确认 Thinking Off；记忆和主动调用仍随各自真实测试核对。
 
 ## 启用前配置要求
 
@@ -134,17 +150,20 @@ Aurabot `apply(ctx)` 自己加载独立 config.json，不接受把业务配置�
 
 | 证据层 | 已完成 / 尚待完成 |
 |---|---|
-| 自动化接口验证 | Node 24.22.2 下两文件共 11 项通过，独立审查者复跑无跳过；包含固定 Aurabot parseReply、真实 npm image-input 编译模块、GIF 字节不变、错误闭合、路径/符号链接拒绝、固定 hash 补丁幂等性；后台 off 的提供者捕获检查是接口测试桩，不是真实 API |
-| 本地 DSH 三插件运行 | dsh-runtime-audit 子任务已实际装载三插件与用户模块，四种 preset 的 Nekowhale 四工具可见；这一层仍不是通过实际 QQ hub 创建的会话，不替代真实 QQ 验收 |
-| 真实 DeepSeek | 此子任务未执行；需验证普通聊天、真实工具调用、Thinking Off、图像像素输入 |
-| 真实 QQ | 此子任务未执行；需验证多气泡、人格、PNG输入与追问、Nekowhale GIF/中文模板真发、记忆/纠错/新会话召回、定时主动、未回复、重启恢复 |
-| 主观体验 | 需由用户在真实会话中评估语气与自然度；无自动化 PASS 可替代 |
+| 自动化接口验证 | 首次媒体适配验证覆盖 GIF 字节不变、路径/符号链接拒绝及人格来源。本轮独立复跑机制/媒体 6 项、投递 5 项、记忆 11 项，全部通过且无跳过；故障注入与提供者捕获属于自动化测试，不代表真实模型或 QQ 通过 |
+| DSH 与实际 QQ 工具装载 | 三插件与用户模块均已装载；本轮真实 QQ 会话的 10 个工具为 Neko 四工具、web_search/web_fetch、remember/recall_memory、qq_chat_history/qq_send_message。未开放 Shell、宿主文件或 qq_send_file |
+| 真实 DeepSeek | 已完成 DSH 中文多轮、人格、Neko 检索/选择/中文模板、Search/Fetch、像素识别与追问；[本地证据](evidence/20261031-dsh-local-api.json)、[视觉证据](evidence/20261031-dsh-local-vision.json)、[服务器证据](evidence/20261031-dsh-server-api.json)。本轮 QQ 观察到的 12 次模型请求均为 Flash / Thinking Off；sticker_search、sticker_send、meme_render、web_search、web_fetch 均实际成功 |
+| 真实 QQ 已确认 | 用户确认首轮收到 3 条气泡、没有原始 `|||`，随后多轮上下文及“大肥鱼”身份正确；实际收到文字 → 动画 GIF → 文字，GIF 可播放。另已确认入站 PNG 识别与边数追问、中文文字表情收到且清晰、搜索回答附带来源。工具元数据与接收端确认分别记录于[聊天与媒体证据](evidence/20261031-qq-chat-media.json) |
+| 真实 QQ 待验收 | 长期记忆自然提炼/纠错/新会话召回、主动聊天及未回复行为、网关重启恢复、登录后备份恢复和持续运行仍在测试；聊天与媒体通过不等于这些项目通过 |
+| 主观体验 | 用户已确认上述气泡和动画表现；长期口吻、自然度及主动频率仍需实际使用评价，无自动化 PASS 可替代 |
 
 复现本地接口验证（路径参数指向受审计的固定上游包）：
 
 ```bash
 AURABOT_SOURCE_ROOT=/ABSOLUTE/AURABOT WHALE_PERSONA_SOURCE=/ABSOLUTE/PERSONA/cordis.patch.yml node tests/qqai-compat.test.mjs
 AURABOT_SOURCE_ROOT=/ABSOLUTE/AURABOT NEKOWHALE_PACKAGE_ROOT=/ABSOLUTE/NEKOWHALE node tests/plugin-media-patches.test.mjs
+AURABOT_SOURCE_ROOT=/ABSOLUTE/AURABOT node tests/qq-delivery-results.test.mjs
+AURABOT_SOURCE_ROOT=/ABSOLUTE/AURABOT node tests/memory-consolidation.test.mjs
 ```
 
 未设置来源变量的用例会明确 skip；不能把 skip 当作通过。此次记录使用实际受审计源码路径运行，未跳过任何项。

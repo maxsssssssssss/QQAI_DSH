@@ -95,7 +95,7 @@ rc.5 已包含两套上游实现：
 | 配置静态核查 | 使用真实 rc.5 base/web 与锁定 Aurabot YAML 合成检查；最初 37 条 override 全部命中，之后补充 UI/本地应用打开/额外日志限制，并经真实 DSH 合成与启动验证 |
 | DSH 实际合成/启动 | 本地 `--dump-config` 通过，最终三插件均 active；认证 RPC 成功，未认证 API=401、不可信 Host=403；本地应用打开=false |
 | 真实 API | 本地 DSH 完成中文多轮、鲸鱼娘人格、Nekowhale 检索/选择/中文模板、Search/Fetch、真实图像像素与图片追问；详见下方证据。Key 只从用户指定文件读入进程环境 |
-| 实际 QQ | 未由本审计执行；必须单独验收三插件、多气泡、记忆、主动、图片和表情 |
+| 实际 QQ | 用户已确认 3 条气泡且不显示原始 `|||`、多轮上下文、“大肥鱼”身份、文字/动画 GIF/文字顺序、PNG识别与追问、中文文字表情清晰、搜索回答附来源；运行元数据确认五个媒体/Web工具真实成功，12次已观察请求均为Flash / Thinking Off。记忆、主动、重启及登录后备份恢复仍在独立验收。[聊天与媒体证据](evidence/20261031-qq-chat-media.json) |
 
 静态检查采用 PyYAML 解析官方 bundle，保留但不执行 `!!js`，只检验 overlay 目标与 preset 工具白名单；它不是 DSH Runtime 测试。最终还需验证：运行进程身份与权限、监听地址、GUI 禁用入口、真实会话工具目录、同一个 profile 的插件装载、无低思考覆盖、无重复注册、Nekowhale 图片鉴权/发送，以及持久化重启与恢复。
 
@@ -134,9 +134,13 @@ DSH_BIN=/opt/qqai-dsh/app/node_modules/.bin/dsh \
 
 脚本固定 pnpm 为 11.28.5。仓库存在完整 profile 锁文件对时，先用 DSH 官方入口初始化新 profile 的目录和 pnpm workspace 设置，再复制锁定 manifest/lock，执行 `dsh plugin --profile web install --frozen-lockfile --ignore-scripts`，并检查锁文件未变化；不会重新解析浮动依赖。若两个文件均不存在，则保留首次捕获分支，按三个精确版本/提交执行 `add --save-exact --ignore-scripts`；只缺其中一个文件时直接失败，避免意外退回无锁安装。首次捕获完成后，将 `$DSH_HOME/profiles/web/package.json` 保存为 `deployment/locks/profile-package.json`，同时保存该目录的 `pnpm-lock.yaml`。可用 `DSH_PNPM_STORE_DIR` 指定同一专用用户可写的包缓存目录，默认位于本次 DSH_HOME/toolchain。
 
-安装后应用四文件哈希补丁，调用 `configure-dsh-profile.mjs`，生成完整 profile patch，保留 Whale dependency、排除其旧 bundle patch、独立挂载 Whale Host 空入口。配置会强制停止 QQ 发送和主动发送，设置外部 OneBot 模式，并保留同项目已有 QQ 号和网关 token。脚本不处理模型 Key。重跑属于停机重新配置步骤，不应在线覆盖运行设置；恢复已备份的会话和偏好时，应按 [备份恢复说明](backup-restore.md) 对恢复的锁执行 frozen 安装并检查补丁，不重跑初始化配置。
+安装后应用当前六文件哈希补丁，调用 `configure-dsh-profile.mjs`，生成完整 profile patch，保留 Whale dependency、排除其旧 bundle patch、独立挂载 Whale Host 空入口。配置会强制停止 QQ 发送和主动发送，设置外部 OneBot 模式，并保留同项目已有 QQ 号和网关 token。脚本不处理模型 Key。重跑属于停机重新配置步骤，不应在线覆盖运行设置；恢复已备份的会话和偏好时，应按 [备份恢复说明](backup-restore.md) 对恢复的锁执行 frozen 安装并检查补丁，不重跑初始化配置。
 
-已在独立空临时 DSH_HOME 执行完整安装脚本：pnpm 明确报告跳过 resolution，三个固定插件安装成功，四文件补丁与完整配置合成通过；安装后的 manifest 与仓库记录一致、lock 逐字节未变，原生 canvas 能加载并输出 PNG。此项没有启动服务或发送 API 请求。[无锁漂移的重建证据](evidence/20261031-dsh-frozen-install.json)
+历史记录：首次在独立空临时 DSH_HOME 执行完整安装脚本时，pnpm 明确报告跳过 resolution，三个固定插件安装成功，当时的四文件补丁与完整配置合成通过；安装后的 manifest 与仓库记录一致、lock 逐字节未变，原生 canvas 能加载并输出 PNG。此项没有启动服务或发送 API 请求，保留其当时的四文件结果，不追改为六文件重建证明。[无锁漂移的重建证据](evidence/20261031-dsh-frozen-install.json)
+
+本轮补充：统一补丁现覆盖 Aurabot `hub.js`、`companion.js`、`llm.js`、`memory.js`、`modules/qq-tools/index.js` 与 Nekowhale `lib/core/image-input.js` 六个文件，加入投递结果核实和记忆流水保留修复。安装器支持原版 Hub 与已部署 GIF-only 中间 hash 迁移到同一最终版本，拒绝其余 hash，每个文件只准备一个输出；机制/媒体 6 项、投递 5 项、记忆 11 项回归通过，无跳过。这些自动化结果不替代真实模型和 QQ 功能验收。完整最终 hash 与修复边界见[三插件兼容性记录](plugin-compatibility-audit.md)。
+
+实际 QQ 会话已核对 10 个工具：`sticker_search`、`sticker_send`、`meme_render`、`sticker_manage`、`web_search`、`web_fetch`、`remember`、`recall_memory`、`qq_chat_history`、`qq_send_message`。本轮12次已观察请求均为 Flash / Thinking Off；两个表情工具、`meme_render`、`web_search`、`web_fetch` 实际成功。用户确认了GIF动画及前后文字顺序、入站PNG识别与边数追问、中文文字表情实际接收且可读、搜索回答附来源。公开[聊天与媒体证据](evidence/20261031-qq-chat-media.json)只记录元数据和确认结果，不含账号或私人聊天。长期记忆、主动及未回复行为、重启恢复与持续运行仍需各自验收；上述历史本地单次测试记录保留当时的范围。
 
 完整安全 overlay 已写入 profile，正式服务不再额外 `--patch` 同一文件，否则会重复插入 preset。启动形态：
 
