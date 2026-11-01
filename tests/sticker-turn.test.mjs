@@ -1,0 +1,126 @@
+// Isolated regressions of the actual pinned hub functions, not live QQ evidence.
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { AsyncLocalStorage } from 'node:async_hooks'
+import { createHash } from 'node:crypto'
+import { readFile, mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { PATCHES, patchedSource } from '../scripts/patch-plugin-media.mjs'
+import { STICKER_TURN_PATCHES } from '../scripts/sticker-turn-patch-spec.mjs'
+import { mediaHooks } from '../adapters/qqai-compat/index.mjs'
+import { createStickerPolicy, toolTurnTracker } from '../adapters/qqai-compat/sticker-policy.mjs'
+
+const root = process.env.AURABOT_SOURCE_ROOT
+const chatId = 'private:12345'
+const sha = value => createHash('sha256').update(value).digest('hex')
+const importSource = value => import('data:text/javascript;base64,' + Buffer.from(value).toString('base64'))
+const log = { info() {}, debug() {}, warn() {} }
+async function source(t) {
+  if (!root) { t.skip('Set AURABOT_SOURCE_ROOT to the fixed upstream package'); return }
+  const spec = PATCHES.find(p => p.file === 'src/chat/hub.js')
+  return patchedSource(await readFile(join(root, spec.file), 'utf8'), spec)
+}
+function fn(source, name, end, async = true) {
+  const start = source.indexOf(`  ${async ? 'async ' : ''}function ${name}(`)
+  const finish = source.indexOf(end, start)
+  assert.ok(start > 0 && finish > start)
+  return source.slice(start, finish)
+}
+
+test('turn-context patch is pinned, idempotent and upgrades the prior deployed hub', async t => {
+  const final = await source(t); if (!final) return
+  const stage = STICKER_TURN_PATCHES[0], combined = PATCHES.find(p => p.file === stage.file)
+  assert.equal(sha(final), stage.after)
+  let previous = final
+  for (const edit of [...stage.edits].reverse()) previous = previous.replace(edit.replacement, edit.needle)
+  assert.equal(sha(previous), stage.before)
+  assert.equal(patchedSource(previous, combined), final)
+  assert.equal(patchedSource(final, combined), final)
+  assert.throws(() => patchedSource(final + '\n// drift', combined), /unreviewed/)
+})
+
+test('actual onSessionEvent and tool-call tracker agree on normalized session and turn', async t => {
+  const src = await source(t); if (!src) return
+  const deliveries = [], released = []
+  const make = new Function('deliver', 'release', 'log', `
+    const sessionKey = x => String(x || '').replace(/^session-/, '');
+    const sessionToChat = new Map([['owner-session', '${chatId}'], ['system-session', 'system:background']]);
+    const turnState = new Map(), slowNoticeSent = new Set(), running = new Set();
+    const stopTyping = () => {}, redact = x => x;
+    ${fn(src, 'textOf', '\n  function onSessionEvent', false)}
+    ${fn(src, 'onSessionEvent', '\n  // ---------- 收 QQ', false)}
+    return onSessionEvent;`)
+  const onEvent = make(async (...args) => deliveries.push(args), c => released.push(c), log)
+  const tracker = toolTurnTracker({ getOwner: () => '12345', chatOfSession: sid => sid === 'owner-session' ? chatId : null })
+  const session = { id: 'session-owner-session' }
+  tracker.observe(session, { type: 'tool/call', data: { turn: 8, callId: 'tool-8' } })
+  const toolScope = tracker.scope({ agent: { session }, callId: 'tool-8', rootCallId: 'tool-8' })
+  const assistant = (turn, text) => ({ type: 'assistant/message', data: { turn, message: { content: [{ type: 'text', text }] } } })
+  const end = turn => ({ type: 'turn/end', data: { turn, reason: { kind: 'completed' } } })
+  onEvent(session, assistant(8, '真实函数的合成回复')); onEvent(session, end(8))
+  onEvent({ id: 'session-unmapped-probe' }, assistant(8, '不可发送')); onEvent({ id: 'session-unmapped-probe' }, end(8))
+  onEvent({ id: 'session-system-session' }, assistant(8, '后台不能发送')); onEvent({ id: 'session-system-session' }, end(8))
+  onEvent(session, assistant(9, '上一轮残留')); onEvent(session, end(10))
+  await Promise.resolve(); await Promise.resolve()
+  assert.equal(deliveries.length, 1)
+  assert.equal(deliveries[0][2].stickerTurnKey, toolScope)
+  assert.equal(toolScope, 'qq:owner-session:8')
+  assert.ok(released.includes(chatId))
+})
+
+test('actual hub preserves turn identity through tools, interleaved final bubbles and send hooks', async t => {
+  const src = await source(t); if (!src) return
+  const replySpec = PATCHES.find(p => p.file === 'src/chat/reply.js')
+  const originalReply = await readFile(join(root, 'src/chat/reply.js'), 'utf8')
+  const { parseReply, bubbleDelay } = await importSource(replySpec ? patchedSource(originalReply, replySpec) : originalReply)
+  const dir = await mkdtemp(join(tmpdir(), 'qqai-hub-turn-')); t.after(() => rm(dir, { recursive: true, force: true }))
+  await mkdir(join(dir, 'byhash'))
+  const catalog = [], base = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64')
+  for (let i = 0; i < 3; i++) {
+    const hash = String(i).padStart(12, '0'); catalog.push({ pack: '大肥鱼', hash })
+    await writeFile(join(dir, 'byhash', hash + '.gif'), Buffer.concat([base, Buffer.from(String(i))]))
+  }
+  const kit = { all: async () => catalog, fileByHash: async hash => join(dir, 'byhash', hash + '.gif') }
+  const policy = createStickerPolicy({ getKit: () => kit, getUsage: () => 'normal' })
+  const media = mediaHooks({ getPort: () => 3080, getKit: () => kit, getDataDir: () => dir, getOwner: () => '12345', policy })
+  const hookScopes = [], accepted = [], sentIds = new Set()
+  const hooks = {
+    reply: async (text, info) => { hookScopes.push(['reply', info.stickerTurnKey]); await Promise.resolve(); return text },
+    items: media.items,
+    send: async (message, info) => {
+      hookScopes.push(['send', info.stickerTurnKey || policy.scope(info)])
+      return media.send(message, info)
+    },
+  }
+  const cfg = { enabled: true, dryRun: false, ownerQQ: '12345', voice: { enabled: false }, stickers: { enabled: false } }
+  const make = new Function('AsyncLocalStorage', 'parseReply', 'bubbleDelay', 'hooks', 'getConfig', 'onebot', 'sentIds', 'log', `
+    const stickerTurnStore = new AsyncLocalStorage(), captureStore = new AsyncLocalStorage();
+    const targetOf = () => ({kind:'private',id:'12345'}), bump = () => {}, mood = () => ({delay:1});
+    const groupEngaged = new Map(), groupRefs = new Map(), groupSaid = new Map(), saidElsewhere = new Map();
+    const stickers = {}; let lastChatAt = 0, lastBotToOwner = null;
+    const sleep = async () => { await Promise.resolve(); }, logChat = () => {}, onActivity = () => {};
+    const sendVoice = async () => {}, sendSticker = async () => {}, pokeBack = async () => {};
+    ${fn(src, 'sendSegments', '\n  /** replyId')}
+    const sendText = (chat, text) => sendSegments(chat, [{type:'text',data:{text}}], text);
+    const sendImage = (chat, file) => sendSegments(chat, [{type:'image',data:{file}}], '[image]');
+    ${fn(src, 'deliver', '\n  // ---------- 盯 DSH')}
+    return { deliver, sendSegments };`)
+  const hub = make(AsyncLocalStorage, parseReply, bubbleDelay, hooks, () => cfg,
+    { call: async (_action, params) => { accepted.push(params.message); await Promise.resolve(); return { message_id: accepted.length } } }, sentIds, log)
+  const image = i => `![表情](http://127.0.0.1:3080/x-nekowhale-stickers/s/${catalog[i].hash}.gif)`
+  const keyA = 'qq:owner-session:8', keyB = 'qq:owner-session:9'
+  await policy.withTurn(keyA, () => hub.deliver(chatId, image(0)))
+  await Promise.all([
+    hub.deliver(chatId, '甲|||' + image(0) + '|||' + image(1) + '|||' + image(2) + '|||乙', { stickerTurnKey: keyA, own: true }),
+    hub.deliver(chatId, '丙|||' + image(0) + '|||' + image(1) + '|||丁', { stickerTurnKey: keyB, own: true }),
+  ])
+  assert.equal(accepted.flat().filter(x => x.type === 'image').length, 4, 'tool+final A sends 2; overlapping B sends 2')
+  assert.deepEqual(accepted.flat().filter(x => x.type === 'text').map(x => x.data.text).sort(), ['丁', '丙', '乙', '甲'].sort())
+  assert.equal(hookScopes.filter(([kind, key]) => kind === 'send' && key === keyA).length, 4)
+  assert.equal(hookScopes.filter(([kind, key]) => kind === 'send' && key === keyB).length, 4)
+  const before = accepted.length
+  await hub.deliver(chatId, '无上下文仍可发文本|||' + image(2))
+  assert.equal(accepted.length, before + 1)
+  assert.equal(accepted.at(-1)[0].type, 'text')
+})

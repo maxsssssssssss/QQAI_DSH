@@ -75,7 +75,7 @@ export async function configureProfile(dshHome, workspace, port, env = process.e
   config.modules = Object.fromEntries(disabled.map((id) => [id, { enabled: false }]))
   for (const id of ['memory', 'mood', 'speakup', 'qq-tools', 'qqai-compat']) config.modules[id] = { enabled: true }
   config.ext = { 'qqai-compat': { personaSourcePath: personaSource, stickersDataDir: stickersData,
-    botName: '大肥鱼', ownerName: '主人' } }
+    botName: '大肥鱼', ownerName: '主人', stickerUsage: 'normal' } }
 
   const manifestPath = join(profile, 'package.json')
   const manifest = await existingJson(manifestPath)
@@ -92,11 +92,13 @@ export async function configureProfile(dshHome, workspace, port, env = process.e
     + `- insert:\n    - id: qqai-whale-source\n      name: dsh-whale-musume-persona\n`
     + `- id: nekowhale-stickers\n  config:\n`
     + `    dataDir: ${JSON.stringify(stickersData)}\n    autoSync: lazy\n    promptMode: off\n`
+    + `    packs: ["大肥鱼"]\n    whitelist: ["pack:大肥鱼"]\n`
     + `    pet: false\n    petBubbles: false\n    petBalance: false\n`
     + `    templates: true\n    agentCuration: true\n    returnImageToModel: false\n`
     + `    publicBaseUrl: ${JSON.stringify(`http://127.0.0.1:${port}`)}\n`
     + `    routePath: /x-nekowhale-stickers\n`
-  const adapter = await readFile(join(repo, 'adapters/qqai-compat/index.mjs'), 'utf8')
+  const adapterFiles = ['sticker-policy.mjs', 'index.mjs']
+  const adapters = await Promise.all(adapterFiles.map(name => readFile(join(repo, 'adapters/qqai-compat', name), 'utf8')))
   // All values above have been validated before writing runtime configuration.
   for (const dir of [dshHome, aurabotData, stickersData, workspace]) {
     await mkdir(dir, { recursive: true, mode: 0o700 })
@@ -104,7 +106,9 @@ export async function configureProfile(dshHome, workspace, port, env = process.e
   }
   await atomic(manifestPath, JSON.stringify(manifest, null, 2) + '\n')
   await atomic(join(profile, 'cordis.patch.yml'), safe.trimEnd() + '\n' + extra)
-  await atomic(join(aurabotData, 'modules/qqai-compat/index.mjs'), adapter)
+  for (let i = 0; i < adapterFiles.length; i++) {
+    await atomic(join(aurabotData, 'modules/qqai-compat', adapterFiles[i]), adapters[i])
+  }
   await atomic(join(aurabotData, 'config.json'), JSON.stringify(config, null, 2) + '\n')
   return { profile, aurabotData, stickersData, enabled: false, dryRun: true,
     ownerConfigured: Boolean(config.ownerQQ), botConfigured: Boolean(config.botQQ), port }

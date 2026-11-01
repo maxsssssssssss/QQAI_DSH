@@ -79,11 +79,14 @@ test('installer refuses drift, verifies both packages, and is idempotent', async
 test('the composed hub accepts only reviewed original/intermediate/final hashes and writes one result per file', async (t) => {
   const original = await source(t, 0)
   if (!original) return
-  assert.equal(PATCHES.length, 7)
+  assert.equal(PATCHES.length, 8)
   assert.equal(new Set(PATCHES.map((p) => `${p.rootIndex}:${p.file}`)).size, PATCHES.length)
   const intermediate = patchedSource(original, GIF_MEDIA_PATCH)
   const final = patchedSource(original, PATCHES[0])
+  const previous = patchedSource(original, { ...PATCHES[0],
+    after: PATCHES[0].stages.at(-1).before, stages: PATCHES[0].stages.slice(0, -1) })
   assert.equal(patchedSource(intermediate, PATCHES[0]), final)
+  assert.equal(patchedSource(previous, PATCHES[0]), final)
   assert.equal(patchedSource(final, PATCHES[0]), final)
   assert.throws(() => patchedSource(intermediate.replace('return { missedAt }', 'return { missedAt, ok: true }'), PATCHES[0]), /unreviewed source hash/)
 })

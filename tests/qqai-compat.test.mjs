@@ -21,6 +21,7 @@ async function fixture(t) {
   await writeFile(file, gif)
   await writeFile(join(dataDir, 'renders', `${renderId}.gif`), gif)
   const kit = {
+    all: async () => [{ pack: '大肥鱼', hash }],
     fileByHash: async (id) => id === hash ? file : undefined,
     renderPath: (id) => join(dataDir, 'renders', `${id}.gif`),
   }
@@ -55,7 +56,7 @@ test('known GIF uses native image payload exactly once for its owner', async (t)
   const f = await fixture(t)
   const hooks = mediaHooks({ getPort: () => 3180, getKit: () => f.kit,
     getDataDir: () => f.dataDir, getOwner: () => 'test-owner' })
-  const info = { chatId: 'private:test-owner' }
+  const info = { chatId: 'private:test-owner', stickerTurnKey: 'qq:synthetic:1' }
   const items = await hooks.items([{ kind: 'text', value: '给你看看' }, { kind: 'image', value: url }], info)
   assert.equal(items.length, 2)
   assert.deepEqual(Buffer.from(items[1].value.slice(9), 'base64'), gif)
@@ -87,7 +88,7 @@ test('pinned upstream parser delivers Markdown image items through this adapter'
   const hooks = mediaHooks({ getPort: () => 3180, getKit: () => f.kit, getDataDir: () => f.dataDir, getOwner: () => 'owner' })
   const parsed = parseReply(`你好呀|||![表情](${url})|||来张表情`)
   assert.deepEqual(parsed.items.map((x) => x.kind), ['text', 'image', 'text'])
-  const transformed = await hooks.items(parsed.items, { chatId: 'private:owner' })
+  const transformed = await hooks.items(parsed.items, { chatId: 'private:owner', stickerTurnKey: 'qq:synthetic:1' })
   assert.deepEqual(transformed.map((x) => x.kind), ['text', 'image', 'text'])
   assert.deepEqual(Buffer.from(transformed[1].value.slice(9), 'base64'), gif)
 })

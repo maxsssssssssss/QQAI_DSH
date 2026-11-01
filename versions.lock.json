@@ -1,6 +1,6 @@
 {
   "recorded_date": "2026-11-02",
-  "status": "native-proactive-30-40-80-enabled",
+  "status": "neko-single-whale-normal-two-per-turn-enabled",
   "node": {
     "version": "24.22.2",
     "linux_x64_sha256": "48cc0e21e048790e54c0cf5749c2725005313d652651c40b7a21feb9697aaf75",
@@ -61,7 +61,7 @@
       "version": "1.1.24",
       "file": "src/chat/hub.js",
       "before": "63d8df994316a6286428ad53cfc530015c340c57cfb9c556fc08c2576a714caf",
-      "after": "aa6f08652dd1a7ebad7e04e0bf8041ad5b45492e9cac8b9f4b0c89b99e8341ab"
+      "after": "43aa7dc54ad209673bccc09509277f06fa57ed14653bed3c5cf7d275aea5cddb"
     },
     {
       "package": "dsh-nekowhale-stickers",
@@ -104,6 +104,13 @@
       "file": "src/core/config.js",
       "before": "1f6125e7be6f718d3c705d27479487b435b0dcdb36ec2eb74f40b30d784e8deb",
       "after": "0309e40efa56a99a4a381f8055be08af564ce0895b3d845f192f3dce11b23873"
+    },
+    {
+      "package": "dsh-nekowhale-stickers",
+      "version": "1.1.1",
+      "file": "lib/core/sync.js",
+      "before": "dbf59ee332c0d6f0ca4043bf4e73372b27b7f16e5fbd80c5dc6e30ecd10cc548",
+      "after": "649e31ca39b238824240e4ce69e8711b643cfbf02adbb50803046fe7971889ec"
     }
   ],
   "runtime_state": {
@@ -131,9 +138,9 @@
     "heybox_reader": {
       "enabled": true,
       "module": "qqai-heybox-reader",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "source": "adapters/qqai-heybox-reader/index.mjs",
-      "sha256": "063a707e0fcacbfa82938d8c2ec4f4248c388cdf3b71262f69c1cd19fa562aeb",
+      "sha256": "e8c93aa6f1a4936ee125ce801e4d79d3dd320d208ccff7c006394403f0ac4170",
       "upstream_api_sha256": "033737291d37f08edecd14ca83c049b434916deb51a64c3a60caee36e66b1faa",
       "interval_hours": 4,
       "max_rounds_per_day": 6,
@@ -151,10 +158,11 @@
     "reminders": {
       "enabled": true,
       "module": "qqai-reminders",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "files": {
-        "index.mjs": "b943245ab7d2e59a7fa4505f475b4f00b0fa516f6a55e112cf6558f7a53543f6",
-        "engine.mjs": "c27b765bb9d60228943d5a09767ce673a6ab0ba9b3db757cc8cd6b0de4f5d08d"
+        "engine.mjs": "c27b765bb9d60228943d5a09767ce673a6ab0ba9b3db757cc8cd6b0de4f5d08d",
+        "index.mjs": "9b33ebda60dc1420f0eb528fb71d952da5b51ea7a39367393e766bba803b1228",
+        "stickers.mjs": "8ed148d9dbec24442236e69879936fd91ec06423da35817108bec42b5c0dcd58"
       },
       "timezone": "Asia/Shanghai",
       "poll_seconds": 5,
@@ -167,7 +175,7 @@
       ],
       "explicit_night_reminders": true,
       "native_speakup_counter_shared": false,
-      "model_call_at_delivery": false,
+      "model_call_at_delivery": true,
       "uncertain_delivery_auto_retry": false,
       "real_model_tool_effects_verified": true,
       "dsh_restart_persistence_verified": true,
@@ -175,7 +183,8 @@
       "owner_qq_natural_language_acceptance_complete": false,
       "recipient_confirmation": true,
       "synthetic_tests_passed": 38,
-      "evidence": "docs/evidence/20261031-reminders.json"
+      "evidence": "docs/evidence/20261031-reminders.json",
+      "optional_sticker_deadline_ms": 20000
     },
     "mood": {
       "enabled": true,
@@ -223,8 +232,8 @@
       "source": "personas/xiaojing.md",
       "source_file_sha256": "814fb3485f8c9f493331b3b61ae3bc90a813ae45f4325dc532c3afbb3f52ca13",
       "effective_text_sha256": "f23e657fd0ed0bf11fbbb2e999c8c49a9441f6487dffbe517b77875e8de510f2",
-      "adapter_version": "0.1.1",
-      "adapter_sha256": "18aaf28196b7aa2726a78f675ce8094f57db2555613959281d920a6da8039c6d",
+      "adapter_version": "0.2.0",
+      "adapter_sha256": "6f63a59e9321efa5b967b6874e22e5ba9feaf3ef4da641155a0bbe65d5bb8415",
       "upstream_plugin_source_sha256": "9969097250f89301d23dffabb3b3dd2a1614cf5e5e0500a389c10c11fa383d7b",
       "upstream_hash_validation_retained": true,
       "real_model_verified": true,
@@ -232,6 +241,31 @@
       "evidence": "docs/evidence/20261031-persona-xiaojing.json"
     },
     "native_proactive_configuration_evidence": "docs/evidence/20261101-proactive-30.json",
-    "qq_native_faces_configuration_evidence": "docs/evidence/20261102-qq-faces-disabled.json"
+    "qq_native_faces_configuration_evidence": "docs/evidence/20261102-qq-faces-disabled.json",
+    "nekowhale_usage": {
+      "usage": "normal",
+      "packs": [
+        "大肥鱼"
+      ],
+      "catalog_count_at_acceptance": 286,
+      "max_images_per_turn": 2,
+      "text_templates": [
+        "think",
+        "sign",
+        "scroll",
+        "couplet_top",
+        "couplet_bottom"
+      ],
+      "prompt_mode": "off",
+      "prompt_via": "aurabot_rules_private",
+      "auto_sync": "lazy",
+      "network_attempt_ms": 12000,
+      "network_total_per_resource_ms": 30000,
+      "files": {
+        "index.mjs": "6f63a59e9321efa5b967b6874e22e5ba9feaf3ef4da641155a0bbe65d5bb8415",
+        "sticker-policy.mjs": "3b4c3c7bdbfbbd76f4b7bc40634f27f79ec014bbc411b958903f1be9891bc133"
+      },
+      "evidence": "docs/evidence/20261102-neko-stickers.json"
+    }
   }
 }

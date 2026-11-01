@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url'
 import { QQ_DELIVERY_PATCHES } from './qq-delivery-patch-spec.mjs'
 import { MEMORY_LIMIT_PATCHES } from './memory-limits-patch-spec.mjs'
 import { PROACTIVE_LIMIT_PATCHES } from './proactive-limits-patch-spec.mjs'
+import { NEKO_NETWORK_PATCHES } from './neko-network-patch-spec.mjs'
+import { STICKER_TURN_PATCHES } from './sticker-turn-patch-spec.mjs'
 
 const sha256 = (text) => createHash('sha256').update(text).digest('hex')
 // Preserve the previously deployed GIF-only hash as an explicit migration stage.
@@ -168,8 +170,8 @@ export const MEMORY_CONSOLIDATION_PATCH = {
 export const PATCHES = [
   {
     ...GIF_MEDIA_PATCH,
-    after: MEMORY_LIMIT_PATCHES[0].after,
-    stages: [GIF_MEDIA_PATCH, QQ_DELIVERY_PATCHES[0], MEMORY_LIMIT_PATCHES[0]],
+    after: STICKER_TURN_PATCHES[0].after,
+    stages: [GIF_MEDIA_PATCH, QQ_DELIVERY_PATCHES[0], MEMORY_LIMIT_PATCHES[0], STICKER_TURN_PATCHES[0]],
   },
   {
     package: 'dsh-nekowhale-stickers', version: '1.1.1', rootIndex: 1, file: 'lib/core/image-input.js',
@@ -201,6 +203,7 @@ export const PATCHES = [
   },
   QQ_DELIVERY_PATCHES[1],
   ...PROACTIVE_LIMIT_PATCHES,
+  ...NEKO_NETWORK_PATCHES,
 ]
 
 export function patchedSource(raw, spec) {

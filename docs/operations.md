@@ -111,7 +111,7 @@ AUTOLOAD只自动注入，不代替QQ登录；若QQ要求快速登录、扫码�
 
 ## 专用提醒运行与维护
 
-`qqai-reminders` 已部署启用，支持主人私聊中创建、查看和取消一次性、每天或每周提醒。时间统一按北京时间；明确指定的夜间提醒也会执行。调度每5秒检查，到点使用真实QQ纯文字发送，一条提醒对应一条气泡，正文不会当作命令或媒体标记执行，到点不额外调用DeepSeek，也不会因未回复继续催促。该模块不修改原生 `speakUp` 的30次额度、排期或小黑盒分享设置。[完整提醒说明](reminders.md)
+`qqai-reminders` 已部署启用，支持主人私聊中创建、查看和取消一次性、每天或每周提醒。时间统一按北京时间；明确指定的夜间提醒也会执行。调度每5秒检查，到点保留原提醒文字，并可按当前表情规则附带0–2张图；使用真实 Flash/off 判断、最多两次短调用，配图准备总预算20秒，失败或超时回退文字。文字和图片合并在一次发送中，正文不会当作命令或任意媒体标记执行，也不会因未回复继续催促。该模块不修改原生 `speakUp` 的30次额度、排期或小黑盒分享设置。[完整提醒说明](reminders.md)
 
 38项合成边界回归已通过，其中引擎与模块各19项。真实Flash/off任务操作、受控DSH重启及QQ定时出站测试也已分别通过，用户确认收到唯一的测试提醒；[脱敏证据](evidence/20261031-reminders.json)记录各层结果。主人从QQ自然语言创建、查询、取消的完整交互复测因暂不方便而延后。运维受控合成输入不算真实QQ入站消息，不能据此宣称该项交互已经验收。
 
@@ -184,3 +184,12 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 当前为关闭。使用 `deployment/set-qq-faces.py --record-dir /var/lib/qqai-dsh/maintenance/20261102-qq-faces --disable`，只通过原生保存接口热更新 `stickers.faces`；反向恢复使用 `--enable`，无需重启或恢复整份旧配置。每次保存前在root私有目录备份配置并验证隔离副本，保存后比较磁盘/内存配置，确认其他字段与服务进程不变。
 
 本次备份 `/var/lib/qqai-dsh/maintenance/20261102-qq-faces/faces-55sbfgea/`。实际磁盘与运行值均false，QQ connected、兼容模块正常，其他配置未变；未发送QQ测试消息或调用模型。旧回归已覆盖关闭时剥离标签和移除提示说明，本次不把它计作新的真实QQ收件验证。[记录](evidence/20261102-qq-faces-disabled.json)
+
+
+## 2026-11-02：Nekowhale 正常表情策略
+
+当前 `ext.qqai-compat.stickerUsage=normal`，只允许大肥鱼单人286款与五种文字模板，整轮最多2张。频率调节使用Aurabot兼容模块的设置；Neko `promptMode`保持off，因为QQ完整人格模式不采用其独立hint section。程序限制与提示一同生效；off仅关闭主动配图提示/提醒配图，不卸载用户指定表情工具。
+
+[表情运行说明](neko-stickers.md)记录实际请求验证、下载测速、QQ回执、自然闲聊未出图观察及回滚。统一patcher现检查8个文件，并需保留新增 `neko-network-patch-spec.mjs` 与 `sticker-turn-patch-spec.mjs`。提醒安装器必须同时安装`engine.mjs`、`stickers.mjs`和最后写入的`index.mjs`。
+
+本轮备份位置为`/var/lib/qqai-dsh/maintenance/20261102-stickers/enable-qyzmwcdm/`，22文件隔离恢复验证通过；提示热更新副本为同级`prompt-vc8k7t4j/`。回滚只恢复本轮代码、stickerUsage和profile套组字段，不能覆盖后来聊天、记忆、提醒或计数。SnowLuma及QQ自动登录排查未重启；临时验收模块已关闭并归档。

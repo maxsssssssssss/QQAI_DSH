@@ -1,0 +1,462 @@
+{
+  "date": "2026-11-02",
+  "timezone": "Asia/Shanghai",
+  "scope": "single-whale normal sticker integration; not overall project acceptance",
+  "deployment": {
+    "ok": true,
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261102-stickers/enable-qyzmwcdm",
+    "operation": "single-pack-neko-normal-two-per-turn",
+    "gatewayRestartRequested": false,
+    "manualStateResetRequested": false,
+    "modelOrQqTestRequested": false,
+    "at": "2026-11-02T03:54:56.591139+08:00",
+    "dshRestarted": true,
+    "gatewayProcessUnchanged": true,
+    "qqReconnected": true,
+    "backupRestoreVerified": true,
+    "backupFiles": 22,
+    "unrelatedConfigUnchanged": true,
+    "policy": {
+      "ok": true,
+      "usage": "normal",
+      "maxImagesPerTurn": 2,
+      "allowedPack": "大肥鱼",
+      "allowedTemplateKeys": [
+        "couplet_top",
+        "couplet_bottom",
+        "think",
+        "scroll",
+        "sign"
+      ],
+      "rulesSha256": "50753a8c1be8d8c32da6de41366dd17c90b2df7bc90b0c1551db1dbd48737a65"
+    },
+    "bytePreserved": {
+      "chatlog/2026-11-01.jsonl": true,
+      "chatlog/2026-11-02.jsonl": true,
+      "memories.json": true,
+      "modules-data/qqai-heybox-reader/reader-state.json": true,
+      "modules-data/qqai-reminders/reminders.json": true,
+      "mood.json": true,
+      "recent-media.json": true,
+      "sessions.json": true,
+      "speakup.json": true
+    },
+    "codeSha256": {
+      "/opt/qqai-dsh/source/scripts/patch-plugin-media.mjs": "670466d46eec1a11a06fd6e18179a54ce29aebf7332c085b57fc63c8a5b85204",
+      "/opt/qqai-dsh/source/scripts/qq-delivery-patch-spec.mjs": "fc0f025a44eda6ccee2333e00c970031253f6f210830f25c290e9d2514e5cf9a",
+      "/opt/qqai-dsh/source/scripts/memory-limits-patch-spec.mjs": "ce3f46c6006f859684795be28b817399fca2f16bca7afe78b7dcc9bbe4469500",
+      "/opt/qqai-dsh/source/scripts/proactive-limits-patch-spec.mjs": "f373edccc0336ab59da8902b22990d66024f01b11e8bba200242ed5db071fb56",
+      "/opt/qqai-dsh/source/scripts/neko-network-patch-spec.mjs": "c4efe91911414438a2d1ca2931c5b7a2a9c1a52232dac7253c91937b4980b207",
+      "/opt/qqai-dsh/source/scripts/sticker-turn-patch-spec.mjs": "ebc9c6e976098544e9fab5459d5718335dbdc3d3a28cc2aaa5e2a2422756b1d9",
+      "/srv/qqai-dsh/home/.dsh/plugins-data/aurabot/modules/qqai-compat/sticker-policy.mjs": "877e386c1a1be74a756303075784fe67ee24c0f4d00fff27ede92bb5ea1f3f25",
+      "/srv/qqai-dsh/home/.dsh/plugins-data/aurabot/modules/qqai-compat/index.mjs": "6f63a59e9321efa5b967b6874e22e5ba9feaf3ef4da641155a0bbe65d5bb8415",
+      "/srv/qqai-dsh/home/.dsh/plugins-data/aurabot/modules/qqai-reminders/stickers.mjs": "8ed148d9dbec24442236e69879936fd91ec06423da35817108bec42b5c0dcd58",
+      "/srv/qqai-dsh/home/.dsh/plugins-data/aurabot/modules/qqai-reminders/engine.mjs": "c27b765bb9d60228943d5a09767ce673a6ab0ba9b3db757cc8cd6b0de4f5d08d",
+      "/srv/qqai-dsh/home/.dsh/plugins-data/aurabot/modules/qqai-reminders/index.mjs": "9b33ebda60dc1420f0eb528fb71d952da5b51ea7a39367393e766bba803b1228",
+      "/srv/qqai-dsh/home/.dsh/plugins-data/aurabot/modules/qqai-heybox-reader/index.mjs": "e8c93aa6f1a4936ee125ce801e4d79d3dd320d208ccff7c006394403f0ac4170",
+      "/srv/qqai-dsh/home/.dsh/profiles/web/node_modules/dsh-aurabot-qq/src/chat/hub.js": "43aa7dc54ad209673bccc09509277f06fa57ed14653bed3c5cf7d275aea5cddb",
+      "/srv/qqai-dsh/home/.dsh/profiles/web/node_modules/dsh-nekowhale-stickers/lib/core/sync.js": "649e31ca39b238824240e4ce69e8711b643cfbf02adbb50803046fe7971889ec"
+    }
+  },
+  "finalRuntime": {
+    "at": "2026-11-02T04:12:24.361879+08:00",
+    "temporaryProbeRetired": true,
+    "probeRouteClosed": true,
+    "qqConnected": true,
+    "botIdentityMatches": true,
+    "dshActive": true,
+    "policy": {
+      "ok": true,
+      "usage": "normal",
+      "maxImagesPerTurn": 2,
+      "allowedPack": "大肥鱼",
+      "allowedTemplateKeys": [
+        "couplet_top",
+        "couplet_bottom",
+        "think",
+        "scroll",
+        "sign"
+      ],
+      "rulesSha256": "e2d4721bc767d50132563d992f3702b9f99b00a3445903fc6b266f130ef0f4c3"
+    },
+    "nativeProactive": {
+      "enabled": true,
+      "maxPerDay": 30,
+      "minIntervalMinutes": 40,
+      "maxIntervalMinutes": 80,
+      "idleMinutes": 40,
+      "awakeFrom": 8,
+      "awakeTo": 23,
+      "nudge": true
+    },
+    "facesEnabled": false,
+    "model": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash",
+      "reasoningEffort": "off"
+    },
+    "patchesVerified": 8,
+    "publicModuleHashes": {
+      "qqai-heybox-reader/index.mjs": "e8c93aa6f1a4936ee125ce801e4d79d3dd320d208ccff7c006394403f0ac4170",
+      "qqai-compat/sticker-policy.mjs": "3b4c3c7bdbfbbd76f4b7bc40634f27f79ec014bbc411b958903f1be9891bc133",
+      "qqai-compat/index.mjs": "6f63a59e9321efa5b967b6874e22e5ba9feaf3ef4da641155a0bbe65d5bb8415",
+      "qqai-reminders/stickers.mjs": "8ed148d9dbec24442236e69879936fd91ec06423da35817108bec42b5c0dcd58",
+      "qqai-reminders/engine.mjs": "c27b765bb9d60228943d5a09767ce673a6ab0ba9b3db757cc8cd6b0de4f5d08d",
+      "qqai-reminders/index.mjs": "9b33ebda60dc1420f0eb528fb71d952da5b51ea7a39367393e766bba803b1228"
+    },
+    "reminderArtwork": {
+      "followsQqStickerPolicy": true,
+      "maximumImages": 2,
+      "deadlineMilliseconds": 20000
+    },
+    "unrelatedConfigStableDuringFinalCheck": true,
+    "privateStateStableDuringFinalCheck": {
+      "memories.json": true,
+      "sessions.json": true,
+      "speakup.json": true,
+      "modules-data/qqai-heybox-reader/reader-state.json": true,
+      "modules-data/qqai-reminders/reminders.json": true
+    }
+  },
+  "automated": {
+    "suites": [
+      {
+        "suite": "qqai-compat",
+        "exitCode": 0,
+        "tests": 6,
+        "pass": 6,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "sticker-policy",
+        "exitCode": 0,
+        "tests": 9,
+        "pass": 9,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "sticker-turn",
+        "exitCode": 0,
+        "tests": 3,
+        "pass": 3,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "neko-network",
+        "exitCode": 0,
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "plugin-media-patches",
+        "exitCode": 0,
+        "tests": 6,
+        "pass": 6,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "qq-delivery-results",
+        "exitCode": 0,
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "heybox-reader",
+        "exitCode": 0,
+        "tests": 23,
+        "pass": 23,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "reminders-engine",
+        "exitCode": 0,
+        "tests": 19,
+        "pass": 19,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "reminders-module",
+        "exitCode": 0,
+        "tests": 23,
+        "pass": 23,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "reminders-stickers",
+        "exitCode": 0,
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "skipped": 0
+      }
+    ],
+    "passed": 116,
+    "skipped": 0
+  },
+  "downloads": {
+    "samples": [
+      {
+        "code": "10N01",
+        "expectedBytes": 639834,
+        "httpStatus": 200,
+        "seconds": 0.231,
+        "bytes": 639834,
+        "verified": true
+      },
+      {
+        "code": "10N09",
+        "expectedBytes": 2201886,
+        "httpStatus": 200,
+        "seconds": 0.457,
+        "bytes": 2201886,
+        "verified": true
+      },
+      {
+        "code": "12N01",
+        "expectedBytes": 47869,
+        "httpStatus": 200,
+        "seconds": 0.799,
+        "bytes": 47869,
+        "verified": true
+      }
+    ],
+    "catalogCount": 286,
+    "catalogTotalBytes": 358022980,
+    "serverFreeBytesAtBenchmark": 46751432704,
+    "fullLibraryPrefetched": false,
+    "cacheMode": "lazy"
+  },
+  "templateRendering": {
+    "scope": "real-template-rendering-no-model-no-qq",
+    "templates": [
+      {
+        "key": "couplet_top",
+        "seconds": 0.703,
+        "bytes": 1252018,
+        "frames": 40,
+        "width": 300,
+        "height": 300,
+        "sha256": "1c19e6f603e066660d8c0fec2f9118ca2b971933fb925ad6fab14c0af91443f4"
+      },
+      {
+        "key": "couplet_bottom",
+        "seconds": 1.269,
+        "bytes": 1220018,
+        "frames": 40,
+        "width": 300,
+        "height": 300,
+        "sha256": "f651474bdf52122e5d6ff4fc587f5a12999b24c80f412b2e2a9e6838f72e72fb"
+      },
+      {
+        "key": "think",
+        "seconds": 0.629,
+        "bytes": 668295,
+        "frames": 20,
+        "width": 300,
+        "height": 300,
+        "sha256": "4561eb417e5a20bfcefcf43f1b5fd227b4838d70f8794af34b162e087e02a3ad"
+      },
+      {
+        "key": "scroll",
+        "seconds": 1.336,
+        "bytes": 1103687,
+        "frames": 40,
+        "width": 300,
+        "height": 300,
+        "sha256": "8efa76a3757a51f32c17372e9eef37ee9057fcc899047f1c50347fd4ed44e99a"
+      },
+      {
+        "key": "sign",
+        "seconds": 0.547,
+        "bytes": 845711,
+        "frames": 30,
+        "width": 300,
+        "height": 300,
+        "sha256": "446b2bedd3695e7168b5560c4a1f36616ae0ac2e471d93919315d64fed34a40e"
+      }
+    ],
+    "ok": true
+  },
+  "realApi": {
+    "at": "2026-11-02T04:09:54.021890+08:00",
+    "syntheticSessions": true,
+    "productionOwnerSessionPrompted": false,
+    "productionMemoryToolsAllowed": false,
+    "checks": {
+      "allCasesCompleted": true,
+      "allActualRequestsFlashThinkingOff": true,
+      "actualLlmRequestObservedForEveryCase": true,
+      "actualNekoToolsAvailable": true,
+      "actualFinalSystemContainsPolicy": true,
+      "actualPersonaPreserved": true,
+      "explicitTemplateReturnedImage": true,
+      "explicitStockReturnedImage": true,
+      "plainTextRequestHasNoImages": true,
+      "modelRepliesWithinTwoImages": true
+    },
+    "observations": {
+      "naturalCasesUsedArtwork": false,
+      "naturalCasesObserved": 4,
+      "naturalCasesWithArtwork": 0,
+      "normalAllowsNoImage": true,
+      "naturalSelectionIsNotAnAcceptanceGate": true
+    },
+    "actualRequestCounts": {
+      "agentDialogue": 11,
+      "auxiliary": 7
+    },
+    "cases": [
+      {
+        "case": "happy",
+        "completed": true,
+        "outputImages": 0,
+        "stockImages": 0,
+        "templateImages": 0,
+        "tools": []
+      },
+      {
+        "case": "hungry",
+        "completed": true,
+        "outputImages": 0,
+        "stockImages": 0,
+        "templateImages": 0,
+        "tools": []
+      },
+      {
+        "case": "joke",
+        "completed": true,
+        "outputImages": 0,
+        "stockImages": 0,
+        "templateImages": 0,
+        "tools": []
+      },
+      {
+        "case": "praise",
+        "completed": true,
+        "outputImages": 0,
+        "stockImages": 0,
+        "templateImages": 0,
+        "tools": []
+      },
+      {
+        "case": "stock",
+        "completed": true,
+        "outputImages": 1,
+        "stockImages": 1,
+        "templateImages": 0,
+        "tools": [
+          {
+            "name": "sticker_search",
+            "isError": false
+          },
+          {
+            "name": "sticker_search",
+            "isError": false
+          },
+          {
+            "name": "sticker_send",
+            "isError": false
+          }
+        ]
+      },
+      {
+        "case": "template",
+        "completed": true,
+        "outputImages": 1,
+        "stockImages": 0,
+        "templateImages": 1,
+        "tools": [
+          {
+            "name": "meme_render",
+            "isError": false
+          }
+        ]
+      },
+      {
+        "case": "plain",
+        "completed": true,
+        "outputImages": 0,
+        "stockImages": 0,
+        "templateImages": 0,
+        "tools": []
+      }
+    ],
+    "priorBatches": [
+      {
+        "batch": "real-acceptance.json",
+        "naturalCases": 4,
+        "naturalCasesWithImages": 0,
+        "qqSends": 0,
+        "promptEvidenceLimitation": "agent/request independently reassembled prompt; superseded by actual llm/stream evidence"
+      },
+      {
+        "batch": "real-acceptance-final.json",
+        "naturalCases": 4,
+        "naturalCasesWithImages": 0,
+        "qqSends": 0,
+        "promptEvidenceLimitation": "agent/request independently reassembled prompt; superseded by actual llm/stream evidence"
+      }
+    ],
+    "additionalSingleNaturalDiagnostic": {
+      "cases": 1,
+      "images": 0,
+      "actualDialogueSystemVerified": true,
+      "auxiliaryTitleRequestInitiallyMisclassified": true
+    }
+  },
+  "realQq": {
+    "media": {
+      "ok": true,
+      "attempted": true,
+      "startedAt": "2026-11-01T20:10:11.693Z",
+      "imagesRequested": 2,
+      "delivered": 3,
+      "failed": 0,
+      "receiptConfirmed": true,
+      "finishedAt": "2026-11-01T20:10:14.250Z"
+    },
+    "reminder": {
+      "attempted": true,
+      "createdAt": "2026-11-01T20:10:14.267Z",
+      "created": true,
+      "modelRequests": [
+        {
+          "provider": "deepseek-official",
+          "model": "deepseek-flash",
+          "thinkingOff": true,
+          "outputCharacters": 67,
+          "usage": {
+            "inputTokens": 488,
+            "outputTokens": 20,
+            "totalTokens": 892
+          }
+        }
+      ],
+      "outboundAttempted": true,
+      "images": 1,
+      "receiptConfirmed": true,
+      "finishedAt": "2026-11-01T20:10:18.696Z"
+    },
+    "userVisualConfirmationThisRun": false,
+    "receiptVerificationPassed": true,
+    "nativeProactiveOrNudgeImageSendObservedThisRun": false,
+    "heyboxImageSendObservedThisRun": false
+  },
+  "remainingObservation": [
+    "Normal mode permits no artwork; 13 natural synthetic cases across diagnostic batches all chose text. No minimum image rate or natural-artwork success is claimed.",
+    "Native proactive, nudge and Heybox use the same QQ policy and media path, but were not forced outside their schedule for separate live image tests.",
+    "This run verifies QQ receipts, not user-side GIF animation or aesthetic satisfaction."
+  ],
+  "temporaryAcceptanceProbeRetired": true
+}

@@ -1,9 +1,10 @@
-// Owner-only durable reminders. No shell, arbitrary targets, or model calls at delivery.
+// Owner-only durable reminders. Optional bounded model-selected artwork; immutable task text.
 import { randomUUID } from 'node:crypto'
 import { constants, openSync, closeSync, readFileSync, writeFileSync, fstatSync,
   fsyncSync, renameSync, unlinkSync, chmodSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { createReminderEngine, normalizeReminder } from './engine.mjs'
+import { prepareReminderStickerSegments, REMINDER_STICKER_TIMEOUT_MS } from './stickers.mjs'
 
 const QQ = (v) => /^\d{5,12}$/.test(String(v || ''))
 const sessionKey = (id) => String(id || '').replace(/^session-/, '')
@@ -84,7 +85,7 @@ export function privateStore(file) {
 }
 
 export default {
-  id: 'qqai-reminders', name: 'QQAI 专用提醒', version: '0.1.0',
+  id: 'qqai-reminders', name: 'QQAI 专用提醒', version: '0.1.1',
   description: '主人私聊中的一次性、每天及每周提醒；持久化与实际 QQ 回执',
   defaults: { enabled: false }, settings: [{ key: 'enabled', type: 'switch', label: '启用主人专用提醒' }],
   setup(api) {
@@ -111,7 +112,15 @@ export default {
           || api.core.onebot.state !== 'connected' || api.core.mutes.muted(`private:${task.owner}`)) return null
         const text = `主人，到提醒时间啦：${task.text}`
           + (task.delayed ? `\n（原定北京时间 ${beijingTime(task.dueAt).slice(0, 16).replace('T', ' ')}，恢复在线后补发。）` : '')
-        const receipt = await api.sendSegments(`private:${task.owner}`, [{ type: 'text', data: { text } }], '[专用提醒]')
+        const compat = api.use?.('qqai-compat')
+        const send = async () => {
+          const images = await prepareReminderStickerSegments(api, compat, text)
+          // The model/download may have yielded: recheck identity and current owner before the sole send.
+          if (!(await allowed(task))) return null
+          return api.sendSegments(`private:${task.owner}`, [{ type: 'text', data: { text } }, ...images], '[专用提醒]')
+        }
+        const receipt = typeof compat?.withStickerTurn === 'function'
+          ? await compat.withStickerTurn(`reminder:${task.id}:${task.dueAt}`, send) : await send()
         if ((typeof receipt?.message_id === 'string' && /^-?[1-9]\d*$/.test(receipt.message_id))
           || (Number.isSafeInteger(receipt?.message_id) && receipt.message_id !== 0)) {
           try { api.core.hub.logChat(`private:${task.owner}`, 'bot', text) }
@@ -125,7 +134,7 @@ export default {
       ? `【专用提醒】北京时间 ${beijingTime()}。用 qq_reminder_create/list/cancel 管理真实定时任务。`
         + '支持一次性、每天、每周；时间含糊先问清。明确指定的夜间提醒照常执行，独立于日常主动聊天额度。'
         + '创建和取消必须使用最新主人请求中的 request_token。只有工具返回 ok 才能说已设置或已取消。'
-        + '提醒到点是单条文字通知，不追问；发送不确定的任务不得擅自重建。' : '')
+        + '提醒到点保留正文，可按当前表情规则附零至两张图；发送不确定的任务不得擅自重建。' : '')
     api.tool(({ chat, level, sessionId }) => {
       if (level !== 'full' || !ownerChat(chat, api.config())) return []
       const guard = (token, mutate) => enabled() && ownerChat(chat, api.config())
@@ -152,7 +161,8 @@ export default {
       ]
     })
     api.route('/state', (req) => req.method === 'GET' ? { ok: true, enabled: enabled(), timezone: 'Asia/Shanghai',
-      pollSeconds: 5, ...engine.status() } : { ok: false, message: '只读接口' })
+      pollSeconds: 5, artwork: { followsQqStickerPolicy: true, maximumImages: 2,
+        deadlineMilliseconds: REMINDER_STICKER_TIMEOUT_MS }, ...engine.status() } : { ok: false, message: '只读接口' })
     api.onDispose(() => { alive = false; grants.clear(); engine.dispose() })
     return { state: engine.status }
   },

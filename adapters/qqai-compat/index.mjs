@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto'
 import { constants, readFileSync } from 'node:fs'
 import { open, realpath } from 'node:fs/promises'
 import { isAbsolute, relative, resolve, sep } from 'node:path'
+import { createStickerPolicy, sharedStickerState, toolTurnTracker } from './sticker-policy.mjs'
 
 export const PERSONA_SHA256 = '9969097250f89301d23dffabb3b3dd2a1614cf5e5e0500a389c10c11fa383d7b'
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024
@@ -84,7 +85,7 @@ export async function approvedGif(ref, { kit, dataDir }) {
 }
 
 /** These callbacks never throw: upstream ignores hook exceptions and would fail open. */
-export function mediaHooks({ getPort, getKit, getDataDir, getOwner, warn = () => {} }) {
+export function mediaHooks({ getPort, getKit, getDataDir, getOwner, policy = createStickerPolicy({ getKit }), warn = () => {} }) {
   const approved = new Map()
   const notify = () => { try { warn('QQAI media adapter rejected an unapproved image') } catch {} }
   const prune = () => {
@@ -94,18 +95,20 @@ export function mediaHooks({ getPort, getKit, getDataDir, getOwner, warn = () =>
     async items(items, info) {
       try {
         if (info?.chatId !== `private:${getOwner()}`) return null
-        const out = []
+        const out = [], scope = policy.scope(info)
         prune()
         for (const item of items) {
           if (item.kind !== 'image') { out.push(item); continue }
           const ref = stickerReference(item.value, getPort())
           if (!ref) { notify(); continue }
           try {
+            if (!scope || !await policy.referenceAllowed(ref)) { notify(); continue }
             const bytes = await approvedGif(ref, { kit: getKit(), dataDir: getDataDir() })
+            if (ref.kind === 'r' && digest(bytes).slice(0, 16) !== ref.id) { notify(); continue }
+            if (!policy.reserve(scope, bytes)) continue
             const value = 'base64://' + bytes.toString('base64')
-            const key = digest(value)
-            const old = approved.get(key)
-            approved.set(key, { count: (old?.count || 0) + 1, at: Date.now(), chatId: info.chatId })
+            const key = scope + '|' + digest(value)
+            approved.set(key, { at: Date.now(), chatId: info.chatId })
             out.push({ ...item, value })
           } catch { notify() }
         }
@@ -116,20 +119,20 @@ export function mediaHooks({ getPort, getKit, getDataDir, getOwner, warn = () =>
       try {
         if (info?.chatId !== `private:${getOwner()}` || !Array.isArray(message)) return null
         prune()
-        const out = []
+        const out = [], consume = new Set(), scope = policy.scope(info)
         for (const segment of message) {
           // The initial deployment has no voice/file/video generation capability.
           if (!['text', 'face', 'reply', 'at', 'image'].includes(segment?.type)) return null
           if (segment.type !== 'image') { out.push(segment); continue }
-          const key = digest(String(segment.data?.file || ''))
+          const key = scope + '|' + digest(String(segment.data?.file || ''))
           const token = approved.get(key)
-          if (!token || token.chatId !== info.chatId || token.count <= 0) { notify(); return null }
-          token.count--
-          if (!token.count) approved.delete(key)
+          if (!scope || !token || token.chatId !== info.chatId || consume.has(key)) { notify(); return null }
+          consume.add(key)
           // Original animated GIF bytes are preserved; OneBot uses the normal image path.
           // sub_type is opt-in only after the actual gateway has been verified.
           out.push(segment)
         }
+        for (const key of consume) approved.delete(key)
         return out.length ? out : null
       } catch { notify(); return null }
     },
@@ -139,9 +142,13 @@ export function mediaHooks({ getPort, getKit, getDataDir, getOwner, warn = () =>
 export default {
   id: 'qqai-compat',
   name: 'QQAI 三插件兼容适配',
-  version: '0.1.1',
+  version: '0.2.0',
   description: '鲸鱼娘人格来源接入与 Nekowhale 受控 GIF 传递；不改变原生聊天、记忆或调度',
-  defaults: { personaSourcePath: '', stickersDataDir: '', botName: '大肥鱼', ownerName: '主人', personaText: '' },
+  defaults: { personaSourcePath: '', stickersDataDir: '', botName: '大肥鱼', ownerName: '主人', personaText: '', stickerUsage: 'off' },
+  settings: [{ key: 'stickerUsage', label: '表情使用积极程度', type: 'select',
+    options: [{ value: 'off', label: '关闭主动配图（仍可点名）' }, { value: 'rare', label: '偶尔' },
+      { value: 'normal', label: '正常' }, { value: 'often', label: '积极' }],
+    hint: '由模型按语境选择，整轮最多 2 张；普通聊天、主动聊天、文章分享、追问和提醒共用此设置。' }],
   setup(api) {
     const settings = api.settings()
     if (!isAbsolute(settings.personaSourcePath) || !isAbsolute(settings.stickersDataDir)) {
@@ -151,33 +158,66 @@ export default {
     let persona
     try { persona = whalePersona(readFileSync(settings.personaSourcePath, 'utf8'), settings) }
     catch (error) { api.setConfig({ enabled: false, dryRun: true }); throw error }
+    const runtime = sharedStickerState(settings.stickersDataDir)
+    const policy = createStickerPolicy({ getKit: () => api.dsh.get('stickers'),
+      getUsage: () => api.settings().stickerUsage, state: runtime })
+    const turns = toolTurnTracker({ getOwner: () => String(api.config().ownerQQ || ''),
+      chatOfSession: id => api.core.hub.chatOfSession(id), state: runtime.calls })
     const media = mediaHooks({
       getPort: () => api.dsh.get('webServer')?.port,
       getKit: () => api.dsh.get('stickers'),
       getDataDir: () => api.settings().stickersDataDir,
       getOwner: () => String(api.config().ownerQQ || ''),
+      policy,
       warn: (message) => api.log.warn(message),
     })
     api.on('persona', () => persona)
     api.route('/persona-state', () => ({ ok: true, personaSha256: digest(persona),
       personaCharacters: persona.length, customPersona: Boolean(settings.personaText?.trim()),
       personaSourceSha256: PERSONA_SHA256 }))
+    api.route('/sticker-state', () => ({ ok: true, ...policy.state(), rulesSha256: digest(policy.rules()) }))
     api.on('rules', (text) => String(text) + '\n【表情与工具】\n'
-      + '- 表情用 sticker_search 检索、sticker_send 选择；用 meme_render 的 template/text 制作文字表情，sticker_manage 管理库。'
-      + '图片是 QQ 不渲染 Markdown 规则的例外：把工具返回的 Markdown 图片行原样放进回复。不要自造文件路径或图片链接。'
+      + '- ' + policy.rules()
       + '\n- 没有 Shell 或宿主文件系统操作权限。头像图片模板暂不开放。搜索、Fetch 的结果必须如实说明。'
       + '\n- 你知道自己是 AI；可以分享虚拟设想，不将想象描述成已发生的现实经历。')
     api.on('reply/items', media.items)
     api.on('send', media.send)
     // DSH rc.5 waterfall signature also used by Aurabot security/danger.js.
     // The upstream meme_render image argument can read any local image file.
-    const off = api.dsh.on('tools/pre-execute', (exec, next) => {
+    const off = api.dsh.on('tools/pre-execute', async (exec, next) => {
       if (exec?.name === 'meme_render' && exec.arguments?.image) {
         return { kind: 'deny', reason: 'Only template and text are enabled; local files and remote avatar URLs are unavailable.' }
+      }
+      if (exec?.name === 'meme_render') {
+        try { await policy.template(exec.arguments?.template, exec.arguments?.text) }
+        catch { return { kind: 'deny', reason: 'Only the five 大肥鱼 text templates with bounded text are enabled.' } }
       }
       return next()
     })
     api.onDispose(off)
-    return { personaSourceSha256: PERSONA_SHA256, mediaPolicy: 'nekowhale-gif-only' }
+    api.onDispose(api.dsh.on('session/event', turns.observe))
+    api.onDispose(api.dsh.on('tools/execute', async (exec, next) => {
+      const run = async () => {
+        const template = exec.name === 'meme_render' ? await policy.template(exec.arguments?.template, exec.arguments?.text) : null
+        const result = await next()
+        if (template && !result?.isError) {
+          for (const part of result?.content || []) {
+            if (part?.type !== 'text' || typeof part.text !== 'string') continue
+            for (const match of part.text.matchAll(/!\[[^\]\r\n]*\]\(([^\s)]+)\)/g)) {
+              const ref = stickerReference(match[1], api.dsh.get('webServer')?.port)
+              if (ref?.kind === 'r') policy.approveRender(ref.id, template)
+            }
+          }
+        }
+        return result
+      }
+      const scope = turns.scope(exec)
+      return scope ? policy.withTurn(scope, run) : run()
+    }))
+    return { personaSourceSha256: PERSONA_SHA256, mediaPolicy: 'nekowhale-single-whale-two-per-turn',
+      stickerPolicy: () => api.settings().stickerUsage === 'off' ? '' : policy.rules(),
+      withStickerTurn: (scope, fn) => policy.withTurn(scope, fn),
+      prepareStickerItems: media.items,
+      renderTextSticker: (template, text) => policy.renderTextSticker(template, text) }
   },
 }

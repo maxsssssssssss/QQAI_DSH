@@ -2,8 +2,10 @@
 """Install the owner-only reminder module, with private snapshot verification.
 
 Run as root. --enable enables both the module and its scheduling switch. Without
---enable only stage disabled code. No model call, test message, service restart,
-QQ container/volume operation, or existing state rewrite is performed here.
+--enable only stage disabled code. The installer issues no explicit model/test
+message request, service restart, QQ container/volume operation or existing state
+rewrite. Enabling the scheduler allows existing due tasks to run normally,
+including optional artwork when the compatibility module enables that policy.
 """
 import argparse
 import datetime as dt
@@ -21,7 +23,7 @@ import urllib.request
 ROOT = Path(__file__).resolve().parents[1]
 DATA = Path('/srv/qqai-dsh/home/.dsh/plugins-data/aurabot')
 MODULE = 'qqai-reminders'
-FILES = ('engine.mjs', 'index.mjs')  # dependency before entrypoint
+FILES = ('engine.mjs', 'stickers.mjs', 'index.mjs')  # dependencies before entrypoint
 LIMIT = 16 * 1024 * 1024
 
 
@@ -74,7 +76,7 @@ def snapshot(helper, record):
     """Stable file snapshot and isolated reconstruction, never a live restore.
 
     Scope is the top-level Aurabot JSON state (including memory and mapping),
-    Heybox/reminder state, and the two existing files this installer can replace.
+    Heybox/reminder state, and all three module files this installer can replace.
     QQ login volumes, full DSH transcripts, and unrelated code are not modified
     and are outside this incremental snapshot.
     """

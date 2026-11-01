@@ -96,7 +96,8 @@ test('autonomous prompt clears the same grant regardless of session prefix form'
 function harness(t, options = {}) {
   const directory = mkdtempSync(join(tmpdir(), 'qqai-reminders-module-'))
   const moduleData = join(directory, 'data'); mkdirSync(moduleData)
-  const cfg = { enabled: true, dryRun: false, ownerQQ: OWNER, botQQ: BOT }
+  const cfg = { enabled: true, dryRun: false, ownerQQ: OWNER, botQQ: BOT,
+    model: { provider: 'deepseek-official', model: 'deepseek-flash', reasoningEffort: 'off' } }
   const settings = { enabled: true }
   const hooks = new Map(), routes = new Map(), timers = [], builders = [], disposers = [], sent = []
   let clock = options.now ?? base, muted = false, identity = BOT, mapped = `private:${OWNER}`
@@ -115,6 +116,33 @@ function harness(t, options = {}) {
       sent.push({ target, segments, note }); return options.receipt ?? { message_id: 1001 }
     },
   }
+  const modelCalls = [], scopes = [], prepared = []
+  if (options.artwork) {
+    const sticker = { id: '大肥鱼/test', hash: '123456abcdef', pack: '大肥鱼', name: '测试' }
+    const kit = { search: async () => [{ sticker }], isEnabled: () => true,
+      file: async () => ({ path: '/unused' }), line: () => '测试｜开心｜庆祝' }
+    const compat = {
+      stickerPolicy: () => '正常：合适才配图；整轮最多两张。',
+      withStickerTurn: async (key, fn) => { scopes.push(key); return fn() },
+      renderTextSticker: async () => { throw new Error('not requested by this fixture') },
+      prepareStickerItems: async (items, info) => {
+        prepared.push({ items, info })
+        return items.map(item => ({ ...item, value: 'base64://R0lGODlhAQABAAAAAA==' }))
+      },
+    }
+    const replies = options.artwork.replies || [JSON.stringify({ choices: [{ kind: 'search', query: '庆祝' }] }),
+      JSON.stringify({ choices: [{ kind: 'sticker', id: sticker.id }] })]
+    const llm = { stream: async function* (request) {
+      modelCalls.push(request)
+      if (options.artwork.onModel) await options.artwork.onModel({ api, cfg, compat, request })
+      if (options.artwork.fail) throw new Error('synthetic unavailable model')
+      yield { type: 'text-delta', text: replies.shift() }
+    } }
+    api.use = id => id === 'qqai-compat' ? compat : null
+    api.dsh = { llm, get: id => id === 'stickers' ? kit : id === 'webServer' ? { port: 3080 } : null }
+    api.core.modules = { filterSync: () => '小鲸合成人格' }
+    api.core.personas = { current: () => '小鲸合成人格' }
+  }
   const previousClock = Date.now
   Date.now = () => clock
   try { module.setup(api) } finally { Date.now = previousClock }
@@ -124,6 +152,7 @@ function harness(t, options = {}) {
   const authorize = (senderId = OWNER) => capability(hooks.get('prompt')([{ type: 'text', text: '一分钟后提醒我喝水' }],
     { chat: chat(), senderId, sessionId: options.prefixedPromptSession ? 'session-' + where.sessionId : where.sessionId }))
   return { directory, moduleData, cfg, settings, hooks, routes, timers, builders, disposers, sent, api, tools, where,
+    modelCalls, scopes, prepared,
     authorize, advance: ms => { clock += ms }, setMuted: value => { muted = value },
     setIdentity: value => { identity = value }, setMapped: value => { mapped = value },
     create: args => tools.qq_reminder_create.execute({ text: '合成提醒测试', delayMinutes: 1, request_token: authorize(), ...args }),
@@ -252,6 +281,44 @@ test('unconfirmed QQ receipt pauses the task without repeating it', async t => {
   assert.equal(h.status().totals.confirmed, 0)
   h.advance(61_000); await h.tick()
   assert.equal(h.sent.length, 1)
+})
+
+test('decorated reminder uses its own capped scope and one receipt while preserving task text exactly', async t => {
+  const h = harness(t, { artwork: {} }), text = '庆祝部署完成'
+  const created = await h.create({ text })
+  assert.equal(created.ok, true)
+  h.advance(61_000); await h.tick()
+  assert.equal(h.modelCalls.length, 2)
+  assert.equal(h.scopes.length, 1); assert.ok(h.scopes[0].startsWith(`reminder:${created.task.id}:`))
+  assert.deepEqual(h.sent[0].segments.map(s => s.type), ['text', 'image'])
+  assert.equal(h.sent[0].segments[0].data.text, `主人，到提醒时间啦：${text}`)
+  assert.equal(h.prepared[0].info.chatId, `private:${OWNER}`)
+  assert.equal(h.status().totals.confirmed, 1)
+  await h.tick(); assert.equal(h.sent.length, 1); assert.equal(h.modelCalls.length, 2)
+})
+
+test('artwork model failure falls back to the unchanged text with no duplicate automatic attempt', async t => {
+  const h = harness(t, { artwork: { fail: true } }), text = '模型不可用仍须提醒喝水'
+  await h.create({ text }); h.advance(61_000); await h.tick()
+  assert.equal(h.modelCalls.length, 1)
+  assert.deepEqual(h.sent[0].segments, [{ type: 'text', data: { text: `主人，到提醒时间啦：${text}` } }])
+  assert.equal(h.status().counts.completed, 1)
+  await h.tick(); assert.equal(h.sent.length, 1)
+})
+
+test('changed QQ identity after artwork generation cannot receive the reminder', async t => {
+  const h = harness(t, { artwork: { onModel: ({ cfg }) => { cfg.botQQ = OTHER } } })
+  await h.create({}); h.advance(61_000); await h.tick()
+  assert.equal(h.sent.length, 0)
+  assert.equal(h.status().totals.confirmed, 0)
+})
+
+test('hot-replaced compatibility exports cannot approve late artwork from the previous module', async t => {
+  const h = harness(t, { artwork: { onModel: ({ api }) => { api.use = () => null } } })
+  await h.create({}); h.advance(61_000); await h.tick()
+  assert.equal(h.prepared.length, 0)
+  assert.equal(h.sent.length, 1)
+  assert.deepEqual(h.sent[0].segments.map(s => s.type), ['text'])
 })
 
 test('a private chat-log error cannot discard a valid QQ delivery receipt', async t => {
