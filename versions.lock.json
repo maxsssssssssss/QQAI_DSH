@@ -1,5 +1,5 @@
 {
-  "recorded_date": "2026-11-01",
+  "recorded_date": "2026-11-02",
   "status": "native-proactive-30-40-80-enabled",
   "node": {
     "version": "24.22.2",
@@ -189,7 +189,7 @@
       "natural_qq_trigger_acceptance_complete": false,
       "evidence": "docs/evidence/20261031-mood-judge.json"
     },
-    "qq_native_faces_enabled": true,
+    "qq_native_faces_enabled": false,
     "memory_limits": {
       "recallCandidates": 10,
       "actualHintItems": 8,
@@ -231,6 +231,7 @@
       "natural_qq_new_persona_acceptance_complete": false,
       "evidence": "docs/evidence/20261031-persona-xiaojing.json"
     },
-    "native_proactive_configuration_evidence": "docs/evidence/20261101-proactive-30.json"
+    "native_proactive_configuration_evidence": "docs/evidence/20261101-proactive-30.json",
+    "qq_native_faces_configuration_evidence": "docs/evidence/20261102-qq-faces-disabled.json"
   }
 }

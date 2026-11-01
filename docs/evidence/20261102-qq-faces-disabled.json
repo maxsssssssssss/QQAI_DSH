@@ -1,0 +1,22 @@
+{
+  "operation": "set-native-qq-faces",
+  "ok": true,
+  "serviceRestarted": false,
+  "qqMessageRequested": false,
+  "modelTestRequested": false,
+  "memoryOrScheduleWritten": false,
+  "recordedAt": "2026-11-02T02:38:31.392181+08:00",
+  "beforeFaces": true,
+  "afterFaces": false,
+  "otherConfigurationUnchanged": true,
+  "isolatedBackupVerified": true,
+  "serviceProcessUnchanged": true,
+  "moduleLoaded": true,
+  "currentModel": {
+    "provider": "deepseek-official",
+    "model": "deepseek-flash",
+    "reasoningEffort": "off"
+  },
+  "onebotState": "connected",
+  "recordDir": "/var/lib/qqai-dsh/maintenance/20261102-qq-faces/faces-55sbfgea"
+}

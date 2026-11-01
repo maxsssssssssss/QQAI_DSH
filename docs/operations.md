@@ -146,7 +146,7 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 
 事实提炼仍由原生04:00/16:00定时器完成，保留80行上限并增加约40000字符分批预算；所有批次都会处理，单条超预算的旧记录单独完整处理。单事实200字符、遗忘规则、提炼模型输出预算和人物档案上限未变。实际调用更多相关记忆、处理较长流水会增加部分token用量。
 
-`stickers.faces=true` 开启QQ系统小黄脸；不需要开启原生图片贴纸库。模型可用 `<face:捂脸>` 等格式，发送前转换为OneBot `face` 段；已从真实SnowLuma读取到330个数字编号表情，未知名称会剔除。Nekowhale原有GIF/图片功能继续保留。
+`stickers.faces=false`：2026-11-02按用户要求关闭QQ系统小黄脸。原生动态提示词不再加入face标签说明，普通发送路径移除 `<face:…>` 标签。Nekowhale原有GIF/图片功能继续保留。此前开启期间已从真实SnowLuma读取到330个数字编号表情，该历史验证不代表当前仍开启。
 
 `speakUp.nudge=true` 开启原生未回复追问。每分钟在08:00–23:00活动窗口检查；机器人最近一次私聊是问句且晚于主人最后回复，经过15至40分钟时，该问题最多尝试一次，50%概率进入模型决策，模型仍可沉默。追问不消耗普通主动的30次计数，也不改其nextAt；追问产生的新问句仍可能再次成为目标，因此不能承诺主人持续不回时总共只追问一次。DSH重启会清空进程内最近问句，重启前的问题不会继续等待追问。purpose仍关闭。
 
@@ -177,3 +177,10 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 唯一主动状态写入为停机期间 `nextAt=0`，day/count/last/nudgedFor保持，重启后由原生分钟tick按新间隔重排。此次恰跨北京时间午夜：旧日6次由原生日切变为新日0次，不是脚本重置。观察到新排期2026-11-01 00:47:30，处于新40–80分钟范围；夜间门槛仍阻止发信，08:00后才按条件考虑普通主动。
 
 备份 `/var/lib/qqai-dsh/maintenance/20261031-proactive-30/proactive-noqon_79/`，清单 `manifest.private.json` 和 `before/`、`isolated-restore/` 逐字节验证。回滚只恢复清单中变更的配置源码、启动校验脚本、原生三个字段；主动状态只让nextAt失效，保留当前day/count等字段；不恢复旧聊天、记忆、reader或reminders状态。失败由脚本执行上述回滚后恢复DSH。14项Node合成测试、6项原状态保留回归及硬链接隔离替换验证通过；已验证实际运行配置/原生排期/QQ重连，未强制模型或QQ消息测试。[分层证据](evidence/20261101-proactive-30.json)
+
+
+## QQ系统小黄脸开关（2026-11-02）
+
+当前为关闭。使用 `deployment/set-qq-faces.py --record-dir /var/lib/qqai-dsh/maintenance/20261102-qq-faces --disable`，只通过原生保存接口热更新 `stickers.faces`；反向恢复使用 `--enable`，无需重启或恢复整份旧配置。每次保存前在root私有目录备份配置并验证隔离副本，保存后比较磁盘/内存配置，确认其他字段与服务进程不变。
+
+本次备份 `/var/lib/qqai-dsh/maintenance/20261102-qq-faces/faces-55sbfgea/`。实际磁盘与运行值均false，QQ connected、兼容模块正常，其他配置未变；未发送QQ测试消息或调用模型。旧回归已覆盖关闭时剥离标签和移除提示说明，本次不把它计作新的真实QQ收件验证。[记录](evidence/20261102-qq-faces-disabled.json)

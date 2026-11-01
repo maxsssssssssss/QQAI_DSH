@@ -166,3 +166,10 @@
 - 最终14文件私有备份及隔离恢复通过，位置 `/var/lib/qqai-dsh/maintenance/20261031-proactive-30/proactive-noqon_79/`。只重启DSH，QQ网关启动时间不变，Aurabot自动重连且身份核对通过。聊天流水、memories、sessions、mood、recent-media、Heybox及reminder状态逐字节一致；小鲸人格、Flash/off、未回复追问等其他设置核对未变。
 - 安装器只写 `nextAt=0`；原生分钟tick自行生成40–80分钟范围排期，观察值00:47:30。维护恰跨北京时间午夜，原生日切将10月31日count6变为11月1日count0；没有手工清零day/count，last/nudgedFor等保留。活动窗口08:00–23:00仍生效，夜间排期不代表夜间发信。
 - 14项Node回归、6项状态保留回归和硬链接原子替换检查通过。实际运行30/40/80、原生排期及QQ重连均验证；没有人为触发模型、提前发QQ消息或声称新频率的长期收件验收。证据 `docs/evidence/20261101-proactive-30.json`。
+
+
+## 2026-11-02 02:38：关闭QQ自带小黄脸
+
+- 按用户指示仅将 `stickers.faces` 从true改为false，使用原生保存接口热更新；Nekowhale、未回复追问、30次/40–80分钟普通主动、小鲸人格及其他配置不变。
+- 先备份私有配置并验证隔离副本，备份 `/var/lib/qqai-dsh/maintenance/20261102-qq-faces/faces-55sbfgea/`。磁盘及实际运行值均确认false，其余配置逐项相同，文件属主权限保持，DSH同一进程、QQ connected、兼容模块无错误。没有重启、清理数据、触发模型或发送QQ测试消息。
+- 新增可逆维护脚本 `deployment/set-qq-faces.py`（enable/disable）；原生关闭逻辑与Nekowhale独立链路均沿用既有实现，没有修改上游代码。证据 `docs/evidence/20261102-qq-faces-disabled.json`。
