@@ -1,6 +1,6 @@
 {
   "recorded_date": "2026-11-02",
-  "status": "neko-single-whale-often-stock-gif-fallback",
+  "status": "neko-often-receipt-cadence-and-search-guidance",
   "node": {
     "version": "24.22.2",
     "linux_x64_sha256": "48cc0e21e048790e54c0cf5749c2725005313d652651c40b7a21feb9697aaf75",
@@ -61,7 +61,7 @@
       "version": "1.1.24",
       "file": "src/chat/hub.js",
       "before": "63d8df994316a6286428ad53cfc530015c340c57cfb9c556fc08c2576a714caf",
-      "after": "71f51cfc9db0a9d1b400f033dc3cfed622b52b13777786aa6b22c805b2363eeb"
+      "after": "b32d8f45db4d237066528f6e6c190b7e45c2ba6fab79cd8696d79fac710097cb"
     },
     {
       "package": "dsh-nekowhale-stickers",
@@ -232,8 +232,8 @@
       "source": "personas/xiaojing.md",
       "source_file_sha256": "7c40fb08ab49f67f6b3956573e935f6434339968fa0084d6e09e181d506984d0",
       "effective_text_sha256": "80f4eb8a086ea75e136e310ca157bcfa6774b2c85eb7fe2cd6b18551610fefe0",
-      "adapter_version": "0.2.1",
-      "adapter_sha256": "5b99eb45265129e150aa5b533c97d2d8bc678a1788f55d83fa732679ce2d2c26",
+      "adapter_version": "0.2.2",
+      "adapter_sha256": "2a54a67bedc2353a7679eae3730054f5dcbc10c8728a5191608491dda59a7c29",
       "upstream_plugin_source_sha256": "9969097250f89301d23dffabb3b3dd2a1614cf5e5e0500a389c10c11fa383d7b",
       "upstream_hash_validation_retained": true,
       "real_model_verified": true,
@@ -263,11 +263,13 @@
       "network_attempt_ms": 12000,
       "network_total_per_resource_ms": 30000,
       "files": {
-        "index.mjs": "5b99eb45265129e150aa5b533c97d2d8bc678a1788f55d83fa732679ce2d2c26",
-        "sticker-policy.mjs": "6313163e2287a32bab760e9217d09bde97ea7dbdb9df1363b6d462815843ef01"
+        "index.mjs": "2a54a67bedc2353a7679eae3730054f5dcbc10c8728a5191608491dda59a7c29",
+        "sticker-policy.mjs": "795f6bacb48156c86c1345817bed1a23a0cdc805c642d6f509977b014ee37334"
       },
       "evidence": "docs/evidence/20261102-neko-stickers.json",
-      "delivery_evidence": "docs/evidence/20261102-gif-often.json"
+      "delivery_evidence": "docs/evidence/20261102-gif-often.json",
+      "owner_chat_hint_after_text_only_turns": 3,
+      "owner_chat_hint_evidence": "docs/evidence/20261102-sticker-hints.json"
     }
   }
 }

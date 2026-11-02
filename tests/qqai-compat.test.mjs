@@ -4,12 +4,29 @@ import { mkdtemp, mkdir, writeFile, symlink, rm, readFile } from 'node:fs/promis
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { approvedGif, mediaHooks, stickerReference, whalePersona } from '../adapters/qqai-compat/index.mjs'
+import { approvedGif, guideStockSearch, mediaHooks, stickerReference, whalePersona } from '../adapters/qqai-compat/index.mjs'
 
 const gif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64')
 const hash = '012345abcdef'
 const renderId = '012345abcdef0123'
 const url = `http://127.0.0.1:3180/x-nekowhale-stickers/s/${hash}.gif`
+
+test('successful owner search shows how to pass a returned name, without selecting an image', () => {
+  const exec = { name: 'sticker_search', callId: 'c1', rootCallId: 'c1' }
+  const scope = 'qq:example:3'
+  const text = '鲸鱼“好耶”｜喜悦｜快乐\n拉炮｜喜悦｜庆祝'
+  const result = Object.freeze({ isError: false, value: Object.freeze({ text }) })
+  const guided = guideStockSearch(exec, result, scope).value.text
+  assert.ok(guided.startsWith(text + '\n'))
+  assert.ok(guided.includes('sticker_send({"name":"鲸鱼“好耶”"})'))
+  assert.ok(!guided.includes('!['))
+  assert.equal(guideStockSearch(exec, result, ''), result)
+  assert.equal(guideStockSearch({ ...exec, name: 'sticker_send' }, result, scope), result)
+  assert.equal(guideStockSearch({ ...exec, rootCallId: 'parent' }, result, scope), result)
+  for (const untouched of [{ isError: true, content: [] }, { isError: false, value: { text: '没有匹配的表情，换个情绪词再试。' } }]) {
+    assert.equal(guideStockSearch(exec, untouched, scope), untouched)
+  }
+})
 
 async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), 'qqai-compat-'))

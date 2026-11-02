@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto'
 import { constants, readFileSync } from 'node:fs'
 import { open, realpath } from 'node:fs/promises'
 import { isAbsolute, relative, resolve, sep } from 'node:path'
-import { createStickerPolicy, sharedStickerState, toolTurnTracker } from './sticker-policy.mjs'
+import { createStickerPolicy, qqStickerTurnKey, sessionKey, sharedStickerState, toolTurnTracker } from './sticker-policy.mjs'
 
 export const PERSONA_SHA256 = '9969097250f89301d23dffabb3b3dd2a1614cf5e5e0500a389c10c11fa383d7b'
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024
@@ -62,6 +62,17 @@ export function stockResultUrl(result, port) {
   if (typeof text !== 'string') return ''
   const url = /^!\[[^\]\r\n]*\]\(([^\s)]+)\)(?:\r?\n|$)/.exec(text)?.[1]
   return stickerReference(url, port)?.kind === 's' ? url : ''
+}
+
+/** Keep candidate order. DSH renders the updated Neko value into the next model step. */
+export function guideStockSearch(exec, result, scope) {
+  if (!scope || exec.name !== 'sticker_search' || exec.callId !== exec.rootCallId || result?.isError !== false) return result
+  const text = result.value?.text
+  const name = typeof text === 'string' && /^([^｜\r\n]+)｜[^｜\r\n]*｜/u.exec(text)?.[1]
+  if (!name) return result
+  const example = JSON.stringify({ name })
+  const hint = `挑到贴切的一张就用第一列的完整名称调用 sticker_send，例如 sticker_send(${example})。使用工具返回的图片行，不要用名称拼地址。`
+  return { ...result, value: { ...result.value, text: text + '\n' + hint } }
 }
 
 /** Resolve only known library files, with realpath containment and bounded reads. */
@@ -152,10 +163,58 @@ export function mediaHooks({ getPort, getKit, getDataDir, getOwner, policy = cre
   }
 }
 
+// One receipt event represents the entire delivery, including all QQ bubbles.
+// Only a count and recent opaque turn keys survive module reloads.
+export function ownerStickerCadence(api, policy, state) {
+  function enabled(chatId) {
+    const cfg = api.config()
+    const owner = cfg.ownerQQ && 'private:' + cfg.ownerQQ
+    if (state.owner !== owner) Object.assign(state, { owner, plain: 0, session: '', seen: new Map() })
+    return owner && chatId === owner && cfg.enabled && !cfg.dryRun && api.settings().stickerUsage === 'often'
+  }
+  function mark(key, status) {
+    state.seen.set(key, status)
+    if (state.seen.size > 64) state.seen.delete(state.seen.keys().next().value)
+  }
+  api.on('activity', event => {
+    const receipt = event?.stickerReceipt
+    if (event?.kind !== 'out' || !receipt || !enabled(event.chatId)) return
+    const key = policy.scope({ stickerTurnKey: receipt.key })
+    if (receipt.image) {
+      if (key && state.seen.get(key) === 'image') return
+      state.plain = 0
+      state.session = ''
+    } else {
+      if (!receipt.final || !receipt.textOnly || !key.startsWith('qq:')) return
+      const prior = state.seen.get(key)
+      if (prior === 'text' || prior === 'image') return
+      state.plain = prior === 'hint' ? 1 : Math.min(state.plain + 1, 3)
+    }
+    if (key) mark(key, receipt.image ? 'image' : 'text')
+  })
+  api.on('prompt', (content, { chat, sessionId, senderId, steer }) => {
+    if (!steer && enabled(chat?.chatId) && chat.kind === 'private') {
+      const ownerInput = String(senderId) === String(api.config().ownerQQ)
+      state.session = ownerInput && state.plain === 3 ? sessionKey(sessionId) : ''
+    }
+    return content
+  })
+  api.context?.(({ chat, sessionId }) => {
+    if (!enabled(chat?.chatId) || !state.session || state.session !== sessionKey(sessionId)) return ''
+    return '最近几轮都是文字。如果这句适合用大肥鱼 GIF 表达你的反应，可以先用 sticker_search 找找；没有贴切的就照常回文字。'
+  })
+  return (session, event) => {
+    if (event?.type !== 'turn/end' || !state.session || state.session !== sessionKey(session?.id)) return
+    const key = qqStickerTurnKey(state.session, event.data?.turn)
+    if (event.data?.reason?.kind === 'completed' && key && !state.seen.has(key)) mark(key, 'hint')
+    state.session = ''
+  }
+}
+
 export default {
   id: 'qqai-compat',
   name: 'QQAI 三插件兼容适配',
-  version: '0.2.1',
+  version: '0.2.2',
   description: '鲸鱼娘人格来源接入与 Nekowhale 受控 GIF 传递；不改变原生聊天、记忆或调度',
   defaults: { personaSourcePath: '', stickersDataDir: '', botName: '大肥鱼', ownerName: '主人', personaText: '', stickerUsage: 'off' },
   settings: [{ key: 'stickerUsage', label: '表情使用积极程度', type: 'select',
@@ -174,6 +233,7 @@ export default {
     const runtime = sharedStickerState(settings.stickersDataDir)
     const policy = createStickerPolicy({ getKit: () => api.dsh.get('stickers'),
       getUsage: () => api.settings().stickerUsage, state: runtime })
+    const endCadence = ownerStickerCadence(api, policy, runtime.cadence ||= {})
     const turns = toolTurnTracker({ getOwner: () => String(api.config().ownerQQ || ''),
       stockUrl: result => stockResultUrl(result, api.dsh.get('webServer')?.port),
       chatOfSession: id => api.core.hub.chatOfSession(id), state: runtime.calls })
@@ -210,7 +270,10 @@ export default {
       return next()
     })
     api.onDispose(off)
-    api.onDispose(api.dsh.on('session/event', turns.observe))
+    api.onDispose(api.dsh.on('session/event', (session, event) => {
+      turns.observe(session, event)
+      endCadence(session, event)
+    }))
     api.onDispose(api.dsh.on('tools/result', turns.result))
     api.onDispose(api.dsh.on('tools/execute', async (exec, next) => {
       const run = async () => {
@@ -225,7 +288,7 @@ export default {
             }
           }
         }
-        return result
+        return guideStockSearch(exec, result, scope)
       }
       const scope = turns.scope(exec)
       return scope ? policy.withTurn(scope, run) : run()

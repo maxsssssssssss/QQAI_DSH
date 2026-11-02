@@ -89,4 +89,16 @@ const stickerTurnStore = new AsyncLocalStorage()`,
       replacement: "hooks.items(items, { chatId, text, stickerFinal, userText:",
     },
   ],
+}, {
+  package: 'dsh-aurabot-qq', version: '1.1.24', rootIndex: 0, file: 'src/chat/hub.js',
+  before: '71f51cfc9db0a9d1b400f033dc3cfed622b52b13777786aa6b22c805b2363eeb',
+  after: 'b32d8f45db4d237066528f6e6c190b7e45c2ba6fab79cd8696d79fac710097cb',
+  edits: [{
+    needle: "    onActivity?.({ kind: 'out', chatId, reply: delivery.ok ? text : said, userText: opts.userText || '' })",
+    replacement: `    const stickerReceipt = cfg.enabled && !cfg.dryRun && !captureStore.getStore() ? {
+      key: stickerTurnStore.getStore(), final: stickerFinal,
+      image: confirmed.some(i => i.kind === 'image'), textOnly: delivery.ok && confirmed.every(i => i.kind === 'text'),
+    } : null
+    onActivity?.({ kind: 'out', chatId, reply: delivery.ok ? text : said, userText: opts.userText || '', stickerReceipt })`,
+  }],
 }]

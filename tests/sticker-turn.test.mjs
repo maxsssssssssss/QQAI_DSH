@@ -97,7 +97,7 @@ test('actual hub preserves turn identity through tools, interleaved final bubble
     stockUrl: result => stockResultUrl(result, 3080) })
   const media = mediaHooks({ getPort: () => 3080, getKit: () => kit, getDataDir: () => dir, getOwner: () => '12345', policy,
     takeStock: turns.takeStock })
-  const hookScopes = [], accepted = [], sentIds = new Set()
+  const hookScopes = [], accepted = [], activities = [], sentIds = new Set()
   const hooks = {
     reply: async (text, info) => { hookScopes.push(['reply', info.stickerTurnKey]); await Promise.resolve(); return text },
     items: media.items,
@@ -107,20 +107,24 @@ test('actual hub preserves turn identity through tools, interleaved final bubble
     },
   }
   const cfg = { enabled: true, dryRun: false, ownerQQ: '12345', voice: { enabled: false }, stickers: { enabled: false } }
-  const make = new Function('AsyncLocalStorage', 'parseReply', 'bubbleDelay', 'hooks', 'getConfig', 'onebot', 'sentIds', 'log', `
+  const make = new Function('AsyncLocalStorage', 'parseReply', 'bubbleDelay', 'hooks', 'getConfig', 'onebot', 'sentIds', 'log', 'onActivity', `
     const stickerTurnStore = new AsyncLocalStorage(), captureStore = new AsyncLocalStorage();
     const targetOf = () => ({kind:'private',id:'12345'}), bump = () => {}, mood = () => ({delay:1}), isMuted = () => false;
     const groupEngaged = new Map(), groupRefs = new Map(), groupSaid = new Map(), saidElsewhere = new Map();
     const stickers = {}; let lastChatAt = 0, lastBotToOwner = null;
-    const sleep = async () => { await Promise.resolve(); }, logChat = () => {}, onActivity = () => {};
+    const sleep = async () => { await Promise.resolve(); }, logChat = () => {};
     const sendVoice = async () => {}, sendSticker = async () => {}, pokeBack = async () => {};
     ${fn(src, 'sendSegments', '\n  /** replyId')}
     const sendText = (chat, text) => sendSegments(chat, [{type:'text',data:{text}}], text);
     const sendImage = (chat, file) => sendSegments(chat, [{type:'image',data:{file}}], '[image]');
     ${fn(src, 'deliver', '\n  // ---------- 盯 DSH')}
     return { deliver, sendSegments };`)
+  let rejectImages = false
   const hub = make(AsyncLocalStorage, parseReply, bubbleDelay, hooks, () => cfg,
-    { call: async (_action, params) => { accepted.push(params.message); await Promise.resolve(); return { message_id: accepted.length } } }, sentIds, log)
+    { call: async (_action, params) => {
+      if (rejectImages && params.message.some(s => s.type === 'image')) return {}
+      accepted.push(params.message); await Promise.resolve(); return { message_id: accepted.length }
+    } }, sentIds, log, a => activities.push(a))
   const image = i => `![表情](http://127.0.0.1:3080/x-nekowhale-stickers/s/${catalog[i].hash}.gif)`
   const keyA = 'qq:owner-session:8', keyB = 'qq:owner-session:9'
   await policy.withTurn(keyA, () => hub.deliver(chatId, image(0)))
@@ -169,8 +173,15 @@ test('actual hub preserves turn identity through tools, interleaved final bubble
   assert.deepEqual(accepted.slice(-2).map(segments => segments[0].type), ['text', 'image'])
   assert.equal(recovered.ok, true)
   assert.equal(recovered.delivered, 2)
+  assert.deepEqual(activities.at(-1).stickerReceipt, { key: 'qq:owner-session:98', final: true, image: true, textOnly: false })
   select(99, 2)
   const explicit = await hub.deliver(chatId, '甲|||' + image(2) + '|||乙', { ...finalOpts, stickerTurnKey: 'qq:owner-session:99' })
   assert.deepEqual(accepted.slice(-3).map(segments => segments[0].type), ['text', 'image', 'text'])
   assert.equal(explicit.delivered, 3)
+  rejectImages = true
+  const partial = await hub.deliver(chatId, '甲|||' + image(2), { ...finalOpts, stickerTurnKey: 'qq:owner-session:100' })
+  assert.equal(partial.failed, 1)
+  assert.deepEqual(activities.at(-1).stickerReceipt, { key: 'qq:owner-session:100', final: true, image: false, textOnly: false })
+  await hub.deliver(chatId, '甲|||乙', { ...finalOpts, stickerTurnKey: 'qq:owner-session:101' })
+  assert.deepEqual(activities.at(-1).stickerReceipt, { key: 'qq:owner-session:101', final: true, image: false, textOnly: true })
 })

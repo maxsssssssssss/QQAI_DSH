@@ -1,0 +1,152 @@
+{
+  "deployment": {
+    "at": "2026-11-02T23:25:48.413583+08:00",
+    "backup": "/var/lib/qqai-dsh/maintenance/20261102-sticker-hints/enable-uar0r4vx",
+    "backupFiles": 20,
+    "chatlogFilesPreserved": 1,
+    "nonHistoryUnchanged": [
+      "config.json",
+      "memories.json",
+      "modules-data/qqai-heybox-reader/reader-state.json",
+      "modules-data/qqai-reminders/reminders.json",
+      "mood.json",
+      "sessions.json",
+      "speakup.json"
+    ],
+    "adapterFilesVerified": 2,
+    "patchFilesVerified": 8,
+    "botIdentityMatches": true,
+    "personaMatches": true,
+    "policy": {
+      "ok": true,
+      "usage": "often",
+      "maxImagesPerTurn": 2,
+      "allowedPack": "大肥鱼",
+      "allowedTemplateKeys": [
+        "couplet_top",
+        "couplet_bottom",
+        "think",
+        "scroll",
+        "sign"
+      ],
+      "rulesSha256": "fc41d906249041b9ee5854665267c26685a9db1a7c824822bebe815d89cada0f"
+    },
+    "model": "deepseek-flash",
+    "thinking": "off",
+    "dshRestarted": true,
+    "gatewayProcessUnchanged": true,
+    "isolatedBackupRestoreVerified": true
+  },
+  "automated": {
+    "nodeVersion": "24.17.0",
+    "nodePassed": 162,
+    "pythonPassed": 12,
+    "failed": 0,
+    "skipped": 0,
+    "upstreamFixtures": "Pinned original Aurabot, whale persona and Nekowhale sources"
+  },
+  "beforeFix": {
+    "observedCompletedOwnerChatTurns": 22,
+    "turnsWithoutNekoCalls": 21,
+    "searchOnlyTurns": 1,
+    "searchOnlyTurnHadFiveCandidates": true,
+    "constructedUrlDidNotMatchAllowedGifFormat": true
+  },
+  "isolatedRealModel": {
+    "providerEndpoint": "https://api.deepseek.com/chat/completions",
+    "runtimeContextRole": "user",
+    "fullDshAgentLoop": false,
+    "kind": "real-deepseek-flash-off-isolated-installed-hub",
+    "realQqSends": 0,
+    "syntheticOwner": true,
+    "providerRequests": 10,
+    "guideSeenByNextRequest": 2,
+    "autoSendCalledAfterGuide": 1,
+    "downloadedPublicAssets": 4,
+    "rounds": [
+      {
+        "turn": 1,
+        "newContextHint": false,
+        "realModel": true,
+        "confirmedTextOnly": true,
+        "guideRequests": 0,
+        "selected": 0,
+        "confirmedImages": 0,
+        "candidateNameUsedAfterGuide": false
+      },
+      {
+        "turn": 2,
+        "newContextHint": false,
+        "realModel": true,
+        "confirmedTextOnly": true,
+        "guideRequests": 0,
+        "selected": 0,
+        "confirmedImages": 0,
+        "candidateNameUsedAfterGuide": false
+      },
+      {
+        "turn": 3,
+        "newContextHint": false,
+        "realModel": true,
+        "confirmedTextOnly": true,
+        "guideRequests": 0,
+        "selected": 0,
+        "confirmedImages": 0,
+        "candidateNameUsedAfterGuide": false
+      },
+      {
+        "turn": 4,
+        "newContextHint": true,
+        "realModel": true,
+        "confirmedTextOnly": false,
+        "guideRequests": 1,
+        "selected": 1,
+        "confirmedImages": 1,
+        "candidateNameUsedAfterGuide": true
+      },
+      {
+        "turn": 5,
+        "newContextHint": false,
+        "realModel": true,
+        "confirmedTextOnly": true,
+        "guideRequests": 0,
+        "selected": 0,
+        "confirmedImages": 0,
+        "candidateNameUsedAfterGuide": false
+      },
+      {
+        "turn": 6,
+        "newContextHint": false,
+        "realModel": true,
+        "confirmedTextOnly": false,
+        "guideRequests": 1,
+        "selected": 2,
+        "confirmedImages": 2,
+        "candidateNameUsedAfterGuide": true,
+        "explicitRequestedImageCount": 1,
+        "requestedCountMatched": false
+      }
+    ],
+    "ok": true,
+    "harnessSha256": "e3c159fc6cd616f9a97f0acd74f8bc193e9aaa8d6e49f8bc4702cbf864249bd9",
+    "allowedModelTools": [
+      "sticker_search",
+      "sticker_send"
+    ],
+    "input": "Synthetic owner dialogue. First three requests ask for a numeric reply. Fourth user message does not request a GIF. Sixth asks for a celebration GIF.",
+    "deliveryBoundary": "Installed Hub and Nekowhale tools with intercepted OneBot. For each image verify the GIF signature and SHA-1 prefix against selected stock.",
+    "productionOwnerSessionPrompted": false,
+    "privateArtifactDirectory": "/var/lib/qqai-dsh/maintenance/20261102-sticker-hints/real-model-sticker-guidance/"
+  },
+  "naturalConversationObservation": {
+    "checkedAt": "2026-11-02T23:27:57.662152+08:00",
+    "recentLiveRuntimeContextObserved": true,
+    "turnsCompletedAfterDeployment": 0,
+    "searchCallsAfterDeployment": 0,
+    "stockSelectionsAfterDeployment": 0,
+    "newHintSnapshotsAfterDeployment": 0,
+    "onebotOnlineAndMatched": true
+  },
+  "naturalQqNewBehaviorVerified": false,
+  "scope": "The previous release had a confirmed real OneBot GIF delivery. The new release has live QQ connectivity, an isolated real-model test and a separate short read-only observation of the owner session."
+}

@@ -113,9 +113,13 @@ def profile_update(raw, restore_from=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--record-dir', required=True)
-    parser.add_argument('--from-normal', action='store_true',
+    baseline = parser.add_mutually_exclusive_group()
+    baseline.add_argument('--from-normal', action='store_true',
         help='Upgrade the deployed normal GIF policy and final delivery to the often policy')
+    baseline.add_argument('--from-often', action='store_true',
+        help='Upgrade the deployed 0.2.1 often policy with no configuration writes')
     args = parser.parse_args()
+    upgrade = args.from_normal or args.from_often
     os.umask(0o077)
     check(os.geteuid() == 0)
     helper = module('private_ops', ROOT / 'deployment/set-proactive.py')
@@ -137,12 +141,19 @@ def main():
         cfg = json.loads(files.read_raw(config_path)['raw'])
         check(cfg['model']['model'] == 'deepseek-flash' and cfg['model']['reasoningEffort'] == 'off')
         check(cfg['stickers']['faces'] is False and cfg['stickers']['enabled'] is False)
-        if args.from_normal:
-            check(cfg['ext']['qqai-compat']['stickerUsage'] == 'normal')
-            for filename, expected in {
+        lock = json.loads((ROOT / 'versions.lock.json').read_bytes())
+        for filename, expected in lock['runtime_state']['nekowhale_usage']['files'].items():
+            check(sha((ROOT / 'adapters/qqai-compat' / filename).read_bytes()) == expected)
+        if upgrade:
+            check(cfg['ext']['qqai-compat']['stickerUsage'] == ('often' if args.from_often else 'normal'))
+            expected_module = {
                 'index.mjs': '6f63a59e9321efa5b967b6874e22e5ba9feaf3ef4da641155a0bbe65d5bb8415',
                 'sticker-policy.mjs': '3b4c3c7bdbfbbd76f4b7bc40634f27f79ec014bbc411b958903f1be9891bc133',
-            }.items():
+            } if args.from_normal else {
+                'index.mjs': '5b99eb45265129e150aa5b533c97d2d8bc678a1788f55d83fa732679ce2d2c26',
+                'sticker-policy.mjs': '6313163e2287a32bab760e9217d09bde97ea7dbdb9df1363b6d462815843ef01',
+            }
+            for filename, expected in expected_module.items():
                 check(sha((DATA / 'modules/qqai-compat' / filename).read_bytes()) == expected)
         else:
             for name, expected in OLD_ENTRY_HASHES.items():
@@ -150,21 +161,22 @@ def main():
         invocation = run(['systemctl', 'show', 'qqai-dsh.service', '--property=InvocationID', '--value']).strip()
         gateway = json.loads(run(['docker', 'inspect', 'qqai-dsh-snowluma']))[0]['State']['StartedAt']
         packages = [(PROFILE / 'node_modules' / n).resolve() for n in ('dsh-aurabot-qq', 'dsh-nekowhale-stickers')]
-        if args.from_normal:
-            for patch in json.loads((ROOT / 'versions.lock.json').read_text())['compatibility_patches']:
+        if upgrade:
+            previous_hub = ('71f51cfc9db0a9d1b400f033dc3cfed622b52b13777786aa6b22c805b2363eeb'
+                            if args.from_often else '43aa7dc54ad209673bccc09509277f06fa57ed14653bed3c5cf7d275aea5cddb')
+            for patch in lock['compatibility_patches']:
                 path = PROFILE / 'node_modules' / patch['package'] / patch['file']
-                expected = ('43aa7dc54ad209673bccc09509277f06fa57ed14653bed3c5cf7d275aea5cddb'
-                            if patch['file'] == 'src/chat/hub.js' else patch['after'])
+                expected = previous_hub if patch['file'] == 'src/chat/hub.js' else patch['after']
                 check(sha(path.read_bytes()) == expected)
         else:
             run([NODE, str(SOURCE / PATCH_FILES[0]), '--check', *map(str, packages)])
         sources = {SOURCE / name: (ROOT / name).read_bytes() for name in PATCH_FILES}
-        for name in (('qqai-compat',) if args.from_normal else MODULES):
+        for name in (('qqai-compat',) if upgrade else MODULES):
             for path in (ROOT / 'adapters' / name).glob('*.mjs'):
                 run([NODE, '--check', str(path)])
                 sources[DATA / 'modules' / name / path.name] = path.read_bytes()
         code = [packages[0] / 'src/chat/hub.js']
-        if not args.from_normal:
+        if not upgrade:
             code.append(packages[1] / 'lib/core/sync.js')
         stage = 'stop-dsh-and-backup'
         run(['systemctl', 'stop', 'qqai-dsh.service']); stopped = True
@@ -213,9 +225,12 @@ def main():
         run([NODE, str(SOURCE / PATCH_FILES[0]), *map(str, packages)])
         for path in code:
             old = originals[path]; os.chown(path, old['uid'], old['gid']); os.chmod(path, old['mode'])
-        updated = json.loads(json.dumps(cfg)); updated['ext']['qqai-compat']['stickerUsage'] = 'often'
-        settings = {config_path: (json.dumps(updated, ensure_ascii=False, indent=2)+'\n').encode()}
-        if not args.from_normal:
+        settings = {}
+        if not args.from_often:
+            updated = json.loads(json.dumps(cfg))
+            updated['ext']['qqai-compat']['stickerUsage'] = 'often'
+            settings[config_path] = (json.dumps(updated, ensure_ascii=False, indent=2)+'\n').encode()
+        if not upgrade:
             settings[profile_path] = profile_update(originals[profile_path]['raw'])
         for path, raw in settings.items():
             old = originals[path]; installed.append(path)

@@ -26,6 +26,7 @@ async function deliveryFixture(source, options = {}) {
   const config = { enabled: true, dryRun: false, ownerQQ: '12345', voice: { enabled: false }, stickers: { enabled: false } }
   const make = new Function('parseReply', 'bubbleDelay', 'getConfig', 'sendText', 'sendImage', 'sleep', 'logChat', 'onActivity', `
     const hooks = {}, log = {info(){},warn(){},debug(){}}, mood = () => ({delay:1});
+    const captureStore = {getStore:()=>null}, stickerTurnStore = {getStore:()=>undefined};
     const groupEngaged = new Map(), groupRefs = new Map(), groupSaid = new Map(), saidElsewhere = new Map();
     const stickers = {}; let lastChatAt = 0, lastBotToOwner = null;
     const sendVoice = async () => true, sendSticker = async () => true, pokeBack = async () => {};

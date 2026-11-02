@@ -5,7 +5,7 @@ export const STICKER_PACK = '大肥鱼'
 export const MAX_IMAGES_PER_TURN = 2
 export const TEXT_TEMPLATES = Object.freeze({ couplet_top: 12, couplet_bottom: 12, think: 20, scroll: 60, sign: 40 })
 const sha = value => createHash('sha256').update(value).digest('hex')
-const sessionKey = value => String(value || '').replace(/^session-/, '')
+export const sessionKey = value => String(value || '').replace(/^session-/, '')
 export const qqStickerTurnKey = (session, turn) => {
   const id = sessionKey(session)
   return /^[\w-]{1,160}$/.test(id) && Number.isSafeInteger(turn) && turn >= 0 ? `qq:${id}:${turn}` : ''

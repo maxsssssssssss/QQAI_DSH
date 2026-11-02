@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto'
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { mediaHooks, stockResultUrl } from '../adapters/qqai-compat/index.mjs'
+import { mediaHooks, ownerStickerCadence, stockResultUrl } from '../adapters/qqai-compat/index.mjs'
 import { createStickerPolicy, toolTurnTracker, qqStickerTurnKey, stickerRules, TEXT_TEMPLATES } from '../adapters/qqai-compat/sticker-policy.mjs'
 
 const sha = b => createHash('sha256').update(b).digest('hex')
@@ -16,6 +16,54 @@ const url = (kind, id) => `http://127.0.0.1:3080/x-nekowhale-stickers/${kind}/${
 const info = turn => ({ chatId, stickerTurnKey: `qq:synthetic:${turn}` })
 const images = items => (items || []).filter(x => x.kind === 'image')
 const segments = items => images(items).map(x => ({ type: 'image', data: { file: x.value } }))
+
+test('often hints on the fourth then seventh owner turn; counts confirmed turns, never bubbles or context builds', () => {
+  const hooks = {}, state = {}, session = { id: 'session-synthetic' }
+  const chat = { chatId, kind: 'private' }, where = { chat, sessionId: session.id, senderId: '11111' }
+  const cfg = { ownerQQ: '11111', enabled: true, dryRun: false }, settings = { stickerUsage: 'often' }
+  const api = { config: () => cfg, settings: () => settings, on: (k, fn) => { hooks[k] = fn },
+    context: fn => { hooks.context = fn } }
+  const policy = createStickerPolicy({})
+  const install = () => ownerStickerCadence(api, policy, state)
+  let end = install()
+  const delivered = (n, extras = {}, chat = chatId) => hooks.activity({ kind: 'out', chatId: chat,
+    stickerReceipt: { key: `qq:synthetic:${n}`, final: true, image: false, textOnly: true, ...extras } })
+  const input = []
+  function prompt(expected, turn, reason = 'completed') {
+    assert.equal(hooks.prompt(input, where), input)
+    const block = hooks.context(where)
+    assert.equal(block.includes('sticker_search'), expected)
+    assert.equal(hooks.context(where), block, 'stable for subsequent tool steps')
+    assert.equal(hooks.context({ ...where, sessionId: 'another' }), '')
+    assert.equal(hooks.context({ ...where, chat: { chatId: 'group:11111' } }), '')
+    end({ id: 'synthetic' }, { type: 'turn/end', data: { turn, reason: { kind: reason } } })
+    assert.equal(hooks.context(where), '')
+  }
+  delivered(90, { final: false }); delivered(91, { textOnly: false }); delivered(92, {}, 'private:99999')
+  for (let n = 1; n <= 7; n++) {
+    if (n === 3) end = install() // same process module reload
+    prompt(n === 4 || n === 7, n)
+    delivered(n); delivered(n) // duplicate receipt for the same turn
+  }
+  delivered(8, { final: false, image: true, textOnly: false })
+  delivered(8) // interim image and final text belong to the same turn
+  for (let n = 9; n <= 11; n++) { prompt(false, n); delivered(n) }
+  hooks.prompt(input, { ...where, steer: true })
+  assert.equal(hooks.context(where), '', 'steer cannot arm the hint')
+  for (const mode of ['normal', 'rare', 'off']) {
+    settings.stickerUsage = mode
+    prompt(false)
+  }
+  settings.stickerUsage = 'often'; cfg.dryRun = true; prompt(false)
+  cfg.dryRun = false
+  prompt(true, 12, 'aborted')
+  prompt(true, 13) // silence carries no receipt
+  hooks.prompt(input, where) // another module may veto the owner's prompt
+  hooks.prompt(input, { ...where, senderId: '' })
+  assert.equal(hooks.context(where), '', 'native proactive prompt in the same session cannot inherit the hint')
+  prompt(true, 14); delivered(14)
+  prompt(false, 15)
+})
 
 async function fixture(t, shared) {
   const dir = await mkdtemp(join(tmpdir(), 'qqai-sticker-policy-'))
