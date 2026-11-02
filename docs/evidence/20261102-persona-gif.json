@@ -1,0 +1,229 @@
+{
+  "date": "2026-11-02",
+  "timezone": "Asia/Shanghai",
+  "scope": "approved persona text change and real DeepSeek isolated QQ-preset tests; no new QQ delivery test",
+  "approvedSource": "personas/xiaojing.md",
+  "sourceFileSha256": "7c40fb08ab49f67f6b3956573e935f6434339968fa0084d6e09e181d506984d0",
+  "deployment": {
+    "ok": true,
+    "operation": "replace-whale-persona-xiaojing",
+    "serviceRestartRequested": false,
+    "gatewayRestartRequested": false,
+    "manualQqSendRequested": false,
+    "memoryOrHistoryWriteRequested": false,
+    "at": "2026-11-02T10:44:43.773840+08:00",
+    "botName": "小鲸",
+    "ownerName": "主人",
+    "personaSha256": "80f4eb8a086ea75e136e310ca157bcfa6774b2c85eb7fe2cd6b18551610fefe0",
+    "textOnly": true,
+    "adapterCodeWritten": false,
+    "moduleSha256": "6f63a59e9321efa5b967b6874e22e5ba9feaf3ef4da641155a0bbe65d5bb8415",
+    "effectivePersonaMatchesFile": true,
+    "moduleLoaded": true,
+    "unrelatedConfigUnchanged": true,
+    "serviceInvocationUnchanged": true,
+    "gatewayStartUnchanged": true,
+    "qqConnected": true,
+    "botIdentityMatches": true,
+    "backupRestoreVerified": true,
+    "backupFiles": 7,
+    "privateStateBytePreserved": {
+      "memories.before.json": true,
+      "sessions.before.json": true,
+      "speakup.before.json": true,
+      "reader.before.json": true,
+      "reminders.before.json": true
+    },
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261102-persona-gif/persona-c_zjr9zo"
+  },
+  "realApi": {
+    "at": "2026-11-02T10:45:45.672824+08:00",
+    "checks": {
+      "allCasesCompleted": true,
+      "allActualRequestsFlashThinkingOff": true,
+      "actualLlmRequestObservedForEveryCase": true,
+      "actualNekoToolsAvailable": true,
+      "actualFinalSystemContainsPolicy": true,
+      "actualPersonaPreserved": true,
+      "explicitTemplateReturnedImage": true,
+      "explicitStockReturnedImage": true,
+      "plainTextRequestHasNoImages": true,
+      "modelRepliesWithinTwoImages": true
+    },
+    "actualRequestCounts": {
+      "agentDialogue": 21,
+      "auxiliary": 7
+    },
+    "approvedPersonaObserved": true,
+    "observerErrors": 0,
+    "blockedNonStickerToolAttempts": 0,
+    "cases": [
+      {
+        "case": "happy",
+        "completed": true,
+        "tools": [
+          {
+            "name": "sticker_search",
+            "isError": false
+          },
+          {
+            "name": "sticker_send",
+            "isError": false
+          }
+        ],
+        "outputImages": 0,
+        "stockImages": 0,
+        "templateImages": 0,
+        "stageDirectionMarkers": 0
+      },
+      {
+        "case": "hungry",
+        "completed": true,
+        "tools": [
+          {
+            "name": "sticker_search",
+            "isError": false
+          },
+          {
+            "name": "sticker_send",
+            "isError": false
+          }
+        ],
+        "outputImages": 1,
+        "stockImages": 1,
+        "templateImages": 0,
+        "stageDirectionMarkers": 0
+      },
+      {
+        "case": "joke",
+        "completed": true,
+        "tools": [
+          {
+            "name": "sticker_search",
+            "isError": false
+          },
+          {
+            "name": "sticker_send",
+            "isError": true
+          },
+          {
+            "name": "sticker_send",
+            "isError": false
+          }
+        ],
+        "outputImages": 1,
+        "stockImages": 1,
+        "templateImages": 0,
+        "stageDirectionMarkers": 0
+      },
+      {
+        "case": "praise",
+        "completed": true,
+        "tools": [],
+        "outputImages": 0,
+        "stockImages": 0,
+        "templateImages": 0,
+        "stageDirectionMarkers": 0
+      },
+      {
+        "case": "stock",
+        "completed": true,
+        "tools": [
+          {
+            "name": "sticker_search",
+            "isError": false
+          },
+          {
+            "name": "sticker_search",
+            "isError": false
+          },
+          {
+            "name": "sticker_search",
+            "isError": false
+          },
+          {
+            "name": "sticker_search",
+            "isError": false
+          },
+          {
+            "name": "sticker_search",
+            "isError": false
+          },
+          {
+            "name": "sticker_send",
+            "isError": false
+          }
+        ],
+        "outputImages": 1,
+        "stockImages": 1,
+        "templateImages": 0,
+        "stageDirectionMarkers": 0
+      },
+      {
+        "case": "template",
+        "completed": true,
+        "tools": [
+          {
+            "name": "meme_render",
+            "isError": false
+          }
+        ],
+        "outputImages": 1,
+        "stockImages": 0,
+        "templateImages": 1,
+        "stageDirectionMarkers": 0
+      },
+      {
+        "case": "plain",
+        "completed": true,
+        "tools": [],
+        "outputImages": 0,
+        "stockImages": 0,
+        "templateImages": 0,
+        "stageDirectionMarkers": 0
+      }
+    ],
+    "naturalCases": 4,
+    "naturalCasesCallingStickerTools": 3,
+    "naturalCasesWithGif": 2,
+    "observedActionMarkerCount": 0,
+    "manualSyntheticReplyReview": {
+      "allSevenReviewed": true,
+      "parenthesizedOrStarredActionNarrationObserved": false,
+      "happyCaseToolSucceededButImageLineOmitted": true,
+      "jokeCaseOneToolErrorThenRecovered": true,
+      "templateResponseIncorrectlyDescribedSixCharactersAsSeven": true
+    },
+    "productionOwnerSessionPrompted": false,
+    "productionMemoryToolsAllowed": false,
+    "qqDeliveryRequested": false
+  },
+  "runtimeAfter": {
+    "finishedAt": "2026-11-02T10:46:14.413650+08:00",
+    "observerRetired": true,
+    "observerRouteClosed": true,
+    "unrelatedConfigPreserved": true,
+    "qqConnected": true,
+    "botIdentityMatches": true,
+    "policy": {
+      "ok": true,
+      "usage": "normal",
+      "maxImagesPerTurn": 2,
+      "allowedPack": "大肥鱼",
+      "allowedTemplateKeys": [
+        "couplet_top",
+        "couplet_bottom",
+        "think",
+        "scroll",
+        "sign"
+      ],
+      "rulesSha256": "e2d4721bc767d50132563d992f3702b9f99b00a3445903fc6b266f130ef0f4c3"
+    }
+  },
+  "backupRestoreScope": "seven protected files copied into an isolated restore-check directory and byte/JSON verified; no online state restored",
+  "remainingLimitations": [
+    "The four natural scenarios are a small synthetic sample, not an estimated daily GIF rate or real QQ visual confirmation.",
+    "One natural case called sticker_send successfully but omitted its Markdown image line; it is counted as no image, not a successful delivery.",
+    "The wording change is deployed exactly as approved; tool protocol and normal frequency were not strengthened or changed to force passing results."
+  ]
+}

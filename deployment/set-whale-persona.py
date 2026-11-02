@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Apply the owner's Xiaojing persona through the existing QQ adapter, hot.
 
-Only ext.qqai-compat.personaText / botName and the adapter entry are changed.
+With --text-only, only ext.qqai-compat.personaText changes and the existing
+adapter is reloaded. Its installed code must match the reviewed source.
+Without that flag, the original pinned migration also changes botName/code.
 Backups contain private runtime files; rollback restores only code and those
 two settings, never old memories, conversation mappings or schedule counters.
 """
@@ -56,6 +58,7 @@ def gateway():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--record-dir', required=True)
+    parser.add_argument('--text-only', action='store_true')
     args = parser.parse_args()
     os.umask(0o077)
     record = None
@@ -89,12 +92,18 @@ def main():
         check(old_settings.get('ownerName') == '主人')
         live_before = q.fetch_json(opener, '/aurabot/api/state')
         check(live_before.get('onebot', {}).get('state') == 'connected')
+        idle_spec = importlib.util.spec_from_file_location('idle', SOURCE / 'deployment/update-native-proactive.py')
+        idle = importlib.util.module_from_spec(idle_spec)
+        idle_spec.loader.exec_module(idle)
+        idle.check_idle(q, opener)
         target = DATA / 'modules' / MODULE / 'index.mjs'
         check(not target.is_symlink())
         old_code, metadata = target.read_bytes(), target.stat()
-        check(sha(old_code) == OLD_SHA)
         source = ROOT / 'adapters' / MODULE / 'index.mjs'
         new_code = source.read_bytes()
+        check(old_code == new_code if args.text_only else sha(old_code) == OLD_SHA)
+        if args.text_only:
+            check(old_settings.get('botName') == '小鲸')
         persona = (ROOT / 'personas/xiaojing.md').read_text().strip()
         check('你的名字是小鲸，称呼对方为主人' in persona and len(persona) < 20000)
         subprocess.run(['/opt/qqai-dsh/node-v24.22.2-linux-x64/bin/node', '--check', str(source)],
@@ -106,7 +115,7 @@ def main():
                  'sessions.before.json': DATA / 'sessions.json',
                  'speakup.before.json': DATA / 'speakup.json',
                  'reader.before.json': DATA / 'modules-data/qqai-heybox-reader/reader-state.json',
-                 'reminders.before.json': DATA / 'modules-data/qqai-reminders/state.json'}
+                 'reminders.before.json': DATA / 'modules-data/qqai-reminders/reminders.json'}
         paths = {key: value for key, value in paths.items() if value.exists()}
         raw_before = {key: value.read_bytes() for key, value in paths.items()}
         restored = record / 'restore-check'
@@ -120,12 +129,16 @@ def main():
         helper.save_private(record, 'backup-manifest.json', {
             key: {'sha256': sha(raw), 'bytes': len(raw)} for key, raw in raw_before.items()})
         check(helper.unchanged_file(helper.read_file(DATA / 'config.json'), config))
-        # Save first: the old module ignores the new text until the atomic code update.
+        # The current adapter captures persona during setup, so reload after save.
         config_changed = True
-        post('/aurabot/api/save', {'ext': {MODULE: {'botName': '小鲸', 'personaText': persona}}})
-        helper.atomic_write(target, new_code, uid=metadata.st_uid, gid=metadata.st_gid,
-                            mode=stat.S_IMODE(metadata.st_mode))
-        code_changed = True
+        patch = {'personaText': persona}
+        if not args.text_only:
+            patch['botName'] = '小鲸'
+        post('/aurabot/api/save', {'ext': {MODULE: patch}})
+        if not args.text_only:
+            helper.atomic_write(target, new_code, uid=metadata.st_uid, gid=metadata.st_gid,
+                                mode=stat.S_IMODE(metadata.st_mode))
+            code_changed = True
         post('/aurabot/api/modules/reload', {'id': MODULE})
         effective = q.fetch_json(opener, '/aurabot/api/ext/' + MODULE + '/persona-state')
         check(effective.get('personaSha256') == sha(persona.encode()) and effective.get('customPersona') is True)
@@ -145,6 +158,7 @@ def main():
         check(str((live_after['onebot'].get('login') or {}).get('uin')) == str(disk_after['botQQ']))
         result.update(ok=True, at=dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).isoformat(),
             botName='小鲸', ownerName='主人', personaSha256=sha(persona.encode()),
+            textOnly=args.text_only, adapterCodeWritten=code_changed,
             moduleSha256=sha(new_code), effectivePersonaMatchesFile=True, moduleLoaded=True,
             unrelatedConfigUnchanged=True, serviceInvocationUnchanged=True, gatewayStartUnchanged=True,
             qqConnected=True, botIdentityMatches=True, backupRestoreVerified=True, backupFiles=len(paths),
@@ -159,9 +173,10 @@ def main():
                     helper.atomic_write(target, old_code, uid=metadata.st_uid, gid=metadata.st_gid,
                                         mode=stat.S_IMODE(metadata.st_mode))
                 if config_changed:
-                    post('/aurabot/api/save', {'ext': {MODULE: {
-                        'botName': old_settings.get('botName', '大肥鱼'),
-                        'personaText': old_settings.get('personaText', '')}}})
+                    rollback = {'personaText': old_settings.get('personaText', '')}
+                    if not args.text_only:
+                        rollback['botName'] = old_settings.get('botName', '大肥鱼')
+                    post('/aurabot/api/save', {'ext': {MODULE: rollback}})
                 post('/aurabot/api/modules/reload', {'id': MODULE})
                 result['targetedRollbackVerified'] = True
             except Exception:

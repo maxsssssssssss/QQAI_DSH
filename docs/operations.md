@@ -193,3 +193,6 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 [表情运行说明](neko-stickers.md)记录实际请求验证、下载测速、QQ回执、自然闲聊未出图观察及回滚。统一patcher现检查8个文件，并需保留新增 `neko-network-patch-spec.mjs` 与 `sticker-turn-patch-spec.mjs`。提醒安装器必须同时安装`engine.mjs`、`stickers.mjs`和最后写入的`index.mjs`。
 
 本轮备份位置为`/var/lib/qqai-dsh/maintenance/20261102-stickers/enable-qyzmwcdm/`，22文件隔离恢复验证通过；提示热更新副本为同级`prompt-vc8k7t4j/`。回滚只恢复本轮代码、stickerUsage和profile套组字段，不能覆盖后来聊天、记忆、提醒或计数。SnowLuma及QQ自动登录排查未重启；临时验收模块已关闭并归档。
+
+
+人格文本维护可使用 `deployment/set-whale-persona.py --text-only --record-dir /var/lib/qqai-dsh/maintenance/20261102-persona-gif`：先确认聊天空闲并备份，核对已安装adapter代码与部署源一致，仅热更新personaText、重载兼容模块，不升级代码或重启网关。当前人格为2026-11-02确认的日常GIF表达版，文件见`personas/xiaojing.md`；七文件隔离验证和测试边界见[本轮证据](evidence/20261102-persona-gif.json)。若回退，只通过原生保存接口恢复对应备份config中的personaText后重载qqai-compat，不恢复整份旧配置、记忆或调度状态。
