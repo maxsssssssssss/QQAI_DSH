@@ -146,6 +146,26 @@
   },
   "limitations": [
     "The four natural conversations are isolated examples and do not establish a daily usage rate.",
-    "The replay intercepted OneBot before the network. There is no new real QQ image receipt or phone-side observation from this change."
-  ]
+    "The initial isolated replay intercepted OneBot before the network. A subsequent owner-authorized single-image gateway test is recorded below. Device-side viewing is unconfirmed."
+  ],
+  "followUpQqTest": {
+    "at": "2026-11-02T20:06:58.541+08:00",
+    "model": "deepseek-flash",
+    "thinking": "off",
+    "actualAgentRequests": 3,
+    "auxiliaryRequests": 1,
+    "syntheticModelTurn": true,
+    "modelOriginallyIncludedImage": true,
+    "omissionDeliberatelyInjectedAtFinalReply": true,
+    "installedHubAndCompatInIsolatedProcess": true,
+    "stockStickerName": "拉炮",
+    "selectedBytes": 1214073,
+    "selectedBytesMatched": true,
+    "qqMessagesSent": 1,
+    "imageSegments": 1,
+    "gatewayReceiptConfirmed": true,
+    "gatewayGetMsgConfirmedSingleBotImage": true,
+    "ownerDeviceVisualConfirmation": false,
+    "initialHarnessAttemptStoppedBeforeTransport": true
+  }
 }
