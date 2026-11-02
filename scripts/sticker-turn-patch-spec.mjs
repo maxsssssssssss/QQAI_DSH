@@ -36,4 +36,57 @@ const stickerTurnStore = new AsyncLocalStorage()`,
       replacement: "deliver(chatId, text, { wantVoice, autoReply, userText: st.lastText || '', own: true, stickerTurnKey: 'qq:' + key + ':' + d.turn })",
     },
   ],
+}, {
+  package: 'dsh-aurabot-qq', version: '1.1.24', rootIndex: 0, file: 'src/chat/hub.js',
+  before: '43aa7dc54ad209673bccc09509277f06fa57ed14653bed3c5cf7d275aea5cddb',
+  after: '71f51cfc9db0a9d1b400f033dc3cfed622b52b13777786aa6b22c805b2363eeb',
+  edits: [
+    {
+      needle: "    if (event.type === 'user/message') {",
+      replacement: `    if (event.type === 'tool/call' && event.data?.name === 'sticker_send') {
+      st.stickerCallTurn = event.data.turn
+      return
+    }
+    if (event.type === 'user/message') {`,
+    },
+    {
+      needle: "      const text = st.lastTurn === d.turn ? st.text : ''",
+      replacement: `      const text = st.lastTurn === d.turn ? st.text : ''
+      const stockCalledThisTurn = Number.isSafeInteger(d.turn) && st.stickerCallTurn === d.turn
+      st.stickerCallTurn = null`,
+    },
+    {
+      needle: '      if (!text) return release(chatId)',
+      replacement: `      const stickerFinal = chatId === 'private:' + getConfig().ownerQQ
+      if (!text && !(stickerFinal && stockCalledThisTurn)) return release(chatId)`,
+    },
+    {
+      needle: "own: true, stickerTurnKey: 'qq:' + key + ':' + d.turn",
+      replacement: "own: true, stickerFinal, stickerTurnKey: 'qq:' + key + ':' + d.turn",
+    },
+    {
+      needle: '    const cfg = getConfig()\n    if (hooks?.reply) {',
+      replacement: `    const cfg = getConfig()
+    const stickerFinal = opts.stickerFinal === true && cfg.enabled && !cfg.dryRun && !opts.simulate && !captureStore.getStore() && !isMuted?.(chatId)
+    const emptyStickerReply = opts.stickerFinal && text === ''
+    if (emptyStickerReply && !stickerFinal) return
+    if (hooks?.reply) {`,
+    },
+    {
+      needle: "        if (typeof next === 'string') text = next",
+      replacement: "        if (emptyStickerReply && typeof next === 'string' && next !== '') return\n        if (typeof next === 'string') text = next",
+    },
+    {
+      needle: '    if (r.silent) {',
+      replacement: "    if (r.silent && !(emptyStickerReply && text === '')) {",
+    },
+    {
+      needle: "    if (cfg.stickers.enabled && !items.some((i) => i.kind === 'sticker')",
+      replacement: "    if (!r.silent && cfg.stickers.enabled && !items.some((i) => i.kind === 'sticker')",
+    },
+    {
+      needle: "hooks.items(items, { chatId, text, userText:",
+      replacement: "hooks.items(items, { chatId, text, stickerFinal, userText:",
+    },
+  ],
 }]

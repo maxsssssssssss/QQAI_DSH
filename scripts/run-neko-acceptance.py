@@ -32,6 +32,8 @@ CASES = [
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', required=True)
+    parser.add_argument('--replay-fixture', type=Path,
+        help='save one successful isolated stock tool call/result for offline omission replay')
     parser.add_argument('--send-qq', action='store_true')
     parser.add_argument('--inspector', default='/opt/qqai-dsh/source/scripts/inspect-qq-runtime.py')
     args = parser.parse_args()
@@ -39,6 +41,9 @@ def main():
     output = Path(args.output)
     if not output.is_absolute() or output.is_symlink():
         raise ValueError('output must be a new protected absolute file')
+    if args.replay_fixture and (not args.replay_fixture.is_absolute() or args.replay_fixture.exists()
+            or args.replay_fixture.is_symlink() or args.replay_fixture.parent != output.parent):
+        raise ValueError('replay fixture must be a new file beside the private output')
     spec = importlib.util.spec_from_file_location('qqai_inspect', args.inspector)
     q = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(q)
@@ -108,6 +113,29 @@ def main():
         if result is None:
             rpc('session/cancel', {'request': {'sessionId': session_id}})
             result = {'completed': False, 'terminal': 'timeout'}
+        if label == 'stock' and args.replay_fixture and result.get('completed'):
+            projection = rpc('session/projections', {'request': {'sessionId': session_id}})
+            page = rpc('session/page', {'request': {'address': {'kind': 'session', 'sessionId': session_id},
+                'throughSeq': projection['asOfSeq'], 'maxMessages': 200}})
+            calls = {}
+            for record in page['records']:
+                event = record.get('event', {})
+                data = event.get('data', {})
+                if event.get('type') == 'tool/call' and data.get('name') == 'sticker_send':
+                    calls[data['callId']] = data
+                if event.get('type') != 'tool/result':
+                    continue
+                message = data['message']
+                call = calls.get(message.get('toolCallId'))
+                if call and message.get('isError') is False and call['turn'] == data['turn']:
+                    # Only the fresh, explicitly requested synthetic stock call. No dialogue or owner session.
+                    fixture = {'session': desired, 'call': call, 'result': {
+                        'isError': False, 'content': [b for b in message['content'] if b.get('type') == 'text']}}
+                    with args.replay_fixture.open('x', encoding='utf-8') as f:
+                        json.dump(fixture, f, ensure_ascii=False)
+                    break
+            if not args.replay_fixture.is_file():
+                raise ValueError('synthetic stock reply produced no successful tool result to replay')
         evidence['cases'].append({'case': label, **result})
         save()
         print(json.dumps({'case': label, 'completed': result.get('completed'),

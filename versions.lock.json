@@ -1,6 +1,6 @@
 {
   "recorded_date": "2026-11-02",
-  "status": "neko-single-whale-normal-two-per-turn-enabled",
+  "status": "neko-single-whale-often-stock-gif-fallback",
   "node": {
     "version": "24.22.2",
     "linux_x64_sha256": "48cc0e21e048790e54c0cf5749c2725005313d652651c40b7a21feb9697aaf75",
@@ -61,7 +61,7 @@
       "version": "1.1.24",
       "file": "src/chat/hub.js",
       "before": "63d8df994316a6286428ad53cfc530015c340c57cfb9c556fc08c2576a714caf",
-      "after": "43aa7dc54ad209673bccc09509277f06fa57ed14653bed3c5cf7d275aea5cddb"
+      "after": "71f51cfc9db0a9d1b400f033dc3cfed622b52b13777786aa6b22c805b2363eeb"
     },
     {
       "package": "dsh-nekowhale-stickers",
@@ -232,8 +232,8 @@
       "source": "personas/xiaojing.md",
       "source_file_sha256": "7c40fb08ab49f67f6b3956573e935f6434339968fa0084d6e09e181d506984d0",
       "effective_text_sha256": "80f4eb8a086ea75e136e310ca157bcfa6774b2c85eb7fe2cd6b18551610fefe0",
-      "adapter_version": "0.2.0",
-      "adapter_sha256": "6f63a59e9321efa5b967b6874e22e5ba9feaf3ef4da641155a0bbe65d5bb8415",
+      "adapter_version": "0.2.1",
+      "adapter_sha256": "5b99eb45265129e150aa5b533c97d2d8bc678a1788f55d83fa732679ce2d2c26",
       "upstream_plugin_source_sha256": "9969097250f89301d23dffabb3b3dd2a1614cf5e5e0500a389c10c11fa383d7b",
       "upstream_hash_validation_retained": true,
       "real_model_verified": true,
@@ -244,7 +244,7 @@
     "native_proactive_configuration_evidence": "docs/evidence/20261101-proactive-30.json",
     "qq_native_faces_configuration_evidence": "docs/evidence/20261102-qq-faces-disabled.json",
     "nekowhale_usage": {
-      "usage": "normal",
+      "usage": "often",
       "packs": [
         "大肥鱼"
       ],
@@ -263,10 +263,11 @@
       "network_attempt_ms": 12000,
       "network_total_per_resource_ms": 30000,
       "files": {
-        "index.mjs": "6f63a59e9321efa5b967b6874e22e5ba9feaf3ef4da641155a0bbe65d5bb8415",
-        "sticker-policy.mjs": "3b4c3c7bdbfbbd76f4b7bc40634f27f79ec014bbc411b958903f1be9891bc133"
+        "index.mjs": "5b99eb45265129e150aa5b533c97d2d8bc678a1788f55d83fa732679ce2d2c26",
+        "sticker-policy.mjs": "6313163e2287a32bab760e9217d09bde97ea7dbdb9df1363b6d462815843ef01"
       },
-      "evidence": "docs/evidence/20261102-neko-stickers.json"
+      "evidence": "docs/evidence/20261102-neko-stickers.json",
+      "delivery_evidence": "docs/evidence/20261102-gif-often.json"
     }
   }
 }

@@ -56,6 +56,14 @@ export function stickerReference(value, port) {
   return { kind: match[1], id: match[2] }
 }
 
+/** Nekowhale's successful stock tool returns one Markdown line, then a footer. */
+export function stockResultUrl(result, port) {
+  const text = result.value?.text ?? result.content?.find(part => part?.type === 'text')?.text
+  if (typeof text !== 'string') return ''
+  const url = /^!\[[^\]\r\n]*\]\(([^\s)]+)\)(?:\r?\n|$)/.exec(text)?.[1]
+  return stickerReference(url, port)?.kind === 's' ? url : ''
+}
+
 /** Resolve only known library files, with realpath containment and bounded reads. */
 export async function approvedGif(ref, { kit, dataDir }) {
   if (!isAbsolute(dataDir || '')) throw new Error('An absolute sticker data directory is required')
@@ -85,7 +93,7 @@ export async function approvedGif(ref, { kit, dataDir }) {
 }
 
 /** These callbacks never throw: upstream ignores hook exceptions and would fail open. */
-export function mediaHooks({ getPort, getKit, getDataDir, getOwner, policy = createStickerPolicy({ getKit }), warn = () => {} }) {
+export function mediaHooks({ getPort, getKit, getDataDir, getOwner, policy = createStickerPolicy({ getKit }), takeStock = () => [], warn = () => {} }) {
   const approved = new Map()
   const notify = () => { try { warn('QQAI media adapter rejected an unapproved image') } catch {} }
   const prune = () => {
@@ -96,6 +104,11 @@ export function mediaHooks({ getPort, getKit, getDataDir, getOwner, policy = cre
       try {
         if (info?.chatId !== `private:${getOwner()}`) return null
         const out = [], scope = policy.scope(info)
+        if (info.stickerFinal === true && scope?.startsWith('qq:')) {
+          const explicit = new Set(items.filter(i => i.kind === 'image').map(i => i.value))
+          const missing = takeStock(scope).filter(url => !explicit.has(url))
+          items = [...items, ...missing.map(value => ({ kind: 'image', value }))]
+        }
         prune()
         for (const item of items) {
           if (item.kind !== 'image') { out.push(item); continue }
@@ -142,7 +155,7 @@ export function mediaHooks({ getPort, getKit, getDataDir, getOwner, policy = cre
 export default {
   id: 'qqai-compat',
   name: 'QQAI 三插件兼容适配',
-  version: '0.2.0',
+  version: '0.2.1',
   description: '鲸鱼娘人格来源接入与 Nekowhale 受控 GIF 传递；不改变原生聊天、记忆或调度',
   defaults: { personaSourcePath: '', stickersDataDir: '', botName: '大肥鱼', ownerName: '主人', personaText: '', stickerUsage: 'off' },
   settings: [{ key: 'stickerUsage', label: '表情使用积极程度', type: 'select',
@@ -162,12 +175,14 @@ export default {
     const policy = createStickerPolicy({ getKit: () => api.dsh.get('stickers'),
       getUsage: () => api.settings().stickerUsage, state: runtime })
     const turns = toolTurnTracker({ getOwner: () => String(api.config().ownerQQ || ''),
+      stockUrl: result => stockResultUrl(result, api.dsh.get('webServer')?.port),
       chatOfSession: id => api.core.hub.chatOfSession(id), state: runtime.calls })
     const media = mediaHooks({
       getPort: () => api.dsh.get('webServer')?.port,
       getKit: () => api.dsh.get('stickers'),
       getDataDir: () => api.settings().stickersDataDir,
       getOwner: () => String(api.config().ownerQQ || ''),
+      takeStock: turns.takeStock,
       policy,
       warn: (message) => api.log.warn(message),
     })
@@ -196,6 +211,7 @@ export default {
     })
     api.onDispose(off)
     api.onDispose(api.dsh.on('session/event', turns.observe))
+    api.onDispose(api.dsh.on('tools/result', turns.result))
     api.onDispose(api.dsh.on('tools/execute', async (exec, next) => {
       const run = async () => {
         const template = exec.name === 'meme_render' ? await policy.template(exec.arguments?.template, exec.arguments?.text) : null

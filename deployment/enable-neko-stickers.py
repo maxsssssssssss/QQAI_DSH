@@ -113,6 +113,8 @@ def profile_update(raw, restore_from=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--record-dir', required=True)
+    parser.add_argument('--from-normal', action='store_true',
+        help='Upgrade the deployed normal GIF policy and final delivery to the often policy')
     args = parser.parse_args()
     os.umask(0o077)
     check(os.geteuid() == 0)
@@ -122,7 +124,7 @@ def main():
     q = module('runtime', ROOT / 'scripts/inspect-qq-runtime.py')
     parent = files.private_subdir(Path(args.record_dir))
     record = Path(tempfile.mkdtemp(prefix='enable-', dir=parent))
-    result = {'ok': False, 'recordDir': str(record), 'operation': 'single-pack-neko-normal-two-per-turn',
+    result = {'ok': False, 'recordDir': str(record), 'operation': 'single-pack-neko-often-two-per-turn',
         'gatewayRestartRequested': False, 'manualStateResetRequested': False, 'modelOrQqTestRequested': False}
     originals, installed, stopped = {}, [], False
     stage = 'preflight'
@@ -135,18 +137,35 @@ def main():
         cfg = json.loads(files.read_raw(config_path)['raw'])
         check(cfg['model']['model'] == 'deepseek-flash' and cfg['model']['reasoningEffort'] == 'off')
         check(cfg['stickers']['faces'] is False and cfg['stickers']['enabled'] is False)
-        for name, expected in OLD_ENTRY_HASHES.items():
-            check(sha((DATA / 'modules' / name / 'index.mjs').read_bytes()) == expected)
+        if args.from_normal:
+            check(cfg['ext']['qqai-compat']['stickerUsage'] == 'normal')
+            for filename, expected in {
+                'index.mjs': '6f63a59e9321efa5b967b6874e22e5ba9feaf3ef4da641155a0bbe65d5bb8415',
+                'sticker-policy.mjs': '3b4c3c7bdbfbbd76f4b7bc40634f27f79ec014bbc411b958903f1be9891bc133',
+            }.items():
+                check(sha((DATA / 'modules/qqai-compat' / filename).read_bytes()) == expected)
+        else:
+            for name, expected in OLD_ENTRY_HASHES.items():
+                check(sha((DATA / 'modules' / name / 'index.mjs').read_bytes()) == expected)
         invocation = run(['systemctl', 'show', 'qqai-dsh.service', '--property=InvocationID', '--value']).strip()
         gateway = json.loads(run(['docker', 'inspect', 'qqai-dsh-snowluma']))[0]['State']['StartedAt']
         packages = [(PROFILE / 'node_modules' / n).resolve() for n in ('dsh-aurabot-qq', 'dsh-nekowhale-stickers')]
-        run([NODE, str(SOURCE / PATCH_FILES[0]), '--check', *map(str, packages)])
+        if args.from_normal:
+            for patch in json.loads((ROOT / 'versions.lock.json').read_text())['compatibility_patches']:
+                path = PROFILE / 'node_modules' / patch['package'] / patch['file']
+                expected = ('43aa7dc54ad209673bccc09509277f06fa57ed14653bed3c5cf7d275aea5cddb'
+                            if patch['file'] == 'src/chat/hub.js' else patch['after'])
+                check(sha(path.read_bytes()) == expected)
+        else:
+            run([NODE, str(SOURCE / PATCH_FILES[0]), '--check', *map(str, packages)])
         sources = {SOURCE / name: (ROOT / name).read_bytes() for name in PATCH_FILES}
-        for name in MODULES:
+        for name in (('qqai-compat',) if args.from_normal else MODULES):
             for path in (ROOT / 'adapters' / name).glob('*.mjs'):
                 run([NODE, '--check', str(path)])
                 sources[DATA / 'modules' / name / path.name] = path.read_bytes()
-        code = [packages[0] / 'src/chat/hub.js', packages[1] / 'lib/core/sync.js']
+        code = [packages[0] / 'src/chat/hub.js']
+        if not args.from_normal:
+            code.append(packages[1] / 'lib/core/sync.js')
         stage = 'stop-dsh-and-backup'
         run(['systemctl', 'stop', 'qqai-dsh.service']); stopped = True
         selected = set(DATA.glob('*.json')) | set((DATA / 'chatlog').glob('*.jsonl'))
@@ -182,6 +201,8 @@ def main():
         stage = 'apply'
         for path, raw in sources.items():
             old = originals[path]
+            if old and old['raw'] == raw:
+                continue
             if path.is_relative_to(DATA):
                 parent_info = path.parent.stat()
                 uid, gid, mode = (old['uid'], old['gid'], old['mode']) if old else (parent_info.st_uid, parent_info.st_gid, 0o600)
@@ -192,9 +213,11 @@ def main():
         run([NODE, str(SOURCE / PATCH_FILES[0]), *map(str, packages)])
         for path in code:
             old = originals[path]; os.chown(path, old['uid'], old['gid']); os.chmod(path, old['mode'])
-        updated = json.loads(json.dumps(cfg)); updated['ext']['qqai-compat']['stickerUsage'] = 'normal'
-        for path, raw in [(config_path, (json.dumps(updated, ensure_ascii=False, indent=2)+'\n').encode()),
-                          (profile_path, profile_update(originals[profile_path]['raw']))]:
+        updated = json.loads(json.dumps(cfg)); updated['ext']['qqai-compat']['stickerUsage'] = 'often'
+        settings = {config_path: (json.dumps(updated, ensure_ascii=False, indent=2)+'\n').encode()}
+        if not args.from_normal:
+            settings[profile_path] = profile_update(originals[profile_path]['raw'])
+        for path, raw in settings.items():
             old = originals[path]; installed.append(path)
             helper.atomic_write(path, raw, uid=old['uid'], gid=old['gid'], mode=old['mode'])
         check(unrelated(json.loads(config_path.read_bytes())) == unrelated(cfg))
@@ -206,12 +229,12 @@ def main():
         after = previous.wait_online(q)
         check(unrelated(after['config']) == unrelated(before['config']))
         check(unrelated(json.loads(config_path.read_bytes())) == unrelated(cfg))
-        check(after['config']['ext']['qqai-compat']['stickerUsage'] == 'normal')
+        check(after['config']['ext']['qqai-compat']['stickerUsage'] == 'often')
         end = time.monotonic() + 25
         while True:
             try:
                 policy = q.fetch_json(q.connect(), '/aurabot/api/ext/qqai-compat/sticker-state')
-                if policy.get('usage') == 'normal': break
+                if policy.get('usage') == 'often': break
             except Exception: pass
             check(time.monotonic() < end); time.sleep(1)
         check(policy.get('maxImagesPerTurn') == 2 and policy.get('allowedPack') == '大肥鱼')

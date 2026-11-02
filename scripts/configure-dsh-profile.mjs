@@ -75,7 +75,7 @@ export async function configureProfile(dshHome, workspace, port, env = process.e
   config.modules = Object.fromEntries(disabled.map((id) => [id, { enabled: false }]))
   for (const id of ['memory', 'mood', 'speakup', 'qq-tools', 'qqai-compat']) config.modules[id] = { enabled: true }
   config.ext = { 'qqai-compat': { personaSourcePath: personaSource, stickersDataDir: stickersData,
-    botName: '大肥鱼', ownerName: '主人', stickerUsage: 'normal' } }
+    botName: '大肥鱼', ownerName: '主人', stickerUsage: 'often' } }
 
   const manifestPath = join(profile, 'package.json')
   const manifest = await existingJson(manifestPath)

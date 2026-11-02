@@ -34,18 +34,52 @@ export function sharedStickerState(key) {
 }
 
 /** A tool call is durably announced before dispatch; rootCallId also covers nested calls. */
-export function toolTurnTracker({ getOwner, chatOfSession, state = new Map() }) {
+export function toolTurnTracker({ getOwner, chatOfSession, stockUrl = () => '', state = new Map() }) {
   const ownerSession = sid => chatOfSession(sid) === `private:${getOwner()}`
+  // Only direct stock-send calls can become attachments. Keep their call order
+  // even when concurrent tools settle out of order. Nothing is replayed on boot.
+  const stock = new Map()
   return {
     observe(session, event) {
       try {
         const sid = sessionKey(session?.id), d = event?.data
-        if (event?.type !== 'tool/call' || !ownerSession(sid) || typeof d?.callId !== 'string') return
-        const scope = qqStickerTurnKey(sid, d.turn)
+        const scope = qqStickerTurnKey(sid, d?.turn)
+        if (event?.type === 'user/message' && ['aurabot', 'user'].includes(d?.source?.kind)) {
+          // A new input supersedes this step, including any yet-unsettled call.
+          for (const [key, call] of stock) if (call.sid === sid && !call.closed) stock.delete(key)
+          return
+        }
+        if (event?.type === 'turn/end') {
+          for (const [key, call] of stock) if (call.scope === scope) {
+            if (d.reason?.kind === 'completed' && call.url) call.closed = true
+            else stock.delete(key)
+          }
+          return
+        }
+        if (event?.type !== 'tool/call' || typeof d?.callId !== 'string' || !ownerSession(sid)) return
         if (!scope) return
-        state.set(`${sid}|${d.callId}`, scope)
+        const key = `${sid}|${d.callId}`
+        state.set(key, scope)
         if (state.size > 4096) state.delete(state.keys().next().value)
+        if (d.name === 'sticker_send') {
+          stock.set(key, { sid, scope, url: '', closed: false, at: Date.now() })
+          if (stock.size > 128) stock.delete(stock.keys().next().value)
+        }
       } catch {}
+    },
+    result(exec, result) {
+      if (exec?.name !== 'sticker_send' || exec.rootCallId !== exec.callId || result?.isError !== false) return
+      const sid = sessionKey(exec.agent?.session?.id)
+      const call = stock.get(`${sid}|${exec.callId}`)
+      if (call && !call.closed && ownerSession(sid)) call.url = stockUrl(result)
+    },
+    takeStock(scope) {
+      const urls = new Set()
+      for (const [key, call] of stock) if (call.scope === scope) {
+        stock.delete(key)
+        if (call.url && Date.now() - call.at < 30 * 60_000 && urls.size < MAX_IMAGES_PER_TURN) urls.add(call.url)
+      }
+      return [...urls]
     },
     scope(exec) {
       try {

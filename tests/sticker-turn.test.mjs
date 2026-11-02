@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { PATCHES, patchedSource } from '../scripts/patch-plugin-media.mjs'
 import { STICKER_TURN_PATCHES } from '../scripts/sticker-turn-patch-spec.mjs'
-import { mediaHooks } from '../adapters/qqai-compat/index.mjs'
+import { mediaHooks, stockResultUrl } from '../adapters/qqai-compat/index.mjs'
 import { createStickerPolicy, toolTurnTracker } from '../adapters/qqai-compat/sticker-policy.mjs'
 
 const root = process.env.AURABOT_SOURCE_ROOT
@@ -30,7 +30,7 @@ function fn(source, name, end, async = true) {
 
 test('turn-context patch is pinned, idempotent and upgrades the prior deployed hub', async t => {
   const final = await source(t); if (!final) return
-  const stage = STICKER_TURN_PATCHES[0], combined = PATCHES.find(p => p.file === stage.file)
+  const stage = STICKER_TURN_PATCHES.at(-1), combined = PATCHES.find(p => p.file === stage.file)
   assert.equal(sha(final), stage.after)
   let previous = final
   for (const edit of [...stage.edits].reverse()) previous = previous.replace(edit.replacement, edit.needle)
@@ -47,6 +47,7 @@ test('actual onSessionEvent and tool-call tracker agree on normalized session an
     const sessionKey = x => String(x || '').replace(/^session-/, '');
     const sessionToChat = new Map([['owner-session', '${chatId}'], ['system-session', 'system:background']]);
     const turnState = new Map(), slowNoticeSent = new Set(), running = new Set();
+    const getConfig = () => ({ownerQQ: '12345'});
     const stopTyping = () => {}, redact = x => x;
     ${fn(src, 'textOf', '\n  function onSessionEvent', false)}
     ${fn(src, 'onSessionEvent', '\n  // ---------- 收 QQ', false)}
@@ -62,9 +63,18 @@ test('actual onSessionEvent and tool-call tracker agree on normalized session an
   onEvent({ id: 'session-unmapped-probe' }, assistant(8, '不可发送')); onEvent({ id: 'session-unmapped-probe' }, end(8))
   onEvent({ id: 'session-system-session' }, assistant(8, '后台不能发送')); onEvent({ id: 'session-system-session' }, end(8))
   onEvent(session, assistant(9, '上一轮残留')); onEvent(session, end(10))
+  const select = turn => ({ type: 'tool/call', data: { turn, name: 'sticker_send', callId: 'stock-' + turn } })
+  onEvent(session, select(11)); onEvent(session, end(11)); onEvent(session, end(11))
+  onEvent(session, select(12)); onEvent(session, { type: 'turn/end', data: { turn: 12, reason: { kind: 'aborted' } } })
+  onEvent(session, end(12))
+  onEvent(session, { type: 'tool/call', data: { turn: 13, name: 'sticker_search' } }); onEvent(session, end(13))
   await Promise.resolve(); await Promise.resolve()
-  assert.equal(deliveries.length, 1)
+  assert.equal(deliveries.length, 2)
   assert.equal(deliveries[0][2].stickerTurnKey, toolScope)
+  assert.equal(deliveries[0][2].stickerFinal, true)
+  assert.equal(deliveries[1][1], '')
+  assert.equal(deliveries[1][2].stickerTurnKey, 'qq:owner-session:11')
+  assert.equal(deliveries[1][2].stickerFinal, true)
   assert.equal(toolScope, 'qq:owner-session:8')
   assert.ok(released.includes(chatId))
 })
@@ -83,7 +93,10 @@ test('actual hub preserves turn identity through tools, interleaved final bubble
   }
   const kit = { all: async () => catalog, fileByHash: async hash => join(dir, 'byhash', hash + '.gif') }
   const policy = createStickerPolicy({ getKit: () => kit, getUsage: () => 'normal' })
-  const media = mediaHooks({ getPort: () => 3080, getKit: () => kit, getDataDir: () => dir, getOwner: () => '12345', policy })
+  const turns = toolTurnTracker({ getOwner: () => '12345', chatOfSession: sid => sid === 'owner-session' && chatId,
+    stockUrl: result => stockResultUrl(result, 3080) })
+  const media = mediaHooks({ getPort: () => 3080, getKit: () => kit, getDataDir: () => dir, getOwner: () => '12345', policy,
+    takeStock: turns.takeStock })
   const hookScopes = [], accepted = [], sentIds = new Set()
   const hooks = {
     reply: async (text, info) => { hookScopes.push(['reply', info.stickerTurnKey]); await Promise.resolve(); return text },
@@ -96,7 +109,7 @@ test('actual hub preserves turn identity through tools, interleaved final bubble
   const cfg = { enabled: true, dryRun: false, ownerQQ: '12345', voice: { enabled: false }, stickers: { enabled: false } }
   const make = new Function('AsyncLocalStorage', 'parseReply', 'bubbleDelay', 'hooks', 'getConfig', 'onebot', 'sentIds', 'log', `
     const stickerTurnStore = new AsyncLocalStorage(), captureStore = new AsyncLocalStorage();
-    const targetOf = () => ({kind:'private',id:'12345'}), bump = () => {}, mood = () => ({delay:1});
+    const targetOf = () => ({kind:'private',id:'12345'}), bump = () => {}, mood = () => ({delay:1}), isMuted = () => false;
     const groupEngaged = new Map(), groupRefs = new Map(), groupSaid = new Map(), saidElsewhere = new Map();
     const stickers = {}; let lastChatAt = 0, lastBotToOwner = null;
     const sleep = async () => { await Promise.resolve(); }, logChat = () => {}, onActivity = () => {};
@@ -123,4 +136,41 @@ test('actual hub preserves turn identity through tools, interleaved final bubble
   await hub.deliver(chatId, '无上下文仍可发文本|||' + image(2))
   assert.equal(accepted.length, before + 1)
   assert.equal(accepted.at(-1)[0].type, 'text')
+
+  // Exercise the actual admission, settled result, final-only merge and receipt path.
+  const markers = []
+  hooks.items = (items, info) => {
+    markers.push(info.stickerFinal)
+    return media.items(items, info)
+  }
+  const session = { id: 'session-owner-session' }
+  function select(turn, i) {
+    const callId = 'call-' + turn
+    turns.observe(session, { type: 'tool/call', data: { turn, callId, name: 'sticker_send' } })
+    turns.result({ name: 'sticker_send', callId, rootCallId: callId, agent: { session } },
+      { isError: false, content: [{ type: 'text', text: image(i) }] })
+    turns.observe(session, { type: 'turn/end', data: { turn, reason: { kind: 'completed' } } })
+  }
+  select(97, 0)
+  const finalOpts = { stickerTurnKey: 'qq:owner-session:97', stickerFinal: true, own: true }
+  const oldCount = accepted.length
+  await hub.deliver(chatId, '工具中的发送', { stickerTurnKey: finalOpts.stickerTurnKey })
+  await hub.deliver(chatId, '[沉默]', finalOpts)
+  hooks.reply = () => null
+  await hub.deliver(chatId, '', finalOpts)
+  hooks.reply = () => ''
+  await hub.deliver(chatId, '被过滤掉的回复', finalOpts)
+  hooks.reply = text => text
+  await hub.deliver(chatId, '', finalOpts)
+  assert.deepEqual(markers, [false, true])
+  assert.deepEqual(accepted.slice(oldCount).map(segments => segments[0].type), ['text', 'image'])
+  select(98, 1)
+  const recovered = await hub.deliver(chatId, '漏贴图片的最终回复', { ...finalOpts, stickerTurnKey: 'qq:owner-session:98' })
+  assert.deepEqual(accepted.slice(-2).map(segments => segments[0].type), ['text', 'image'])
+  assert.equal(recovered.ok, true)
+  assert.equal(recovered.delivered, 2)
+  select(99, 2)
+  const explicit = await hub.deliver(chatId, '甲|||' + image(2) + '|||乙', { ...finalOpts, stickerTurnKey: 'qq:owner-session:99' })
+  assert.deepEqual(accepted.slice(-3).map(segments => segments[0].type), ['text', 'image', 'text'])
+  assert.equal(explicit.delivered, 3)
 })

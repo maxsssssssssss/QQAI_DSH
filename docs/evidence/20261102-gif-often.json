@@ -1,0 +1,151 @@
+{
+  "deployment": {
+    "at": "2026-11-02T19:49:52.100355+08:00",
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261102-gif-often/enable-fkdm8szf",
+    "ok": true,
+    "dshRestarted": true,
+    "gatewayProcessUnchanged": true,
+    "qqReconnected": true,
+    "backupRestoreVerified": true,
+    "backupFiles": 20,
+    "unrelatedConfigUnchanged": true,
+    "policy": {
+      "ok": true,
+      "usage": "often",
+      "maxImagesPerTurn": 2,
+      "allowedPack": "大肥鱼",
+      "allowedTemplateKeys": [
+        "couplet_top",
+        "couplet_bottom",
+        "think",
+        "scroll",
+        "sign"
+      ],
+      "rulesSha256": "fc41d906249041b9ee5854665267c26685a9db1a7c824822bebe815d89cada0f"
+    }
+  },
+  "preservedOnRestart": {
+    "memories.json": true,
+    "sessions.json": true,
+    "speakup.json": true,
+    "modules-data/qqai-heybox-reader/reader-state.json": true,
+    "modules-data/qqai-reminders/reminders.json": true,
+    "mood.json": true
+  },
+  "chatLogFilesBytePreserved": true,
+  "realModel": {
+    "actualRequestCounts": {
+      "agentDialogue": 12,
+      "auxiliary": 7
+    },
+    "checks": {
+      "allCasesCompleted": true,
+      "allActualRequestsFlashThinkingOff": true,
+      "actualLlmRequestObservedForEveryCase": true,
+      "actualNekoToolsAvailable": true,
+      "actualFinalSystemContainsPolicy": true,
+      "actualPersonaPreserved": true,
+      "explicitTemplateReturnedImage": true,
+      "explicitStockReturnedImage": true,
+      "plainTextRequestHasNoImages": true,
+      "modelRepliesWithinTwoImages": true
+    },
+    "productionOwnerSessionPrompted": false,
+    "productionMemoryToolsAllowed": false,
+    "qqDeliveryRequested": false,
+    "cases": [
+      {
+        "case": "happy",
+        "successfulStockCalls": 0,
+        "modelOutputImages": 0
+      },
+      {
+        "case": "hungry",
+        "successfulStockCalls": 0,
+        "modelOutputImages": 0
+      },
+      {
+        "case": "joke",
+        "successfulStockCalls": 0,
+        "modelOutputImages": 0
+      },
+      {
+        "case": "praise",
+        "successfulStockCalls": 1,
+        "modelOutputImages": 1
+      },
+      {
+        "case": "stock",
+        "successfulStockCalls": 1,
+        "modelOutputImages": 1
+      },
+      {
+        "case": "template",
+        "successfulStockCalls": 0,
+        "modelOutputImages": 1
+      },
+      {
+        "case": "plain",
+        "successfulStockCalls": 0,
+        "modelOutputImages": 0
+      }
+    ]
+  },
+  "after": {
+    "approvedPersonaObserved": true,
+    "observerRetired": true,
+    "observerRouteClosed": true,
+    "unrelatedConfigPreserved": true,
+    "qqConnected": true,
+    "botIdentityMatches": true
+  },
+  "isolatedReplay": {
+    "ok": true,
+    "scope": "installed hub isolated replay of real synthetic model selection",
+    "oneBotTransport": "intercepted",
+    "realQqSends": 0,
+    "productionOwnerMappingAccessed": false,
+    "checks": [
+      {
+        "policy": "omitted",
+        "segments": [
+          "text",
+          "image"
+        ],
+        "selectedImageBytesMatch": true
+      },
+      {
+        "policy": "already-in-final",
+        "segments": [
+          "text",
+          "image",
+          "text"
+        ],
+        "selectedImageBytesMatch": true
+      },
+      {
+        "policy": "no-selection",
+        "segments": [
+          "text"
+        ],
+        "selectedImageBytesMatch": false
+      }
+    ]
+  },
+  "localRegression": {
+    "nodeVersion": "24.22.2",
+    "nodeTestsPassed": 160,
+    "nodeTestsSkipped": 0,
+    "pythonUnittestDiscoveryPassed": 4
+  },
+  "recentMediaCache": {
+    "previousEntries": 1,
+    "currentEntriesAfterRestart": 0,
+    "onlyExpiredReferencesRemoved": true,
+    "nativeTtlMinutes": 30
+  },
+  "limitations": [
+    "The four natural conversations are isolated examples and do not establish a daily usage rate.",
+    "The replay intercepted OneBot before the network. There is no new real QQ image receipt or phone-side observation from this change."
+  ]
+}

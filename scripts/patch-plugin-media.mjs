@@ -170,8 +170,8 @@ export const MEMORY_CONSOLIDATION_PATCH = {
 export const PATCHES = [
   {
     ...GIF_MEDIA_PATCH,
-    after: STICKER_TURN_PATCHES[0].after,
-    stages: [GIF_MEDIA_PATCH, QQ_DELIVERY_PATCHES[0], MEMORY_LIMIT_PATCHES[0], STICKER_TURN_PATCHES[0]],
+    after: STICKER_TURN_PATCHES.at(-1).after,
+    stages: [GIF_MEDIA_PATCH, QQ_DELIVERY_PATCHES[0], MEMORY_LIMIT_PATCHES[0], ...STICKER_TURN_PATCHES],
   },
   {
     package: 'dsh-nekowhale-stickers', version: '1.1.1', rootIndex: 1, file: 'lib/core/image-input.js',

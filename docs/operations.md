@@ -188,7 +188,7 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 
 ## 2026-11-02：Nekowhale 正常表情策略
 
-当前 `ext.qqai-compat.stickerUsage=normal`，只允许大肥鱼单人286款与五种文字模板，整轮最多2张。频率调节使用Aurabot兼容模块的设置；Neko `promptMode`保持off，因为QQ完整人格模式不采用其独立hint section。程序限制与提示一同生效；off仅关闭主动配图提示/提醒配图，不卸载用户指定表情工具。
+当前 `ext.qqai-compat.stickerUsage=often`，只允许大肥鱼单人286款与五种文字模板，整轮最多2张。频率调节使用Aurabot兼容模块的设置；Neko `promptMode`保持off，因为QQ完整人格模式不采用其独立hint section。程序限制与提示一同生效；off仅关闭主动配图提示/提醒配图，不卸载用户指定表情工具。
 
 [表情运行说明](neko-stickers.md)记录实际请求验证、下载测速、QQ回执、自然闲聊未出图观察及回滚。统一patcher现检查8个文件，并需保留新增 `neko-network-patch-spec.mjs` 与 `sticker-turn-patch-spec.mjs`。提醒安装器必须同时安装`engine.mjs`、`stickers.mjs`和最后写入的`index.mjs`。
 
@@ -196,3 +196,9 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 
 
 人格文本维护可使用 `deployment/set-whale-persona.py --text-only --record-dir /var/lib/qqai-dsh/maintenance/20261102-persona-gif`：先确认聊天空闲并备份，核对已安装adapter代码与部署源一致，仅热更新personaText、重载兼容模块，不升级代码或重启网关。当前人格为2026-11-02确认的日常GIF表达版，文件见`personas/xiaojing.md`；七文件隔离验证和测试边界见[本轮证据](evidence/20261102-persona-gif.json)。若回退，只通过原生保存接口恢复对应备份config中的personaText后重载qqai-compat，不恢复整份旧配置、记忆或调度状态。
+
+### 2026-11-02 表情积极档与漏图修复回滚
+
+当前线上维护备份为 `/var/lib/qqai-dsh/maintenance/20261102-gif-often/enable-fkdm8szf/`。只需调回频率时，在 Aurabot 兼容模块保存“表情使用积极程度”为“正常”，用本机受保护的 `/aurabot/api/ext/qqai-compat/sticker-state` 核对 `usage`。
+
+若需同时回退漏图修复，先确认主人私聊和提醒空闲并停止 `qqai-dsh.service`。按该目录 `manifest.private.json` 的路径、SHA-256、属主与权限，从 `before/` 原子恢复五个受影响的代码文件：Hub 的 `src/chat/hub.js`、兼容模块的 `index.mjs` 和 `sticker-policy.mjs`、线上源码的 `scripts/patch-plugin-media.mjs` 和 `scripts/sticker-turn-patch-spec.mjs`。仅把当前 config 的 `ext.qqai-compat.stickerUsage` 改回 `normal`。用回退后的 patcher 对两个已装包执行 `--check`，启动 DSH，核对 OneBot 在线、机器人身份和策略回读，将发布记录指向上一版本 `55cbeec`。恢复范围仅含上述代码和配置字段，备份中的记忆、聊天及调度文件只用于核对。

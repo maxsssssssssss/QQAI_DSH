@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto'
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { mediaHooks } from '../adapters/qqai-compat/index.mjs'
+import { mediaHooks, stockResultUrl } from '../adapters/qqai-compat/index.mjs'
 import { createStickerPolicy, toolTurnTracker, qqStickerTurnKey, stickerRules, TEXT_TEMPLATES } from '../adapters/qqai-compat/sticker-policy.mjs'
 
 const sha = b => createHash('sha256').update(b).digest('hex')
@@ -45,11 +45,74 @@ async function fixture(t, shared) {
   }
   const state = shared || { scopes: new Map(), renders: new Map() }
   const policy = createStickerPolicy({ getKit: () => kit, getUsage: () => 'normal', state })
+  const turns = toolTurnTracker({ getOwner: () => '11111', chatOfSession: sid => sid === 'synthetic' ? chatId : '',
+    stockUrl: result => stockResultUrl(result, 3080) })
   const hooks = mediaHooks({ getPort: () => 3080, getKit: () => kit,
-    getDataDir: () => dir, getOwner: () => '11111', policy })
+    getDataDir: () => dir, getOwner: () => '11111', policy, takeStock: turns.takeStock })
   const item = i => ({ kind: 'image', value: url('s', catalog[i].hash) })
-  return { dir, kit, policy, hooks, item, state, disable: () => { enabled = false } }
+  function tool(turn, callId, name = 'sticker_send', sid = 'synthetic') {
+    const session = { id: sid }
+    turns.observe(session, { type: 'tool/call', data: { turn, callId, name } })
+    return (link, { isError = false, rootCallId = callId } = {}) => {
+      const text = `![现成图](${link})\n把上面这行原样放进回复即可显示。`
+      turns.result({ agent: { session }, callId, rootCallId, name },
+        { isError, ...(isError ? {} : { value: { text } }), content: [{ type: 'text', text }] })
+    }
+  }
+  return { dir, kit, policy, hooks, item, state, turns, tool, disable: () => { enabled = false } }
 }
+
+test('only a final reply recovers omitted stock GIFs, in call order and just once', async t => {
+  const f = await fixture(t), text = { kind: 'text', value: '恭喜' }, final = { ...info(1), stickerFinal: true }
+  const first = f.tool(1, 'a'), second = f.tool(1, 'b'), third = f.tool(1, 'c')
+  second(f.item(1).value); third(f.item(2).value); first(f.item(0).value)
+  assert.deepEqual(await f.hooks.items([text], info(1)), [text], 'a mid-turn send leaves the choices pending')
+  assert.equal(await f.hooks.items([], { ...final, chatId: 'private:22222' }), null)
+  assert.equal(await f.hooks.items([], { ...info(2), stickerFinal: true }), null)
+  const reply = await f.hooks.items([text], final)
+  assert.deepEqual(reply.map(i => i.kind), ['text', 'image', 'image'])
+  assert.deepEqual(images(reply).map(i => Buffer.from(i.value.slice(9), 'base64')), [gif(0), gif(1)])
+  assert.ok(f.hooks.send(segments(reply), final))
+  assert.equal(f.hooks.send(segments(reply), final), null)
+  assert.deepEqual(await f.hooks.items([text], final), [text])
+})
+
+test('an explicitly placed or already sent image uses its original slot; image-only completion works', async t => {
+  const f = await fixture(t), final = { ...info(1), stickerFinal: true }, text = { kind: 'text', value: '原有位置' }
+  f.tool(1, 'a')(f.item(0).value); f.tool(1, 'b')(f.item(1).value)
+  const prior = await f.hooks.items([f.item(0)], info(1))
+  assert.ok(f.hooks.send(segments(prior), info(1)))
+  const reply = await f.hooks.items([f.item(1), text], final)
+  assert.deepEqual(reply.map(i => i.kind), ['image', 'text'])
+  f.tool(2, 'new')(f.item(0).value)
+  assert.equal(images(await f.hooks.items([], { ...info(2), stickerFinal: true })).length, 1)
+})
+
+test('stale, failed, nested, preview, unmapped or unapproved stock selections cannot attach', async t => {
+  const f = await fixture(t), session = { id: 'session-synthetic' }, final = { ...info(1), stickerFinal: true }
+  const link = f.item(0).value
+  f.tool(1, 'selected')(link)
+  const late = f.tool(1, 'still-running')
+  f.turns.observe(session, { type: 'user/message', data: { source: { kind: 'aurabot' } } })
+  late(link)
+  f.tool(1, 'failed')(link, { isError: true })
+  f.tool(1, 'nested')(link, { rootCallId: 'parent' })
+  f.tool(1, 'search', 'sticker_search')(link)
+  f.tool(1, 'template', 'meme_render')(link)
+  f.tool(1, 'render-ref')(url('r', 'f'.repeat(16)))
+  f.tool(1, 'external')(link.replace('127.0.0.1', 'example.com'))
+  f.tool(1, 'unmapped', 'sticker_send', 'unmapped')(link)
+  f.tool(1, 'wrong-pack')(f.item(5).value)
+  assert.equal(await f.hooks.items([], final), null)
+  f.tool(2, 'cancelled')(link)
+  f.turns.observe(session, { type: 'turn/end', data: { turn: 2, reason: { kind: 'aborted' } } })
+  assert.equal(await f.hooks.items([], { ...info(2), stickerFinal: true }), null)
+  f.tool(3, 'selected-again')(link)
+  f.turns.observe(session, { type: 'user/message', data: { source: { kind: 'runtime-context' } } })
+  f.turns.observe(session, { type: 'turn/end', data: { turn: 3, reason: { kind: 'completed' } } })
+  f.turns.observe(session, { type: 'user/message', data: { source: { kind: 'user' } } })
+  assert.equal(images(await f.hooks.items([], { ...info(3), stickerFinal: true })).length, 1)
+})
 
 test('tool sends and multiple final bubbles share two slots, and duplicate images do not recur', async t => {
   const f = await fixture(t)
