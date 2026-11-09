@@ -239,7 +239,8 @@
       "real_model_verified": true,
       "natural_qq_new_persona_acceptance_complete": false,
       "evidence": "docs/evidence/20261109-persona-yandere.json",
-      "style": "病娇版小鲸，主人的女朋友，日常 QQ 恋人私聊与大肥鱼 GIF"
+      "style": "病娇版小鲸，主人的女朋友，日常 QQ 恋人私聊与大肥鱼 GIF",
+      "existing_session_refresh_evidence": "docs/evidence/20261109-persona-session.json"
     },
     "native_proactive_configuration_evidence": "docs/evidence/20261101-proactive-30.json",
     "qq_native_faces_configuration_evidence": "docs/evidence/20261102-qq-faces-disabled.json",

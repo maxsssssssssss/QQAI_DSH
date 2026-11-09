@@ -1,0 +1,132 @@
+{
+  "scope": "One existing QQ private session, same session mapping. No change to the approved persona Markdown or QQ reply rules.",
+  "causeObserved": {
+    "twoOwnerTurnsLocated": true,
+    "newSystemAppendedInFirstTurn": true,
+    "existingLeadingSystemContainedPreviousPersona": true,
+    "activeModelSurfaceContainedBothVersions": true
+  },
+  "ownerSession": {
+    "ok": true,
+    "mode": "apply",
+    "realQqSends": 0,
+    "ownerPrompted": false,
+    "before": {
+      "systemCount": 2,
+      "oldLeading": true,
+      "newLeading": false,
+      "lastEqualsCurrent": true,
+      "oldSystemCount": 1,
+      "newSystemCount": 1,
+      "nonSystemMessages": 977
+    },
+    "plan": {
+      "dryRun": true,
+      "activeSystemBefore": 2,
+      "activeSystemAfter": 2,
+      "plannedReplacements": 2,
+      "appliedReplacements": 0,
+      "nonSystemMessages": 977,
+      "nonSystemDigestUnchanged": true,
+      "leadingIsCurrent": false
+    },
+    "applied": {
+      "dryRun": false,
+      "activeSystemBefore": 2,
+      "activeSystemAfter": 1,
+      "plannedReplacements": 2,
+      "appliedReplacements": 2,
+      "nonSystemMessages": 977,
+      "nonSystemDigestUnchanged": true,
+      "leadingIsCurrent": true
+    },
+    "durable": true,
+    "after": {
+      "systemCount": 1,
+      "oldLeading": false,
+      "newLeading": true,
+      "lastEqualsCurrent": true,
+      "nonSystemMessages": 977,
+      "nonSystemHistoryIdentical": true
+    },
+    "moduleUnloaded": true,
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261109-persona-session/apply-a61g34l6",
+    "configPreserved": true,
+    "mappingPreserved": true,
+    "memoryBytesPreserved": true,
+    "qqOnline": true,
+    "at": "2026-11-09T18:20:23.004997+08:00"
+  },
+  "independentReadback": {
+    "at": "2026-11-09T18:22:20.820159+08:00",
+    "leadingNew": true,
+    "activePreviousPersonaCount": 0,
+    "activeCurrentPersonaCount": 1,
+    "nonSystemMessages": 977,
+    "qqOnline": true
+  },
+  "isolatedRealModel": {
+    "provider": "deepseek-official",
+    "model": "deepseek-flash",
+    "reasoningEffort": "off",
+    "realQqSends": 0,
+    "rounds": [
+      {
+        "turn": 1,
+        "leadingOld": true,
+        "leadingNew": false,
+        "effectiveOldSystems": 1,
+        "effectiveNewSystems": 0,
+        "observedFirstUser": true,
+        "earlierAssistantPresent": false,
+        "answeredWithGirlfriend": false,
+        "answeredWithWhale": false,
+        "answeredWithMeow": true
+      },
+      {
+        "turn": 2,
+        "leadingOld": true,
+        "leadingNew": false,
+        "effectiveOldSystems": 1,
+        "effectiveNewSystems": 1,
+        "observedFirstUser": true,
+        "earlierAssistantPresent": true,
+        "answeredWithGirlfriend": false,
+        "answeredWithWhale": false,
+        "answeredWithMeow": false
+      },
+      {
+        "turn": 3,
+        "leadingOld": false,
+        "leadingNew": true,
+        "effectiveOldSystems": 0,
+        "effectiveNewSystems": 1,
+        "observedFirstUser": true,
+        "earlierAssistantPresent": true,
+        "answeredWithGirlfriend": false,
+        "answeredWithWhale": true,
+        "answeredWithMeow": false
+      }
+    ],
+    "normalization": {
+      "ok": true,
+      "dryRun": false,
+      "activeSystemBefore": 2,
+      "activeSystemAfter": 1,
+      "plannedReplacements": 2,
+      "appliedReplacements": 2,
+      "nonSystemMessages": 6,
+      "nonSystemDigestUnchanged": true,
+      "leadingIsCurrent": true,
+      "flushed": true,
+      "replayWrites": 0
+    },
+    "normalizerSha256": "0db57eeac2557c49c8e8605104361a0565df61da200fc22c099ec8bb7e246167",
+    "postFixObservation": "On a broad question about her setting, the synthetic response identified as Xiaojing and a whale girl, and expressed attachment. It did not explicitly identify as a girlfriend."
+  },
+  "automated": {
+    "regressionTestsPassed": 4,
+    "regressionTestsSkipped": 0
+  },
+  "naturalOwnerQqReplyAfterRepairVerified": false
+}

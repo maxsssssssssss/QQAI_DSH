@@ -199,6 +199,12 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 
 在服务器的项目源码目录执行 `python3 deployment/set-whale-persona.py --text-only --record-dir /var/lib/qqai-dsh/maintenance/20261109-persona-yandere`，可应用锁文件选定的人格。安装器先检查会话空闲并备份，随后保存 `ext.qqai-compat.personaText`、重载模块并核对 QQ 身份。本次回退可从 `persona-z7zwgv9l/config.before.json` 提取旧的 `ext.qqai-compat.personaText`，通过本机 Aurabot 配置保存接口写入该字段，再重载 `qqai-compat`。上一版有效摘要为 `80f4eb8a086ea75e136e310ca157bcfa6774b2c85eb7fe2cd6b18551610fefe0`。回退后同步调整源码锁文件中的活动人格记录。[备份与验证记录](evidence/20261109-persona-yandere.json)
 
+### 既有 QQ 会话的人格切换
+
+核查原私聊时，先通过 `agent.session.deriveMessages()` 检查模型实际接收的所有有效 system 消息。DeepSeek 连续会话可把变更后的人格追加在末尾，面板回读和新建会话都无法单独验证旧会话的首条提示。
+
+本次维护使用 `scripts/refresh-qq-session-persona.mjs`。在已核对私聊映射的 agent 上取得 `agent.runMaintenance` 空闲窗口，按该 agent 的作用域重新渲染完整系统提示，备份原系统节点，再用 `normalizePersonaSurface` 的 `dryRun: true` 检查计划。确认旧首部和新末尾均来自这次人格切换后执行同一调用，随后 `await sessions.flush(agent.session)` 并重新读取。工具校验所有非系统消息的顺序和摘要。初始系统节点的历史事件仍保存在 DSH 日志中。将来主动切回其他人格时，使用人格安装器并核对原私聊的有效首部。[本次维护证据](evidence/20261109-persona-session.json)
+
 ### 2026-11-02 表情积极档与漏图修复回滚
 
 当前线上维护备份为 `/var/lib/qqai-dsh/maintenance/20261102-gif-often/enable-fkdm8szf/`。只需调回频率时，在 Aurabot 兼容模块保存“表情使用积极程度”为“正常”，用本机受保护的 `/aurabot/api/ext/qqai-compat/sticker-state` 核对 `usage`。
