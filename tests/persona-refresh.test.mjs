@@ -72,6 +72,27 @@ test('partly completed refresh can be retried without replacing the new head twi
   assert.equal(session.deriveMessages()[0].id, fixedHeadId)
 })
 
+test('a persona-only edit on the old head takes effect before the next turn', async () => {
+  const oldRendering = 'QQ 私聊\n' + previousPersona + '\n陪伴设置'
+  const newRendering = 'QQ 私聊\n' + currentPersona + '\n陪伴设置'
+  const currentOptions = { ...options, rendered: newRendering }
+  const session = fixture([oldRendering])
+  const history = session.deriveMessages().slice(1)
+  const preview = await normalizePersonaSurface(session, { ...currentOptions, dryRun: true })
+  assert.equal(preview.plannedReplacements, 1)
+  assert.equal(preview.appliedReplacements, 0)
+  const applied = await normalizePersonaSurface(session, currentOptions)
+  assert.equal(applied.activeSystemAfter, 1)
+  assert.equal(session.deriveMessages()[0].content[0].text, newRendering)
+  assert.deepEqual(session.deriveMessages().slice(1), history)
+  assert.equal((await normalizePersonaSurface(session, currentOptions)).appliedReplacements, 0)
+
+  const unexpected = fixture([oldRendering + '额外指令'])
+  const count = unexpected.events.length
+  await assert.rejects(normalizePersonaSurface(unexpected, currentOptions), /match fresh rendering/)
+  assert.equal(unexpected.events.length, count)
+})
+
 test('rejects unrelated prompts, a stale or projected latest system and non-DSH producers before writing', async () => {
   for (const session of [fixture(['第三方系统', rendered]), fixture([previousPersona, currentPersona]),
     fixture([previousPersona, '前言提及' + currentPersona, rendered])]) {

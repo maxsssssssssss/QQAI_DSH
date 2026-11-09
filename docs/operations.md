@@ -197,13 +197,13 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 
 当前启用的病娇版同样通过兼容模块热加载。安装器从 `versions.lock.json` 的 `runtime_state.active_persona.source` 读取 Markdown，同时验证文件原始字节和去除首尾空白后的运行文本摘要。[当前人格](../personas/xiaojing-yandere.md)
 
-在服务器的项目源码目录执行 `python3 deployment/set-whale-persona.py --text-only --record-dir /var/lib/qqai-dsh/maintenance/20261109-persona-yandere`，可应用锁文件选定的人格。安装器先检查会话空闲并备份，随后保存 `ext.qqai-compat.personaText`、重载模块并核对 QQ 身份。本次回退可从 `persona-z7zwgv9l/config.before.json` 提取旧的 `ext.qqai-compat.personaText`，通过本机 Aurabot 配置保存接口写入该字段，再重载 `qqai-compat`。上一版有效摘要为 `80f4eb8a086ea75e136e310ca157bcfa6774b2c85eb7fe2cd6b18551610fefe0`。回退后同步调整源码锁文件中的活动人格记录。[备份与验证记录](evidence/20261109-persona-yandere.json)
+在服务器项目源码目录执行 `python3 deployment/set-whale-persona.py --text-only --record-dir /var/lib/qqai-dsh/maintenance/20261109-persona-yandere-revision`，可应用锁文件选定的人格。安装器先确认会话空闲、备份并验证还原副本，再保存 `ext.qqai-compat.personaText` 并重载兼容模块。回退本次 23:39 的更新时，从 `/var/lib/qqai-dsh/maintenance/20261109-persona-yandere-revision/persona-qsdbcizc/config.before.json` 提取旧人格字段，经原生配置接口仅写回此项并热重载。回退目标是 18:03 初版病娇，运行文本 SHA-256 为 `1a48475677339fa46b019a10944d9ccc5e1efa7af9e218102e35894542c673ce`。同步恢复该版 Markdown 和锁文件记录，并按下节处理原会话。18:03 部署使用的 `persona-z7zwgv9l` 备份对应更早的日常版。[23:39 部署记录](evidence/20261109-persona-yandere-revision.json) · [18:03 部署记录](evidence/20261109-persona-yandere.json)
 
 ### 既有 QQ 会话的人格切换
 
 核查原私聊时，先通过 `agent.session.deriveMessages()` 检查模型实际接收的所有有效 system 消息。DeepSeek 连续会话可把变更后的人格追加在末尾，面板回读和新建会话都无法单独验证旧会话的首条提示。
 
-本次维护使用 `scripts/refresh-qq-session-persona.mjs`。在已核对私聊映射的 agent 上取得 `agent.runMaintenance` 空闲窗口，按该 agent 的作用域重新渲染完整系统提示，备份原系统节点，再用 `normalizePersonaSurface` 的 `dryRun: true` 检查计划。确认旧首部和新末尾均来自这次人格切换后执行同一调用，随后 `await sessions.flush(agent.session)` 并重新读取。工具校验所有非系统消息的顺序和摘要。初始系统节点的历史事件仍保存在 DSH 日志中。将来主动切回其他人格时，使用人格安装器并核对原私聊的有效首部。[本次维护证据](evidence/20261109-persona-session.json)
+在已核对映射的私聊 agent 上取得 `agent.runMaintenance` 空闲窗口，按其作用域重新渲染完整系统提示，先备份系统节点。将前后两份完整人格与渲染结果传给 `scripts/refresh-qq-session-persona.mjs` 的 `normalizePersonaSurface`，先用 `dryRun: true` 检查计划。旧首部是唯一系统提示时，工具要求除人格正文外与新渲染结果完全一致。如果已有新版末尾，则须与新渲染结果一致。按计划执行，调用 `await sessions.flush(agent.session)` 后独立读回有效系统节点及所有非系统消息的顺序和内容摘要。本次旧系统节点备份在 `/var/lib/qqai-dsh/maintenance/20261109-yandere-revision-session/apply-dxwii1rz/data/system-nodes.before.private.json`。[23:40 原会话验证](evidence/20261109-persona-yandere-revision.json) · [18:20 首次修复](evidence/20261109-persona-session.json)
 
 ### 2026-11-02 表情积极档与漏图修复回滚
 

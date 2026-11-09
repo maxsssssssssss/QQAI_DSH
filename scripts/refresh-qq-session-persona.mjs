@@ -45,9 +45,13 @@ export async function normalizePersonaSurface(session, {
   }
   const before = inspectSurface(session)
   const { active } = before
-  if (active.at(-1).text !== rendered) throw new Error('Latest retained system does not match fresh rendering')
   const prefix = rendered.slice(0, rendered.indexOf(currentPersona))
   const hasPersona = (text, persona) => text === prefix + persona || text.startsWith(prefix + persona + '\n')
+  const latest = active.at(-1).text
+  // Before the next QQ turn, even the newest retained node can still have
+  // the previous persona. Accept that state only for an exact persona-only edit.
+  const previousRendering = prefix + previousPersona + rendered.slice(prefix.length + currentPersona.length)
+  if (latest !== rendered && latest !== previousRendering) throw new Error('Latest retained system does not match fresh rendering')
   if (!active.every(({ text }) => hasPersona(text, previousPersona) || hasPersona(text, currentPersona))) {
     throw new Error('Refusing to replace a system node with an unrecognized persona')
   }
