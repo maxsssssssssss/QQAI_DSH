@@ -157,9 +157,9 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 验证分层：40项合成回归通过；5次真实DSH Flash/off请求（合计2598输入/输出tokens）在隔离合成库中完成长消息尾部提炼和第7条记忆回答，临时模块已卸载，生产记忆逐字节未变。QQ连接和身份、真实表情目录已核对；没有额外发送QQ测试消息，没有把单元测试视为实际小黄脸收件或真实未回复窗口验收。[脱敏证据](evidence/20261031-memory-options.json)
 
 
-## 当前自定义人格（2026-10-31 18:33）
+## 自定义人格首次接入（2026-10-31 18:33）
 
-当前完整人格原文为 `personas/xiaojing.md`，运行副本保存在私有 `ext.qqai-compat.personaText`，名字字段 `ext.qqai-compat.botName=小鲸`。兼容模块会完整覆盖原生人格卡正文，因此仅在原生面板编辑旧dafeiyu卡不会改变当前生效文本。修改应同步原文与这个运行字段，然后重载 `qqai-compat`；DSH/QQ无需重启，历史与记忆保留。上游鲸鱼娘包仍锁定原版本并校验源hash。
+初版小鲸的人格文件为 `personas/xiaojing.md`，运行副本保存在私有 `ext.qqai-compat.personaText`，名字字段 `ext.qqai-compat.botName=小鲸`。兼容模块会完整覆盖原生人格卡正文，因此仅在原生面板编辑旧dafeiyu卡不会改变当前生效文本。修改应同步原文与这个运行字段，然后重载 `qqai-compat`；DSH/QQ无需重启，历史与记忆保留。上游鲸鱼娘包仍锁定原版本并校验源hash。
 
 生效检查可读取受保护的本机 `/aurabot/api/ext/qqai-compat/persona-state`，只返回文本hash与长度等元数据；真实模型验证见 `docs/evidence/20261031-persona-xiaojing.json`。当前源文件含末尾换行，其文件hash与去首尾空白后的运行文本hash不同，这是预期格式差异。
 
@@ -195,7 +195,9 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 本轮备份位置为`/var/lib/qqai-dsh/maintenance/20261102-stickers/enable-qyzmwcdm/`，22文件隔离恢复验证通过；提示热更新副本为同级`prompt-vc8k7t4j/`。回滚只恢复本轮代码、stickerUsage和profile套组字段，不能覆盖后来聊天、记忆、提醒或计数。SnowLuma及QQ自动登录排查未重启；临时验收模块已关闭并归档。
 
 
-人格文本维护可使用 `deployment/set-whale-persona.py --text-only --record-dir /var/lib/qqai-dsh/maintenance/20261102-persona-gif`：先确认聊天空闲并备份，核对已安装adapter代码与部署源一致，仅热更新personaText、重载兼容模块，不升级代码或重启网关。当前人格为2026-11-02确认的日常GIF表达版，文件见`personas/xiaojing.md`；七文件隔离验证和测试边界见[本轮证据](evidence/20261102-persona-gif.json)。若回退，只通过原生保存接口恢复对应备份config中的personaText后重载qqai-compat，不恢复整份旧配置、记忆或调度状态。
+当前启用的病娇版同样通过兼容模块热加载。安装器从 `versions.lock.json` 的 `runtime_state.active_persona.source` 读取 Markdown，同时验证文件原始字节和去除首尾空白后的运行文本摘要。[当前人格](../personas/xiaojing-yandere.md)
+
+在服务器的项目源码目录执行 `python3 deployment/set-whale-persona.py --text-only --record-dir /var/lib/qqai-dsh/maintenance/20261109-persona-yandere`，可应用锁文件选定的人格。安装器先检查会话空闲并备份，随后保存 `ext.qqai-compat.personaText`、重载模块并核对 QQ 身份。本次回退可从 `persona-z7zwgv9l/config.before.json` 提取旧的 `ext.qqai-compat.personaText`，通过本机 Aurabot 配置保存接口写入该字段，再重载 `qqai-compat`。上一版有效摘要为 `80f4eb8a086ea75e136e310ca157bcfa6774b2c85eb7fe2cd6b18551610fefe0`。回退后同步调整源码锁文件中的活动人格记录。[备份与验证记录](evidence/20261109-persona-yandere.json)
 
 ### 2026-11-02 表情积极档与漏图修复回滚
 

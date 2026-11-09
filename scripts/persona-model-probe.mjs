@@ -23,7 +23,7 @@ export default {
       // Same live filter object/path used by host.js aurabot_persona variable.
       const persona = api.core.modules.filterSync('persona', api.core.personas.current())
       const expected = cfg.ext['qqai-compat'].personaText
-      if (typeof persona !== 'string' || persona !== expected || !persona.includes('你的名字是小鲸')) {
+      if (typeof persona !== 'string' || !persona.trim() || persona !== expected) {
         throw new Error('Active persona mismatch')
       }
       result.personaSha256 = digest(persona)

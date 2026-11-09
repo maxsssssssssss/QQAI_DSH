@@ -1,5 +1,11 @@
 # 部署日志
 
+## 2026-11-09 18:03（Asia/Shanghai）切换小鲸病娇版人格
+
+用户提供的完整 Markdown 单独保存在 `personas/xiaojing-yandere.md`。线上兼容模块按原文热加载，私聊配置与内存生效文本的 SHA-256 均为 `1a48475677339fa46b019a10944d9ccc5e1efa7af9e218102e35894542c673ce`。OneBot 在线，QQ 身份核验通过。
+
+本次七个文件的私有备份在 `/var/lib/qqai-dsh/maintenance/20261109-persona-yandere/persona-z7zwgv9l/`，已用隔离恢复副本比对字节。切换前后记忆、会话映射、主动排期、阅读及提醒状态一致。18:05 的独立 `aurabot-private` 会话核对了真实 DeepSeek Flash 请求携带的完整新人格和表情规则。模型在回答中称对方为「主人」，说自己是「你女朋友」。验证使用合成输入，QQ 投递数为零。[部署与模型验证记录](evidence/20261109-persona-yandere.json)
+
 ## 2026-11-02 23:25（Asia/Shanghai）主人私聊表情使用修复
 
 - 将本项目兼容层从 0.2.1 升至 0.2.2。启用新代码前已核实线上为积极档。安装器的 `--from-often` 只更新兼容代码和固定版本的 Aurabot Hub 补丁，保留现有人格、配置和网关。

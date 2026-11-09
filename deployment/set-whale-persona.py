@@ -104,8 +104,13 @@ def main():
         check(old_code == new_code if args.text_only else sha(old_code) == OLD_SHA)
         if args.text_only:
             check(old_settings.get('botName') == '小鲸')
-        persona = (ROOT / 'personas/xiaojing.md').read_text().strip()
-        check('你的名字是小鲸，称呼对方为主人' in persona and len(persona) < 20000)
+        active = json.loads((ROOT / 'versions.lock.json').read_bytes())['runtime_state']['active_persona']
+        source_file = (ROOT / active['source']).resolve()
+        check(source_file.parent == (ROOT / 'personas').resolve() and source_file.suffix == '.md')
+        raw_persona = source_file.read_bytes()
+        persona = raw_persona.decode('utf-8').strip()
+        check(0 < len(persona) <= 20000 and sha(raw_persona) == active['source_file_sha256']
+              and sha(persona.encode()) == active['effective_text_sha256'])
         subprocess.run(['/opt/qqai-dsh/node-v24.22.2-linux-x64/bin/node', '--check', str(source)],
                        check=True, capture_output=True)
         process_before, gateway_before = invocation(), gateway()
