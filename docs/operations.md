@@ -99,7 +99,7 @@ AUTOLOAD只自动注入，不代替QQ登录；若QQ要求快速登录、扫码�
 |---|---|
 | speakUp.enabled | true |
 | maxPerDay | 30，普通主动调度触发次数，不是气泡数或成功送达数 |
-| minIntervalMinutes / maxIntervalMinutes | 40 / 80 |
+| minIntervalMinutes / maxIntervalMinutes | 70 / 70，固定 70 分钟 |
 | idleMinutes | 40 |
 | awakeFrom / awakeTo | 8 / 23，即北京时间08:00至23:00前 |
 | nudge | true，17:45按用户新指示开启；独立于普通30次额度 |
@@ -203,10 +203,18 @@ sudo python3 /opt/qqai-dsh/source/deployment/set-mood-judge.py \
 
 核查原私聊时，先通过 `agent.session.deriveMessages()` 检查模型实际接收的所有有效 system 消息。DeepSeek 连续会话可把变更后的人格追加在末尾，面板回读和新建会话都无法单独验证旧会话的首条提示。
 
-在已核对映射的私聊 agent 上取得 `agent.runMaintenance` 空闲窗口，按其作用域重新渲染完整系统提示，先备份系统节点。将前后两份完整人格与渲染结果传给 `scripts/refresh-qq-session-persona.mjs` 的 `normalizePersonaSurface`，先用 `dryRun: true` 检查计划。旧首部是唯一系统提示时，工具要求除人格正文外与新渲染结果完全一致。如果已有新版末尾，则须与新渲染结果一致。按计划执行，调用 `await sessions.flush(agent.session)` 后独立读回有效系统节点及所有非系统消息的顺序和内容摘要。本次旧系统节点备份在 `/var/lib/qqai-dsh/maintenance/20261109-yandere-revision-session/apply-dxwii1rz/data/system-nodes.before.private.json`。[23:40 原会话验证](evidence/20261109-persona-yandere-revision.json) · [18:20 首次修复](evidence/20261109-persona-session.json)
+人格更新涉及模型可见系统事件时，应在该 agent 的 request hook 内、当前 turn/step 开放期间调用 `normalizePersonaSurface`。`dryRun` 可先检查替换计划；写入使用当前轮次坐标，随后 flush 并验证原生磁盘恢复。空闲维护窗口中的 system/message 无法通过持久化重放校验，工具现会拒绝这种写入。11 月 17 日已修复三条旧事件，并核对全部消息投影相同。原始压缩日志保存在 `/var/lib/qqai-dsh/maintenance/20261117-persona-log-recovery/proactive-fhckt_ww/session.before.jsonl.zstd`，用于取证和人工恢复评估。[恢复证据](evidence/20261117-chat-high-70.json)
 
 ### 2026-11-02 表情积极档与漏图修复回滚
 
 当前线上维护备份为 `/var/lib/qqai-dsh/maintenance/20261102-gif-often/enable-fkdm8szf/`。只需调回频率时，在 Aurabot 兼容模块保存“表情使用积极程度”为“正常”，用本机受保护的 `/aurabot/api/ext/qqai-compat/sticker-state` 核对 `usage`。
 
 若需同时回退漏图修复，先确认主人私聊和提醒空闲并停止 `qqai-dsh.service`。按该目录 `manifest.private.json` 的路径、SHA-256、属主与权限，从 `before/` 原子恢复五个受影响的代码文件：Hub 的 `src/chat/hub.js`、兼容模块的 `index.mjs` 和 `sticker-policy.mjs`、线上源码的 `scripts/patch-plugin-media.mjs` 和 `scripts/sticker-turn-patch-spec.mjs`。仅把当前 config 的 `ext.qqai-compat.stickerUsage` 改回 `normal`。用回退后的 patcher 对两个已装包执行 `--check`，启动 DSH，核对 OneBot 在线、机器人身份和策略回读，将发布记录指向上一版本 `55cbeec`。恢复范围仅含上述代码和配置字段，备份中的记忆、聊天及调度文件只用于核对。
+
+### QQ 思考档位与固定主动间隔（2026-11-17）
+
+`llm-deepseek` 的 `thinking=enabled` 允许每个请求选择思考档，提供器默认 `reasoningEffort=off`。Aurabot 全局 `model.reasoningEffort=off` 为后台调用提供默认值，`chatModels.privateDefault`、`groupDefault` 完整选择 `deepseek-official / deepseek-flash / high`。原生主动和追问进入同一个 QQ 私聊会话，按该会话使用 High。心情、记忆整理、小黑盒独立评估及专用提醒配图继续使用 Off。
+
+本次安装入口为 `deployment/set-chat-thinking.py --record-dir /var/lib/qqai-dsh/maintenance/20261116-chat-high-70`。它会校验现有基线、备份并做隔离还原检查，只调整两个 QQ 默认模型选择、提供器思考策略、主动最小/最大间隔和 nextAt。应用后重启 DSH 并确认 OneBot。已生效配置的验证可运行 `python3 scripts/run-chat-thinking-check.py`，使用真实 API 和隔离会话。
+
+回退配置时先确认原 QQ 会话空闲并停止 DSH。依据 `/var/lib/qqai-dsh/maintenance/20261116-chat-high-70/proactive-pjl18wsc/manifest.private.json`，从 `before` 副本提取原 profile、QQ 两个默认模型选择及主动最小/最大间隔，逐项恢复，并保留当前 day/count。让 nextAt 按回退后的间隔重新排期。启动后核对默认 Off、QQ 模型选择和在线状态。会话恢复修复属于独立的持久化纠错，已保存的历史和长期记忆继续沿用当前版本。

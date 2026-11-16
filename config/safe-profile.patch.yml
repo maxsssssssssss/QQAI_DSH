@@ -9,7 +9,7 @@
   config:
     apiKeyEnv: DEEPSEEK_API_KEY
     baseURL: https://api.deepseek.com/anthropic
-    thinking: disabled
+    thinking: enabled
     reasoningEffort: 'off'
 
 - id: agent-default-model

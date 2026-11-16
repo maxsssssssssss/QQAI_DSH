@@ -11,7 +11,10 @@ const createSystemMessage = text => ({ role: 'system', id: randomUUID(), source:
 const options = { previousPersona, currentPersona, rendered, createSystemMessage }
 
 function fixture(systems) {
-  const events = [], nodes = []
+  const events = [
+    { type: 'turn/start', seq: 0, data: { turn: 1 } },
+    { type: 'step/start', seq: 1, data: { turn: 1, step: 1 } },
+  ], nodes = []
   function add(type, message) {
     nodes.push(events.length)
     events.push({ type, seq: events.length, data: { turn: 1, step: 1, message } })
@@ -21,7 +24,7 @@ function fixture(systems) {
     for (const role of ['user', 'assistant']) add(role + '/message', { role, id: role + i,
       content: [{ type: 'text', text: '合成对话' + i }] })
   }
-  return { events, surface: { nodes }, eventAt: seq => events[seq],
+  return { events, surface: { nodes }, eventAt: seq => events[seq], snapshotEvents: () => events,
     deriveMessages: () => nodes.map(seq => events[seq].data.message).filter(message => message.content.length),
     append(type, data, { surfaceOp, sourceEventSeqs }) {
       assert.equal(type, 'system/message')
@@ -101,9 +104,9 @@ test('rejects unrelated prompts, a stale or projected latest system and non-DSH 
     assert.equal(session.events.length, count)
   }
   const session = fixture([previousPersona, rendered])
-  session.events[0].data.message.source.kind = 'third-party'
+  session.eventAt(session.surface.nodes[0]).data.message.source.kind = 'third-party'
   await assert.rejects(normalizePersonaSurface(session, options), /Unrecognized/)
-  session.events[0].data.message.source.kind = 'system-prompt'
+  session.eventAt(session.surface.nodes[0]).data.message.source.kind = 'system-prompt'
   const derive = session.deriveMessages
   session.deriveMessages = () => derive().slice(1)
   await assert.rejects(normalizePersonaSurface(session, options), /Projected/)
@@ -114,7 +117,19 @@ test('detects unexpected changes to the retained dialogue even when its message 
   const append = session.append
   session.append = (...args) => {
     append(...args)
-    session.events[1].data.message.content[0].text = '意外变化'
+    session.events.find(e => e.type === 'user/message').data.message.content[0].text = '意外变化'
   }
   await assert.rejects(normalizePersonaSurface(session, options), /failed verification/)
+})
+
+test('closed maintenance cannot append a system event and an open next step uses its current coordinates', async () => {
+  const session = fixture([previousPersona, rendered])
+  session.events.push({ type: 'step/end', seq: session.events.length, data: { turn: 1, step: 1 } })
+  const before = structuredClone(session.events)
+  await assert.rejects(normalizePersonaSurface(session, options), /open turn and step/)
+  assert.deepEqual(session.events, before)
+  session.events.push({ type: 'step/start', seq: session.events.length, data: { turn: 1, step: 2 } })
+  const start = session.events.length
+  await normalizePersonaSurface(session, options)
+  assert.ok(session.events.slice(start).every(e => e.data.turn === 1 && e.data.step === 2))
 })

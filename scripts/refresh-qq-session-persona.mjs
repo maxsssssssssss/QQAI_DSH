@@ -1,4 +1,4 @@
-// Call inside the owner agent's runMaintenance(). The caller flushes the session.
+// Call in the owner agent request hook while its turn and step are open. Flush afterwards.
 import { createHash } from 'node:crypto'
 
 function inspectSurface(session) {
@@ -63,8 +63,18 @@ export async function normalizePersonaSurface(session, {
   if (!dryRun && replacements.length) {
     const makeMessage = createSystemMessage ??
       (await import('/opt/qqai-dsh/app/node_modules/@deepseek-ai/dsh-llm/lib/index.js')).createSystemMessage
-    const { turn, step } = session.eventAt(active.at(-1).seq).data
-    if (![turn, step].every(n => Number.isSafeInteger(n) && n >= 0)) throw new Error('Missing system event position')
+    // Reusing the previous system node's position can persist an invalid log:
+    // DSH admits system messages only inside the currently open turn and step.
+    let turn = null, step = null
+    for (const event of session.snapshotEvents()) {
+      if (event.type === 'turn/start') { turn = event.data.turn; step = null }
+      if (event.type === 'step/start') step = event.data.step
+      if (event.type === 'step/end') step = null
+      if (event.type === 'turn/end') { turn = null; step = null }
+    }
+    if (![turn, step].every(n => Number.isSafeInteger(n) && n > 0)) {
+      throw new Error('Persona replacement requires an open turn and step')
+    }
     for (const { seq, text } of replacements) {
       session.append('system/message', { turn, step, message: makeMessage(text) }, {
         surfaceOp: { op: 'replace', startSeq: seq, endSeq: seq }, sourceEventSeqs: [seq],

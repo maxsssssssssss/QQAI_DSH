@@ -1,5 +1,5 @@
 {
-  "recorded_date": "2026-11-09",
+  "recorded_date": "2026-11-17",
   "status": "xiaojing-yandere-persona-active",
   "node": {
     "version": "24.22.2",
@@ -114,6 +114,19 @@
     }
   ],
   "runtime_state": {
+    "model_routing": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash",
+      "provider_thinking": "enabled",
+      "provider_default_effort": "off",
+      "qq_private_effort": "high",
+      "qq_group_effort": "high",
+      "background_effort": "off",
+      "original_session_selection_flushed": true,
+      "high_tool_continuation_verified": true,
+      "evidence": "docs/evidence/20261117-chat-high-70.json"
+    },
+    "persona_log_recovery_evidence": "docs/evidence/20261117-chat-high-70.json",
     "daily_proactive_enabled": true,
     "gateway_hook_autoload_enabled": true,
     "automatic_qq_restart_recovery_verified": false,
@@ -126,8 +139,8 @@
     "native_proactive": {
       "enabled": true,
       "maxPerDay": 30,
-      "minIntervalMinutes": 40,
-      "maxIntervalMinutes": 80,
+      "minIntervalMinutes": 70,
+      "maxIntervalMinutes": 70,
       "idleMinutes": 40,
       "awakeFrom": 8,
       "awakeTo": 23,
@@ -242,7 +255,7 @@
       "style": "病娇版小鲸，主人的女朋友，日常 QQ 恋人私聊与大肥鱼 GIF",
       "existing_session_refresh_evidence": "docs/evidence/20261109-persona-yandere-revision.json"
     },
-    "native_proactive_configuration_evidence": "docs/evidence/20261101-proactive-30.json",
+    "native_proactive_configuration_evidence": "docs/evidence/20261117-chat-high-70.json",
     "qq_native_faces_configuration_evidence": "docs/evidence/20261102-qq-faces-disabled.json",
     "nekowhale_usage": {
       "usage": "often",

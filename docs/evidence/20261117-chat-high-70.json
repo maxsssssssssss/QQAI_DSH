@@ -1,0 +1,239 @@
+{
+  "operation": "QQ high thinking, background off, fixed 70-minute native scheduling",
+  "deployment": {
+    "ok": true,
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261116-chat-high-70/proactive-pjl18wsc",
+    "qqDeliveryRequested": false,
+    "gatewayRestarted": false,
+    "backgroundEffort": "off",
+    "at": "2026-11-17T00:08:17.234924+08:00",
+    "qqChat": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash",
+      "reasoningEffort": "high"
+    },
+    "providerThinking": "enabled",
+    "providerDefaultEffort": "off",
+    "speakUp": {
+      "enabled": true,
+      "maxPerDay": 30,
+      "minIntervalMinutes": 70,
+      "maxIntervalMinutes": 70,
+      "idleMinutes": 40,
+      "awakeFrom": 8,
+      "awakeTo": 23,
+      "nudge": true
+    },
+    "nextAt": 1794849489917,
+    "rescheduledAt": 1794845289917,
+    "exactIntervalMinutes": 70,
+    "previousDay": "Tue Nov 17 2026",
+    "previousCount": 0,
+    "day": "Tue Nov 17 2026",
+    "count": 0,
+    "nativeDayRollover": false,
+    "countResetByInstaller": false,
+    "backupRestoreVerified": true,
+    "backupFiles": 9,
+    "unrelatedConfigPreserved": true,
+    "preservedState": {
+      "memories.json": true,
+      "modules-data/qqai-heybox-reader/reader-state.json": true,
+      "modules-data/qqai-reminders/reminders.json": true,
+      "mood.json": true,
+      "recent-media.json": true,
+      "sessions.json": true
+    },
+    "expiredMediaCacheEntriesRemoved": 0,
+    "qqOnline": true,
+    "gatewayStartPreserved": true,
+    "dshRestarted": true,
+    "timezone": "Asia/Shanghai"
+  },
+  "realModelVerification": {
+    "ok": true,
+    "qqDeliveryRequested": false,
+    "ownerSessionPrompted": false,
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261117-thinking-verification/proactive-2ogvsln0",
+    "rounds": [
+      {
+        "effort": "off",
+        "completed": true,
+        "elapsedSeconds": 2.03
+      },
+      {
+        "effort": "high",
+        "completed": true,
+        "elapsedSeconds": 2.02
+      },
+      {
+        "effort": "high",
+        "completed": true,
+        "elapsedSeconds": 1.02
+      }
+    ],
+    "observation": {
+      "ok": true,
+      "owner": {
+        "selected": {
+          "reasoningEffort": "high",
+          "provider": "deepseek-official",
+          "model": "deepseek-flash"
+        },
+        "effectiveEffort": "high",
+        "historyIdentical": true,
+        "originalSessionPreserved": true,
+        "modelSelectionFlushed": true,
+        "personaSha256": "39b81dfd8f7655ed937704f829f4c39d056d86640c2e85464035c735fbe06243",
+        "activeSystemCount": 1,
+        "nonSystemMessages": 1745
+      },
+      "requests": [
+        {
+          "kind": "dialogue",
+          "model": "deepseek-flash",
+          "effort": "off",
+          "personaMatches": true,
+          "replayedReasoningBlocks": 0,
+          "tools": [
+            "sticker_search"
+          ]
+        },
+        {
+          "kind": "auxiliary",
+          "model": "deepseek-flash",
+          "effort": "off",
+          "personaMatches": null,
+          "replayedReasoningBlocks": 0,
+          "tools": []
+        },
+        {
+          "kind": "dialogue",
+          "model": "deepseek-flash",
+          "effort": "high",
+          "personaMatches": true,
+          "replayedReasoningBlocks": 0,
+          "tools": [
+            "sticker_search"
+          ]
+        },
+        {
+          "kind": "dialogue",
+          "model": "deepseek-flash",
+          "effort": "high",
+          "personaMatches": true,
+          "replayedReasoningBlocks": 1,
+          "tools": [
+            "sticker_search"
+          ]
+        },
+        {
+          "kind": "dialogue",
+          "model": "deepseek-flash",
+          "effort": "high",
+          "personaMatches": true,
+          "replayedReasoningBlocks": 2,
+          "tools": [
+            "sticker_search"
+          ]
+        }
+      ],
+      "turns": [
+        {
+          "event": "assistant",
+          "textCharacters": 21,
+          "reasoningCharacters": 0,
+          "containsSyntheticRecall": true
+        },
+        {
+          "event": "end",
+          "reason": "completed"
+        },
+        {
+          "event": "assistant",
+          "textCharacters": 0,
+          "reasoningCharacters": 134,
+          "containsSyntheticRecall": false
+        },
+        {
+          "event": "assistant",
+          "textCharacters": 39,
+          "reasoningCharacters": 0,
+          "containsSyntheticRecall": false
+        },
+        {
+          "event": "end",
+          "reason": "completed"
+        },
+        {
+          "event": "assistant",
+          "textCharacters": 9,
+          "reasoningCharacters": 0,
+          "containsSyntheticRecall": true
+        },
+        {
+          "event": "end",
+          "reason": "completed"
+        }
+      ],
+      "tools": [
+        {
+          "name": "sticker_search",
+          "success": true
+        }
+      ],
+      "background": {
+        "effort": "off",
+        "requests": 1,
+        "reasoningCharacters": 0,
+        "validMoodResult": true
+      },
+      "errors": 0,
+      "defaultEffort": "off"
+    },
+    "temporaryModuleUnloaded": true,
+    "preservedFiles": {
+      "config.json": true,
+      "sessions.json": true,
+      "memories.json": true
+    },
+    "qqOnline": true,
+    "at": "2026-11-17T00:10:02.174308+08:00"
+  },
+  "nativeSchedule": {
+    "minMinutes": 70,
+    "maxMinutes": 70,
+    "nextAt": 1794849489917,
+    "count": 0,
+    "day": "Tue Nov 17 2026",
+    "matchesDeployedDeadline": true,
+    "minutesFromReplan": 70.0,
+    "nativeStateFileWrittenAfterDeployment": true,
+    "checkedAt": "2026-11-17T00:12:09.673994+08:00"
+  },
+  "personaLogRecovery": {
+    "ok": true,
+    "nativeV4Validation": true,
+    "allProjectedMessagesIdentical": true,
+    "events": 8402,
+    "messages": 1746,
+    "nonSystemMessages": 1745,
+    "recordDir": "/var/lib/qqai-dsh/maintenance/20261117-persona-log-recovery/proactive-fhckt_ww",
+    "outOfStepEventsRepaired": 3,
+    "eventsRemoved": 0,
+    "originalSessionMappingPreserved": true,
+    "backupRestoreVerified": true,
+    "nativeDiskReplayVerified": true,
+    "qqOnline": true,
+    "originalCompressedSha256": "176f1340334f0604719ca20e7206511594b33ade356f6915fd3850d1e37cc8a4",
+    "repairedCompressedSha256": "4c0c370a8d54148f3498e2b50c2ab3972548ed28cfd2bacaaae78b5b9dc5457a",
+    "at": "2026-11-17T00:07:37.7602+08:00"
+  },
+  "regression": {
+    "failed": 0,
+    "skipped": 0,
+    "passed": 6
+  },
+  "actualOwnerQqMessageSentByTest": false,
+  "naturalProactiveDeliveryAfterChangeVerified": false
+}

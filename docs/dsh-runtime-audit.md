@@ -60,11 +60,11 @@ Whale 的旧 `cordis.patch.yml` 不能直接覆盖新 DSH 的默认 preset。保
 
 ## DeepSeek Key、模型与真实像素输入
 
-rc.5 的 `llm-deepseek` entry 实际挂载 `@deepseek-ai/dsh-llm-deepseek-api-key`，使用 Messages API，默认根为 `https://api.deepseek.com/anthropic`，实际请求追加 `/v1/messages`。配置字段是 `apiKeyEnv: DEEPSEEK_API_KEY`、`thinking: disabled`、`reasoningEffort: off`。`apiKeyEnv` 是凭据引用，不是把 Key 写入 YAML。
+rc.5 的 `llm-deepseek` entry 实际挂载 `@deepseek-ai/dsh-llm-deepseek-api-key`，使用 Messages API，默认根为 `https://api.deepseek.com/anthropic`，实际请求追加 `/v1/messages`。配置字段是 `apiKeyEnv: DEEPSEEK_API_KEY`、`thinking: enabled`、`reasoningEffort: off`。`apiKeyEnv` 是凭据引用，不是把 Key 写入 YAML。
 
 凭据服务可从运行环境或受保护的 `$DSH_HOME/.credentials.yaml` 解析引用。Web 密钥字段只写，返回脱敏描述符；配置文件只保留引用。运行文件权限至少落实专用用户目录 `0700`、Key 文件 `0600`，不复制到 Git、日志、测试请求文件或公开 URL。[模型配置指南](https://deepseek-harness.github.io/deepseek-harness/guide/providers)
 
-`thinking: disabled` 是部署策略，只允许 `off`；Aurabot 或其辅助请求显式传 `low` 时仍可能产生配置错误，不能把 `low` 当作 Off。最终应检查真实请求的 Thinking 字段和实际响应，覆盖普通聊天、压缩/记忆、主动分支。直接 Chat Completions 测试须发送 `thinking: {type: disabled}`；官方默认启用思考。[Thinking 文档](https://api-docs.deepseek.com/guides/thinking_mode/)
+2026-11-17 起提供器允许逐请求选择思考档，默认 Off。QQ 使用完整的按聊天模型选择 High，后台通过 Aurabot 全局 Off 或显式 Off 调用。已实测 High 工具续轮和后台 Off；实际 API 请求会分别生成 enabled/high 或 disabled。[当前验证](evidence/20261117-chat-high-70.json)
 
 2026-10-31 官方模型表显示 `deepseek-flash` 对应 DeepSeek-V4.1-Flash-1017，支持图片；`deepseek-v4-pro` 不支持图片。不能沿用早期“DeepSeek 不支持视觉”的判断。[模型表](https://api-docs.deepseek.com/quick_start/pricing/)
 
